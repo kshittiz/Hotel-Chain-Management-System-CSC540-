@@ -83,15 +83,15 @@ public class LoginHMS extends JFrame implements ActionListener {
         String duty = (String) viewList.getSelectedItem();
         if (duty.equals("Front Desk Representative")) {
             user = FrontDeskService.getNameLinkedwithSSN(ssn);
-            new FrontDesk(user);
+            if (user == null)
+                new Error(this);
+            else
+                new FrontDesk(user);
         } else {
             user = ManagerService.getNameLinkedwithSSN(ssn);
+            if (user == null)
+                new Error(this);
         }
-
-        if (user == null)
-            new Error(this);
-        else
-            System.out.println(user);
 
     }
 
