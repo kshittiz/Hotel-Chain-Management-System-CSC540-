@@ -8,7 +8,7 @@ import org.json.JSONObject;
 
 public class People {
     public enum type{
-        customer,staff ;
+        customer,staff,chairman ;
     }
     public  boolean addPerson(JSONObject obj1) {
         
@@ -34,20 +34,44 @@ public class People {
         // System.out.println(obj1.get(key));
     }*/
 
-
-
-    public static void main(String[] args) {
+    public static String getTypeBySSN(String ssn) {
+        String type = null;
+        Connection c = Database.getConnection();
+        try {
+            PreparedStatement exe = c.prepareStatement("SELECT type from people where ssn = ?");
+            exe.setString(1, ssn);
+            ResultSet result = exe.executeQuery();
+            if (result.next())
+                type = result.getString(1);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return type;
+    }
+    public static boolean checkSSNAvailability(String ssn) {
+        boolean check = false;
+        Connection c = Database.getConnection();
+        try {
+            PreparedStatement exe = c.prepareStatement("SELECT name from people where ssn = ?");
+            exe.setString(1, ssn);
+            ResultSet result = exe.executeQuery();
+            check = result.next();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return check;
+    }
+    /*public static void main(String[] args) {
 
 		People p = new People();
 		JSONObject obj = new JSONObject();
 
-		obj.put("name", "foo");
-		obj.put("SSN", 997999799);
-		obj.put("type", type.staff);
+		obj.put("name", "Ojas");
+		obj.put("SSN", 997999889);
+		obj.put("type", type.chairman);
 	
 		System.out.println(obj);
 		boolean x= p.addPerson(obj);
 
-	}
-
+	}*/
 }

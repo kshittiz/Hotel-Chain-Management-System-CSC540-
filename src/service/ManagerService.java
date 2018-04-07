@@ -15,6 +15,7 @@ public class ManagerService {
             exe.setString(1, ssn);
             ResultSet result = exe.executeQuery();
             if (result.next())
+
                 name = result.getString(1);
             c.close();
         } catch (Exception e) {
