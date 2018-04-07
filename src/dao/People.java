@@ -12,7 +12,7 @@ public class People {
         customer,staff,chairman;
     }
     public  int addPerson(JSONObject obj1) {
-       int returnInt=0; 
+       int peopleId=0; 
 		        Connection c = Database.getConnection();
 		        try {
 		            PreparedStatement exe = c.prepareStatement("insert into people(name,ssn, type) values(?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
@@ -22,12 +22,12 @@ public class People {
 		            exe.executeQuery();
 		            ResultSet result = exe.getGeneratedKeys();
 		            if(result.next())
-		                returnInt=result.getInt(1);
+		                peopleId=result.getInt(1);
 		            c.close();
 		        } catch (Exception e) {
 		            System.out.println(e);
 		        }
-		        return returnInt;
+		        return peopleId;
 		    }
 
        
@@ -65,17 +65,18 @@ public class People {
         }
         return check;
     }
- /*   public static void main(String[] args) {
+    public static void main(String[] args) {
 
 		People p = new People();
 		JSONObject obj = new JSONObject();
 
-		obj.put("name", "Ojas");
-		obj.put("SSN", 997019889);
-		obj.put("type", type.chairman);
+		obj.put("name", "SShaivam");
+		obj.put("SSN", 517777822);
+		obj.put("type", type.staff);
 	
 		System.out.println(obj);
-		boolean x= p.addPerson(obj);
+		int x= p.addPerson(obj);
+		System.out.print(x);
 
-	}*/
+	}
 }
