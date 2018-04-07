@@ -8,6 +8,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -16,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import dao.People;
 import service.FrontDeskService;
 import service.ManagerService;
 
@@ -50,7 +52,7 @@ public class LoginHMS extends JFrame implements ActionListener {
         panel.add(viewLabel);
 
         // view combo box
-        String[] privileges = { "Front Desk Representative", "Manager" };
+        String[] privileges = { "Front Desk Representative", "Manager", "Chairman" };
         viewList = new JComboBox<String>(privileges);
         viewList.setSelectedIndex(0);
         panel.add(viewList);
@@ -87,9 +89,14 @@ public class LoginHMS extends JFrame implements ActionListener {
                 new Error(this);
             else
                 new FrontDesk(user);
-        } else {
+        } else if (duty.equals("Manager")) {
             user = ManagerService.getNameLinkedwithSSN(ssn);
             if (user == null)
+                new Error(this);
+        } else {
+            if ((duty.toLowerCase()).equals(People.getTypeBySSN(ssn)))
+                new Chairman(this);
+            else
                 new Error(this);
         }
 
@@ -109,5 +116,110 @@ class Error extends JDialog {
         setSize(250, 100);
         setLocation(login.getLocationOnScreen());
         setVisible(true);
+    }
+}
+
+@SuppressWarnings("serial")
+class Chairman extends JDialog implements ActionListener {
+    JTextField hotelName;
+    JTextField hotelAddress;
+    JTextField managerName;
+    JTextField managerSSN;
+    JTextField managerAge;
+    JTextField jobTitle;
+    JTextField phone;
+    JTextField email;
+    JButton submit = new JButton("submit");
+
+    Chairman(LoginHMS login) {
+        super(login, "Chairman", true);
+        // create panel for hotel
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(2, 2));
+        panel.setBorder(BorderFactory.createTitledBorder("Hotel Details"));
+        // create panel for manager
+        JPanel panel1 = new JPanel();
+        panel1.setLayout(new GridLayout(6, 2));
+        panel1.setBorder(BorderFactory.createTitledBorder("Assign Manager"));
+
+        // hotel label
+        JLabel hotel = new JLabel("Hotel Name");
+        panel.add(hotel);
+
+        // hotel text field
+        hotelName = new JTextField();
+        panel.add(hotelName);
+
+        // hotel address
+        JLabel address = new JLabel("Hotel Address");
+        panel.add(address);
+
+        // hotel address field
+        hotelAddress = new JTextField();
+        panel.add(hotelAddress);
+
+        // Manager name label
+        JLabel manager = new JLabel("Manager Name");
+        panel1.add(manager);
+
+        // Manager name text field
+        managerName = new JTextField();
+        panel1.add(managerName);
+
+        // Manager SSN label
+        JLabel SSN = new JLabel("SSN");
+        panel1.add(SSN);
+
+        // Manager SSN field
+        managerSSN = new JTextField();
+        panel1.add(managerSSN);
+
+        // Manager job label
+        JLabel job = new JLabel("Job Title");
+        panel1.add(job);
+
+        // Manager job text field
+        jobTitle = new JTextField();
+        panel1.add(jobTitle);
+
+        // Manager age label
+        JLabel age = new JLabel("Age");
+        panel1.add(age);
+
+        // Manager age field
+        managerAge = new JTextField();
+        panel1.add(managerAge);
+
+        // Manager phone number label
+        JLabel ph = new JLabel("Phone Number");
+        panel1.add(ph);
+
+        // Manager phone number text field
+        phone = new JTextField();
+        panel1.add(phone);
+
+        // Manager email label
+        JLabel eID = new JLabel("Email ID");
+        panel1.add(eID);
+
+        // Manager age field
+        email = new JTextField();
+        panel1.add(email);
+
+        submit.setBackground(Color.ORANGE);
+        add(panel, BorderLayout.NORTH);
+        add(panel1, BorderLayout.CENTER);
+        add(submit, BorderLayout.SOUTH);
+        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        getRootPane().setDefaultButton(submit);
+
+        setSize(500, 350);
+        setLocation(login.getLocationOnScreen());
+        setVisible(true);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
     }
 }
