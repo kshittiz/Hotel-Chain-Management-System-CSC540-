@@ -11,8 +11,8 @@ public class People {
     public enum type{
         customer,staff,chairman;
     }
-    public  boolean addPerson(JSONObject obj1) {
-        
+    public  int addPerson(JSONObject obj1) {
+       int returnInt=0; 
 		        Connection c = Database.getConnection();
 		        try {
 		            PreparedStatement exe = c.prepareStatement("insert into people(name,ssn, type) values(?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
@@ -22,12 +22,12 @@ public class People {
 		            exe.executeQuery();
 		            ResultSet result = exe.getGeneratedKeys();
 		            if(result.next())
-		                System.out.println(result.getInt(1));
+		                returnInt=result.getInt(1);
 		            c.close();
 		        } catch (Exception e) {
 		            System.out.println(e);
 		        }
-		        return true;
+		        return returnInt;
 		    }
 
        
@@ -65,7 +65,7 @@ public class People {
         }
         return check;
     }
-    public static void main(String[] args) {
+ /*   public static void main(String[] args) {
 
 		People p = new People();
 		JSONObject obj = new JSONObject();
@@ -77,5 +77,5 @@ public class People {
 		System.out.println(obj);
 		boolean x= p.addPerson(obj);
 
-	}
+	}*/
 }
