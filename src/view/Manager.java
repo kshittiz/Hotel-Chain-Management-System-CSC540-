@@ -38,6 +38,9 @@ public class Manager extends JFrame implements ActionListener, ListSelectionList
 
         // adding manager operation tabs
         JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane.setBackground(Color.DARK_GRAY);
+        tabbedPane.setForeground(Color.WHITE);
+        //getContentPane().setBackground(Color.GRAY);
         JPanel add = new JPanel(new BorderLayout());
         ImageIcon addIcon = new ImageIcon(new ImageIcon("images/add.png").getImage()
                 .getScaledInstance(30, 30, Image.SCALE_SMOOTH));
@@ -104,7 +107,11 @@ public class Manager extends JFrame implements ActionListener, ListSelectionList
         JPanel end = new JPanel(new GridLayout(2, 1));
         // adding submit button on end panel
         submit = new JButton("submit");
-        submit.setBackground(Color.GREEN);
+        ImageIcon submitIcon = new ImageIcon(new ImageIcon("images/submit.png").getImage()
+                .getScaledInstance(30, 22, Image.SCALE_SMOOTH));
+        submit.setIcon(submitIcon);
+        submit.setBackground(Color.DARK_GRAY);
+        submit.setForeground(Color.GREEN);
         submit.addActionListener(this);
         // adding help label on end panel
         opLabel = new JLabel("Please select single operation from above and click submit");

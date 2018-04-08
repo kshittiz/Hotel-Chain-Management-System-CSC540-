@@ -4,10 +4,12 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -93,14 +95,18 @@ public class NewStaff extends JDialog implements ActionListener {
 
         add(panel, BorderLayout.CENTER);
 
-        save.setBackground(Color.GREEN);
+        ImageIcon saveIcon = new ImageIcon(new ImageIcon("images/submit.png").getImage()
+                .getScaledInstance(30, 22, Image.SCALE_SMOOTH));
+        save.setIcon(saveIcon);
+        save.setBackground(Color.DARK_GRAY);
+        save.setForeground(Color.GREEN);
         save.addActionListener(this);
         add(save, BorderLayout.SOUTH);
         getRootPane().setDefaultButton(save);
 
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         setSize(dim.width / 4, dim.height / 3);
-        setLocation(100, 100);
+        setLocation(110, 110);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setVisible(true);
     }

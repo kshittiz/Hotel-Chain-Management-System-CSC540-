@@ -4,12 +4,14 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -46,7 +48,7 @@ public class LoginHMS extends JFrame implements ActionListener {
         panel.add(ssnLabel);
 
         // ssn text field
-        ssnText = new JTextField();
+        ssnText = new JTextField("421319931");
         panel.add(ssnText);
 
         // view label
@@ -220,8 +222,11 @@ class Chairman extends JDialog implements ActionListener {
         add(panel1, BorderLayout.CENTER);
         add(submit, BorderLayout.SOUTH);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        getRootPane().setDefaultButton(submit);
-
+        ImageIcon submitIcon = new ImageIcon(new ImageIcon("images/submit.png").getImage()
+                .getScaledInstance(30, 22, Image.SCALE_SMOOTH));
+        submit.setIcon(submitIcon);
+        submit.setBackground(Color.DARK_GRAY);
+        submit.setForeground(Color.GREEN);
         setSize(500, 350);
         setLocation(login.getLocationOnScreen());
         setVisible(true);
