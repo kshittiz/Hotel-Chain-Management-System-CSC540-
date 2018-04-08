@@ -26,4 +26,50 @@ public class Catering extends Staff {
         return obj1.getInt("pid");
 
     }
+    public void deletePerson(int pid) {
+        Connection c = Database.getConnection();
+        try {
+            PreparedStatement exe = c.prepareStatement(
+                    " Delete from catering_staff where pid=?");
+            exe.setInt(1, pid);
+
+            exe.executeQuery();
+
+            c.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+    }
+    public void updatePerson(JSONObject obj2, int pid) {
+        Connection c = Database.getConnection();
+        try {
+
+            PreparedStatement exe = c.prepareStatement(
+                    "update catering_staff set skill=? where pid =?");
+
+            exe.setString(1, obj2.getString("skill"));
+
+            exe.setInt(2, pid);
+
+            exe.executeQuery();
+
+            c.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+    }
+    /*public static void main(String[] args)
+    {
+        Catering cl = new Catering();
+        JSONObject o = new JSONObject();
+        
+        o.put("skill","Pakoda pro");
+        
+       
+        
+        cl.deletePerson(7);
+        cl.updatePerson(o,8);
+    }*/
 }

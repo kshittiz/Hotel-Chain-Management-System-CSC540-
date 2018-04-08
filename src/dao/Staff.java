@@ -30,4 +30,56 @@ public class Staff extends People {
         return obj1.getInt("pid");
     }
 
+    public void deletePerson(int pid) {
+        Connection c = Database.getConnection();
+        try {
+            PreparedStatement exe = c.prepareStatement(
+                    " Delete from staff where pid=?");
+            exe.setInt(1, pid);
+
+            exe.executeQuery();
+
+            c.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+    }
+
+    public void updatePerson(JSONObject obj2, int pid) {
+        Connection c = Database.getConnection();
+        try {
+
+            PreparedStatement exe = c.prepareStatement(
+                    "update staff set job_title=?,hotel_serving=?,age=?,department=? where pid =?");
+
+            exe.setString(1, obj2.getString("job_title"));
+            exe.setInt(2, obj2.getInt("hotel_serving"));
+            exe.setInt(3, obj2.getInt("age"));
+            exe.setString(4, obj2.getString("department"));
+
+            exe.setInt(5, pid);
+
+            exe.executeQuery();
+
+            c.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+    }
+
+  /*  public static void main(String[] args)
+    {
+        Staff c = new Staff();
+        JSONObject o = new JSONObject();
+        
+        o.put("job_title","choru");
+        o.put("hotel_serving", 1);
+        o.put("age", 23);
+        o.put("department", "cleaning");
+        
+        c.updatePerson(o,5);
+    }*/
+
 }

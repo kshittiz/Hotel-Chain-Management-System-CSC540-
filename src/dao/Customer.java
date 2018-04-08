@@ -26,5 +26,46 @@ public class Customer extends People {
 
         return obj1.getInt("pid");
     }
+    public void deletePerson(int pid) {
+        Connection c = Database.getConnection();
+        try {
+            PreparedStatement exe = c.prepareStatement(
+                    " Delete from customer where pid=?");
+            exe.setInt(1, pid);
 
+            exe.executeQuery();
+
+            c.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+    }
+    public void updatePerson(String date_of_birth, int pid) {
+        Connection c = Database.getConnection();
+        try {
+
+            PreparedStatement exe = c.prepareStatement(
+                    "update customer set date_of_birth=? where pid =?");
+
+            exe.setString(1, date_of_birth);
+            
+            
+
+            exe.setInt(2, pid);
+
+            exe.executeQuery();
+
+            c.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+    }
+    /*public static void main(String[] args)
+    {
+        Customer c= new Customer();
+        c.updatePerson("1/1/1",15);
+    }
+*/
 }

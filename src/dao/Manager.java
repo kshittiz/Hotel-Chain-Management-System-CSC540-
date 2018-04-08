@@ -25,4 +25,55 @@ public class Manager extends Staff {
         
         return obj1.getInt("pid");
     }
+
+    public void deletePerson(int pid) {
+        Connection c = Database.getConnection();
+        try {
+            PreparedStatement exe = c.prepareStatement(
+                    " Delete from manager where pid=?");
+            exe.setInt(1, pid);
+
+            exe.executeQuery();
+
+            c.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+    }
+    public void updatePerson(JSONObject obj2, int pid) {
+        Connection c = Database.getConnection();
+        try {
+
+            PreparedStatement exe = c.prepareStatement(
+                    "update manager set privilege=? where pid =?");
+
+            exe.setString(1, obj2.getString("privilege"));
+           
+           
+            
+
+            exe.setInt(2, pid);
+
+            exe.executeQuery();
+
+            c.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+    }
+/*
+    public static void main(String[] args)
+      {
+          Manager m = new Manager();
+          JSONObject o = new JSONObject();
+          
+          o.put("privilege","full_access");
+          
+         
+          
+          
+          m.updatePerson(o,2);
+      }*/
 }
