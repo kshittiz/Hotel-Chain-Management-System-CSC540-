@@ -65,7 +65,7 @@ public class People {
         }
         return check;
     }
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
 
 		People p = new People();
 		JSONObject obj = new JSONObject();
@@ -78,5 +78,5 @@ public class People {
 		int x= p.addPerson(obj);
 		System.out.print(x);
 
-	}
+	}*/
 }
