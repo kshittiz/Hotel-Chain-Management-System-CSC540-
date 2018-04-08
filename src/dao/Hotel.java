@@ -45,32 +45,33 @@ public class Hotel {
 
     }
 
-    public void updateHotel(int hotel_id,String hotel_name,String hotel_address) {
+    public void updateHotel(int hotel_id, String hotel_name,
+            String hotel_address) {
         Connection c = Database.getConnection();
         try {
             PreparedStatement exe = c.prepareStatement(
                     "update hotel set hotel_name=?,hotel_address=? where hotel_id =?",
-                   Statement.RETURN_GENERATED_KEYS);
+                    Statement.RETURN_GENERATED_KEYS);
             exe.setString(1, hotel_name);
             exe.setString(2, hotel_address);
             exe.setInt(3, hotel_id);
 
             exe.executeQuery();
-            
+
             c.close();
         } catch (Exception e) {
             System.out.println(e);
         }
-        
-        
-    }
-
-    public static void main(String[] args) {
-
-        Hotel h = new Hotel();
-
-        h.addHotel("lolol","lollo");
 
     }
 
+    /*
+     * public static void main(String[] args) {
+     * 
+     * Hotel h = new Hotel();
+     * 
+     * h.addHotel("lolol", "lollo");
+     * 
+     * }
+     */
 }
