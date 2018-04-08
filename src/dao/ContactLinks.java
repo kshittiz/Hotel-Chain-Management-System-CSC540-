@@ -7,7 +7,7 @@ import java.sql.Statement;
 
 
 
-public class contact_links {
+public class ContactLinks {
     
     public int CreateContactLinks(int link_id,int contact_id, String type) {
        
