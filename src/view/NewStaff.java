@@ -30,17 +30,17 @@ public class NewStaff extends JDialog implements ActionListener {
     public NewStaff(Manager manager) {
         super(manager, "New staff details", true);
         JPanel panel = new JPanel(new GridLayout(11, 2, 0, 3));
-        name = new JLabel("Name");
-        ssn = new JLabel("SSN");
-        jobTitle = new JLabel("Job Title");
-        age = new JLabel("Age");
-        department = new JLabel("Department");
-        gender = new JLabel("Gender");
-        skill = new JLabel("Skill");
-        privilege = new JLabel("Privilege");
-        type = new JLabel("speciality");
-        phone = new JLabel("Phone");
-        email = new JLabel("Email");
+        name = new JLabel(" Name (*)");
+        ssn = new JLabel(" SSN (*)");
+        jobTitle = new JLabel(" Job Title (*)");
+        age = new JLabel(" Age");
+        department = new JLabel(" Department");
+        gender = new JLabel(" Gender");
+        skill = new JLabel(" Skill");
+        privilege = new JLabel(" Privilege");
+        type = new JLabel(" speciality");
+        phone = new JLabel(" Phone");
+        email = new JLabel(" Email");
 
         nameT = new JTextField();
         ssnT = new JTextField();

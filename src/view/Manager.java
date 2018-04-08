@@ -32,6 +32,7 @@ public class Manager extends JFrame implements ActionListener, ListSelectionList
     JLabel opLabel;
     String action = null;
 
+    // 421319931
     Manager(String name) {
         super("Manager View - " + name);
 
@@ -139,7 +140,7 @@ public class Manager extends JFrame implements ActionListener, ListSelectionList
     @Override
     public void valueChanged(ListSelectionEvent le) {
         opLabel.setForeground(null);
-        opLabel.setText("Please select single operation from below and click submit");
+        opLabel.setText("Please select single operation from above and click submit");
         action = (String) ((JList<String>) le.getSource()).getSelectedValue();
     }
 

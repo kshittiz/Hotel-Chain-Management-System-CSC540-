@@ -152,7 +152,7 @@ class Chairman extends JDialog implements ActionListener {
         panel1.setBorder(BorderFactory.createTitledBorder("Assign Manager"));
 
         // hotel label
-        JLabel hotel = new JLabel("Hotel Name");
+        JLabel hotel = new JLabel(" Hotel Name (*)");
         panel.add(hotel);
 
         // hotel text field
@@ -160,7 +160,7 @@ class Chairman extends JDialog implements ActionListener {
         panel.add(hotelName);
 
         // hotel address
-        JLabel address = new JLabel("Hotel Address");
+        JLabel address = new JLabel(" Hotel Address (*)");
         panel.add(address);
 
         // hotel address field
@@ -168,7 +168,7 @@ class Chairman extends JDialog implements ActionListener {
         panel.add(hotelAddress);
 
         // Manager name label
-        JLabel manager = new JLabel("Manager Name");
+        JLabel manager = new JLabel(" Manager Name (*)");
         panel1.add(manager);
 
         // Manager name text field
@@ -176,7 +176,7 @@ class Chairman extends JDialog implements ActionListener {
         panel1.add(managerName);
 
         // Manager SSN label
-        JLabel SSN = new JLabel("SSN");
+        JLabel SSN = new JLabel(" SSN (*)");
         panel1.add(SSN);
 
         // Manager SSN field
@@ -184,7 +184,7 @@ class Chairman extends JDialog implements ActionListener {
         panel1.add(managerSSN);
 
         // Manager job label
-        JLabel job = new JLabel("Job Title");
+        JLabel job = new JLabel(" Job Title (*)");
         panel1.add(job);
 
         // Manager job text field
@@ -192,7 +192,7 @@ class Chairman extends JDialog implements ActionListener {
         panel1.add(jobTitle);
 
         // Manager age label
-        JLabel age = new JLabel("Age");
+        JLabel age = new JLabel(" Age");
         panel1.add(age);
 
         // Manager age field
@@ -200,7 +200,7 @@ class Chairman extends JDialog implements ActionListener {
         panel1.add(managerAge);
 
         // Manager phone number label
-        JLabel ph = new JLabel("Phone Number");
+        JLabel ph = new JLabel(" Phone Number");
         panel1.add(ph);
 
         // Manager phone number text field
@@ -208,7 +208,7 @@ class Chairman extends JDialog implements ActionListener {
         panel1.add(phone);
 
         // Manager email label
-        JLabel eID = new JLabel("Email ID");
+        JLabel eID = new JLabel(" Email ID");
         panel1.add(eID);
 
         // Manager age field
