@@ -5,7 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-public class room_service_links {
+public class RoomServiceLinks {
     public int addRoomServiceLinks(int room_num,int service_id) {
         int id=0; 
         Connection c = Database.getConnection();
@@ -21,16 +21,16 @@ public class room_service_links {
         } catch (Exception e) {
             System.out.println(e);
         }
-        System.out.println(id);
+        /*System.out.println(id);*/
         return id;
      
     }
 
-    public static void main(String[] args)
+    /*public static void main(String[] args)
     {
         room_service_links rsl = new room_service_links();
         rsl.addRoomServiceLinks(1,2);
-    }
+    }*/
     
 }
 
