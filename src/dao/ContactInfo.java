@@ -7,8 +7,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-public class contact_info {
-    public int addConactInfo(int phone_number,String email) {
+public class ContactInfo {
+    public int addContactInfo(int phone_number,String email) {
         int contact_id=0; 
         Connection c = Database.getConnection();
         try {
@@ -27,12 +27,12 @@ public class contact_info {
 */        return contact_id;
      
     }
-    public static void main(String[] args)
+   /* public static void main(String[] args)
     {
-        contact_info ci = new contact_info();
+        ContactInfo ci = new ContactInfo();
        int x= ci.addConactInfo(999999888, "chor@choru.com");
        
-    }
+    }*/
  
 }
 /* CREATE TABLE contact_info(
