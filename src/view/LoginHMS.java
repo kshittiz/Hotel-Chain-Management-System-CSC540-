@@ -93,6 +93,8 @@ public class LoginHMS extends JFrame implements ActionListener {
             user = ManagerService.getNameLinkedwithSSN(ssn);
             if (user == null)
                 new Error(this);
+            else
+                new Manager(user);
         } else {
             if ((duty.toLowerCase()).equals(People.getTypeBySSN(ssn)))
                 new Chairman(this);
