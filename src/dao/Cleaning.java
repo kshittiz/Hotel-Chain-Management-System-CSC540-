@@ -26,5 +26,51 @@ public class Cleaning extends Staff {
         return obj1.getInt("pid");
 
     }
+    public void deletePerson(int pid) {
+        Connection c = Database.getConnection();
+        try {
+            PreparedStatement exe = c.prepareStatement(
+                    " Delete from cleaning_staff where pid=?");
+            exe.setInt(1, pid);
+
+            exe.executeQuery();
+
+            c.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+    }
+    public void updatePerson(JSONObject obj2, int pid) {
+        Connection c = Database.getConnection();
+        try {
+
+            PreparedStatement exe = c.prepareStatement(
+                    "update cleaning_staff set type=? where pid =?");
+
+            exe.setString(1, obj2.getString("type"));
+
+            exe.setInt(2, pid);
+
+            exe.executeQuery();
+
+            c.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+    }
+    public static void main(String[] args)
+    {
+        Cleaning cl = new Cleaning();
+        JSONObject o = new JSONObject();
+        
+        o.put("type","kachrawala");
+        
+       
+        
+        cl.deletePerson(11);
+        cl.updatePerson(o,12);
+    }
 
 }
