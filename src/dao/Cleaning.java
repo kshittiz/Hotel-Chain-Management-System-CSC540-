@@ -60,7 +60,7 @@ public class Cleaning extends Staff {
         }
 
     }
-    public static void main(String[] args)
+   /* public static void main(String[] args)
     {
         Cleaning cl = new Cleaning();
         JSONObject o = new JSONObject();
@@ -71,6 +71,6 @@ public class Cleaning extends Staff {
         
         cl.deletePerson(11);
         cl.updatePerson(o,12);
-    }
+    }*/
 
 }
