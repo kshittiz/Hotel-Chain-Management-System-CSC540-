@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-
 import org.json.JSONObject;
 
 public class People {
@@ -64,4 +63,52 @@ public class People {
         }
         return check;
     }
+
+    public void deletePerson(int pid) {
+        Connection c = Database.getConnection();
+        try {
+            PreparedStatement exe = c.prepareStatement(
+                    " Delete from people where pid=?");
+            exe.setInt(1, pid);
+
+            exe.executeQuery();
+
+            c.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+    }
+    public void updatePerson( JSONObject obj2 ) {
+        Connection c = Database.getConnection();
+        try {
+            PreparedStatement exe = c.prepareStatement(
+                    "update people set name=?,SSN=?,type=? where pid =?");
+            
+        
+            exe.setString(1, obj2.getString("name"));
+            exe.setInt(2, obj2.getInt("SSN"));
+            exe.setString(3,obj2.getString("type"));
+            exe.setInt(4,obj2.getInt("pid"));
+
+            exe.executeQuery();
+
+            c.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+    }
+  /*  public static void main(String[] args)
+    {
+        People p = new People();
+        JSONObject o = new JSONObject();
+        
+        o.put("name","ojas Ambani");
+        o.put("SSN", 221311231);
+        o.put("type", "customer");
+        o.put("pid", 14);
+        
+        p.updatePerson(o);
+    }*/
 }
