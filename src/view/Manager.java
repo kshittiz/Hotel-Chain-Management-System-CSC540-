@@ -106,10 +106,11 @@ public class Manager extends JFrame implements ActionListener, ListSelectionList
         submit.setBackground(Color.GREEN);
         submit.addActionListener(this);
         // adding help label on end panel
-        opLabel = new JLabel("Please select single operation from below and click submit");
+        opLabel = new JLabel("Please select single operation from above and click submit");
         end.add(opLabel);
         end.add(submit);
         add(end, BorderLayout.SOUTH);
+        getRootPane().setDefaultButton(submit);
 
         setSize(dim.width / 3, dim.height / 3);
         setLocation(100, 100);
@@ -127,6 +128,11 @@ public class Manager extends JFrame implements ActionListener, ListSelectionList
         }
 
         opLabel.setText(action);
+        switch (action) {
+        case "Add new staff member":
+            new NewStaff(this);
+            break;
+        }
     }
 
     @SuppressWarnings("unchecked")

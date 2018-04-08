@@ -95,8 +95,10 @@ public class LoginHMS extends JFrame implements ActionListener {
             user = ManagerService.getNameLinkedwithSSN(ssn);
             if (user == null)
                 new Error(this);
-            else
+            else {
                 new Manager(user);
+                this.setVisible(false);
+            }
         } else {
             Connection c = Database.getConnection();
             People.setConnnection(c);
@@ -142,11 +144,11 @@ class Chairman extends JDialog implements ActionListener {
         super(login, "Chairman", true);
         // create panel for hotel
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(2, 2));
+        panel.setLayout(new GridLayout(2, 2, 0, 3));
         panel.setBorder(BorderFactory.createTitledBorder("Hotel Details"));
         // create panel for manager
         JPanel panel1 = new JPanel();
-        panel1.setLayout(new GridLayout(6, 2));
+        panel1.setLayout(new GridLayout(6, 2, 0, 3));
         panel1.setBorder(BorderFactory.createTitledBorder("Assign Manager"));
 
         // hotel label
