@@ -7,6 +7,7 @@ import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -17,6 +18,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import dao.Database;
 import dao.People;
 import service.FrontDeskService;
 import service.ManagerService;
@@ -96,10 +98,13 @@ public class LoginHMS extends JFrame implements ActionListener {
             else
                 new Manager(user);
         } else {
+            Connection c = Database.getConnection();
+            People.setConnnection(c);
             if ((duty.toLowerCase()).equals(People.getTypeBySSN(ssn)))
                 new Chairman(this);
             else
                 new Error(this);
+            Database.endConnnection(c);
         }
 
     }

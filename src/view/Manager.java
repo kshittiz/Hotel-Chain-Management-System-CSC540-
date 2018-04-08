@@ -3,6 +3,7 @@ package view;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -17,20 +18,19 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTable;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
-public class Manager extends JFrame implements ActionListener {
+public class Manager extends JFrame implements ActionListener, ListSelectionListener {
 
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
     JButton submit;
-    JList<String> addList;
-    JList<String> fetchList;
-    JList<String> upList;
-    JList<String> rmList;
-    JTable table;
+    JList<String> addList, fetchList, upList, rmList;;
+    JLabel opLabel;
+    String action = null;
 
     Manager(String name) {
         super("Manager View - " + name);
@@ -65,18 +65,16 @@ public class Manager extends JFrame implements ActionListener {
         addList = new JList<String>(addOps);
         addList.setPreferredSize(new Dimension(dim.width / 3 - 30, 50));
         addList.setBorder(BorderFactory.createTitledBorder("Available operations"));
+        addList.addListSelectionListener(this);
         add.add(new JScrollPane(addList), BorderLayout.CENTER);
-        JLabel addL = new JLabel("Please select any operation from above and click submit");
-        add.add(addL, BorderLayout.SOUTH);
 
         // building UI for FETCH operation
         String[] fetchOps = { "Front Desk Representative", "Manager", "Chairman" };
         fetchList = new JList<String>(fetchOps);
         fetchList.setBorder(BorderFactory.createTitledBorder("Available operations"));
         fetchList.setPreferredSize(new Dimension(dim.width / 3 - 30, 50));
+        fetchList.addListSelectionListener(this);
         fetch.add(new JScrollPane(fetchList), BorderLayout.CENTER);
-        JLabel fetchL = new JLabel("Please select any operation from above and click submit");
-        fetch.add(fetchL, BorderLayout.SOUTH);
 
         // building UI for UPDATE operation
         String[] upOps = { "Update staff member details", "Update hotel details",
@@ -86,9 +84,8 @@ public class Manager extends JFrame implements ActionListener {
         upList = new JList<String>(upOps);
         upList.setBorder(BorderFactory.createTitledBorder("Available operations"));
         upList.setPreferredSize(new Dimension(dim.width / 3 - 30, 50));
+        upList.addListSelectionListener(this);
         update.add(new JScrollPane(upList), BorderLayout.CENTER);
-        JLabel updateL = new JLabel("Please select any operation from above and click submit");
-        update.add(updateL, BorderLayout.SOUTH);
 
         // building UI for REMOVE operation
         String[] rmOps = { "Remove staff member", "Remove room category", "Remove room",
@@ -97,16 +94,23 @@ public class Manager extends JFrame implements ActionListener {
         rmList = new JList<String>(rmOps);
         rmList.setBorder(BorderFactory.createTitledBorder("Available operations"));
         rmList.setPreferredSize(new Dimension(dim.width / 3 - 30, 50));
+        rmList.addListSelectionListener(this);
         remove.add(new JScrollPane(rmList), BorderLayout.CENTER);
-        JLabel rmL = new JLabel("Please select any operation from above and click submit");
-        remove.add(rmL, BorderLayout.SOUTH);
 
         // adding tabs on JFrame
         add(tabbedPane, BorderLayout.CENTER);
-        // adding submit button on JFrame
+
+        JPanel end = new JPanel(new GridLayout(2, 1));
+        // adding submit button on end panel
         submit = new JButton("submit");
         submit.setBackground(Color.GREEN);
-        add(submit, BorderLayout.SOUTH);
+        submit.addActionListener(this);
+        // adding help label on end panel
+        opLabel = new JLabel("Please select single operation from below and click submit");
+        end.add(opLabel);
+        end.add(submit);
+        add(end, BorderLayout.SOUTH);
+
         setSize(dim.width / 3, dim.height / 3);
         setLocation(100, 100);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -116,7 +120,21 @@ public class Manager extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        if (action == null) {
+            opLabel.setForeground(Color.RED);
+            opLabel.setText("No operation selected!");
+            return;
+        }
 
+        opLabel.setText(action);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void valueChanged(ListSelectionEvent le) {
+        opLabel.setForeground(null);
+        opLabel.setText("Please select single operation from below and click submit");
+        action = (String) ((JList<String>) le.getSource()).getSelectedValue();
     }
 
 }

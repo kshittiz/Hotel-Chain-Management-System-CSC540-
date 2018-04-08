@@ -3,6 +3,7 @@ package dao;
 import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Properties;
 
 public class Database {
@@ -38,19 +39,21 @@ public class Database {
             e.printStackTrace();
         }
     }
-    
-  //This main function can be used to test connectivity with database, will be removed in final version
-  /* public static void main(String... s) {
-        Connection c = getConnection();
+
+    public static void endConnnection(Connection c) {
         try {
-            Statement exe = c.createStatement();
-            ResultSet result = exe.executeQuery("SELECT name from people");
-            while (result.next())
-                System.out.println(result.getString(1));
             c.close();
-        } catch (Exception e) {
-            System.out.println(e);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
-  */
+    // This main function can be used to test connectivity with database, will
+    // be removed in final version
+    /*
+     * public static void main(String... s) { Connection c = getConnection();
+     * try { Statement exe = c.createStatement(); ResultSet result =
+     * exe.executeQuery("SELECT name from people"); while (result.next())
+     * System.out.println(result.getString(1)); c.close(); } catch (Exception e)
+     * { System.out.println(e); } }
+     */
 }
