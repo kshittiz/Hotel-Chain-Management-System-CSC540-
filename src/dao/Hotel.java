@@ -29,7 +29,7 @@ public class Hotel {
                  }
                  return hotelId;
              }
-    public static void main(String[] args) {
+  /*  public static void main(String[] args) {
 
         Hotel h = new Hotel();
         
@@ -41,5 +41,5 @@ public class Hotel {
         System.out.print(x);
 
     }
-
+*/
 }
