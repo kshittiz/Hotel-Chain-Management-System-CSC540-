@@ -30,7 +30,7 @@ public class NewStaff extends JDialog implements ActionListener {
     JButton save = new JButton("Save");
 
     public NewStaff(Manager manager) {
-        super(manager, "New staff details", true);
+        super(manager, "New staff Member", true);
         JPanel panel = new JPanel(new GridLayout(11, 2, 0, 3));
         name = new JLabel(" Name (*)");
         ssn = new JLabel(" SSN (*)");
