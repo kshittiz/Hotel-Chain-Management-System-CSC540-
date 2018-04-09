@@ -6,9 +6,13 @@ import java.sql.PreparedStatement;
 import org.json.JSONObject;
 
 public class FrontDesk extends Staff {
-    public int addPerson(JSONObject obj1) {
+    private static Connection c = null;
 
-        Connection c = Database.getConnection();
+    public static void setConnnection(Connection conn) {
+        c = conn;
+    }
+
+    public int addPerson(JSONObject obj1) {
         try {
             PreparedStatement exe = c.prepareStatement(
                     "insert into front_desk(pid, gender) values(?, ?)");
@@ -24,8 +28,8 @@ public class FrontDesk extends Staff {
 
     }
 
-    public void deletePerson(int pid) {
-        Connection c = Database.getConnection();
+    public boolean deletePerson(int pid) {
+        
         try {
             PreparedStatement exe = c.prepareStatement(
                     " Delete from front_desk where pid=?");
@@ -33,30 +37,16 @@ public class FrontDesk extends Staff {
 
             exe.executeQuery();
 
-            c.close();
+      
         } catch (Exception e) {
             System.out.println(e);
+            return false;
         }
-
+        return true;
     }
-    /*
-     * public static void main(String[] args) {
-     * 
-     * FrontDesk f = new FrontDesk(); JSONObject obj = new JSONObject();
-     * 
-     * obj.put("pid", 15); obj.put("gender", "male");
-     * 
-     * f.addPerson(obj);
-     * 
-     * System.out.println(obj);
-     * 
-     * 
-     * 
-     * }
-     */
 
-    public void updatePerson(JSONObject obj2, int pid) {
-        Connection c = Database.getConnection();
+    public boolean updatePerson(JSONObject obj2, int pid) {
+       
         try {
 
             PreparedStatement exe = c.prepareStatement(
@@ -68,23 +58,12 @@ public class FrontDesk extends Staff {
 
             exe.executeQuery();
 
-            c.close();
+          
         } catch (Exception e) {
             System.out.println(e);
+            return false;
         }
-
+        return true;
     }
-   /* public static void main(String[] args)
-    {
-        FrontDesk f = new FrontDesk();
-        JSONObject o = new JSONObject();
-        
-        o.put("gender","male");
-        
-       
-        
-        f.deletePerson(4);
-        f.updatePerson(o,5);
-    }*/
 
 }
