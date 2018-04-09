@@ -2,6 +2,8 @@ package dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
 
 public class ServiceType {
     private static Connection c = null;
@@ -27,4 +29,17 @@ public class ServiceType {
         return true;
     }
 
+    public static String[] getServices() {
+        ArrayList<String> list = new ArrayList<String>();
+        try {
+            PreparedStatement exe = c.prepareStatement("Select type from service_type");
+            ResultSet result = exe.executeQuery();
+            while (result.next())
+                list.add(result.getString(1));
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+        return list.toArray(new String[list.size()]);
+    }
 }

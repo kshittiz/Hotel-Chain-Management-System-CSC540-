@@ -18,16 +18,17 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import dao.Database;
+import dao.Discount;
 
 @SuppressWarnings("serial")
-public class Discount extends JDialog implements ActionListener {
+public class NewDiscount extends JDialog implements ActionListener {
 
     JLabel paymentType, disc;
     JTextField pT, dT;
 
     JButton save = new JButton("Save");
 
-    public Discount(Manager manager) {
+    public NewDiscount(Manager manager) {
         super(manager, "New Discount", true);
         JPanel panel = new JPanel(new GridLayout(2, 2, 0, 3));
         paymentType = new JLabel(" Payment Type (*)");
@@ -63,6 +64,21 @@ public class Discount extends JDialog implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         Connection conn = Database.getConnection();
+        Discount.setConnnection(conn);
+        Discount disc = new Discount();
+        try {
+            if (!disc.discount(pT.getText(), Integer.parseInt(dT.getText()))) {
+                Manager.opLabel.setText("Discount not saved, error in input!");
+                Manager.opLabel.setForeground(Color.RED);
+            } else {
+                Manager.opLabel.setText("Discount saved successfully!");
+                Manager.opLabel.setForeground(Color.GREEN);
+            }
+        } catch (Exception ex) {
+            System.out.println(ex);
+            Manager.opLabel.setText("Discount not saved, error in input!");
+            Manager.opLabel.setForeground(Color.RED);
+        }
         this.dispose();
         Database.endConnnection(conn);
     }

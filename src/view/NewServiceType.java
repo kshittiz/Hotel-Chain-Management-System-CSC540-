@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import dao.Database;
+import dao.ServiceType;
 
 @SuppressWarnings("serial")
 public class NewServiceType extends JDialog implements ActionListener {
@@ -63,6 +64,21 @@ public class NewServiceType extends JDialog implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         Connection conn = Database.getConnection();
+        ServiceType.setConnnection(conn);
+        ServiceType st = new ServiceType();
+        try {
+            if (!st.addServiceType(typeT.getText(), Integer.parseInt(priceT.getText()))) {
+                Manager.opLabel.setText("Service type not saved, error in input!");
+                Manager.opLabel.setForeground(Color.RED);
+            } else {
+                Manager.opLabel.setText("Service type saved successfully!");
+                Manager.opLabel.setForeground(Color.GREEN);
+            }
+        } catch (Exception ex) {
+            System.out.println((ex));
+            Manager.opLabel.setText("Service type not saved, error in input!");
+            Manager.opLabel.setForeground(Color.RED);
+        }
         this.dispose();
         Database.endConnnection(conn);
     }
