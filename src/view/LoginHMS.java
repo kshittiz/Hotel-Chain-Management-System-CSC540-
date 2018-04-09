@@ -96,15 +96,16 @@ public class LoginHMS extends JFrame implements ActionListener {
         People.setConnnection(conn);
         HotelPeopleLinks.setConnnection(conn);
         pid = People.getPIDbySSN(ssn);
-        hid = HotelPeopleLinks.getHotelIdsByPeopleId(pid).get(0);
         Database.endConnnection(conn);
         if (duty.equals("Front Desk Representative")) {
+            hid = HotelPeopleLinks.getHotelIdsByPeopleId(pid).get(0);
             user = FrontDeskService.getNameLinkedwithSSN(ssn);
             if (user == null)
                 new Error(this);
             else
                 new FrontDesk(user);
         } else if (duty.equals("Manager")) {
+            hid = HotelPeopleLinks.getHotelIdsByPeopleId(pid).get(0);
             user = ManagerService.getNameLinkedwithSSN(ssn);
             if (user == null)
                 new Error(this);
@@ -145,23 +146,26 @@ class Error extends JDialog {
 class Chairman extends JDialog implements ActionListener {
     JTextField hotelName;
     JTextField hotelAddress;
+    JTextField hotelPhone;
+    JTextField hotelEmail;
     JTextField managerName;
     JTextField managerSSN;
     JTextField managerAge;
     JTextField jobTitle;
     JTextField phone;
     JTextField email;
+    JTextField managerAddress;
     JButton submit = new JButton("submit");
 
     Chairman(LoginHMS login) {
         super(login, "Chairman", true);
         // create panel for hotel
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(2, 2, 0, 3));
+        panel.setLayout(new GridLayout(4, 2, 0, 3));
         panel.setBorder(BorderFactory.createTitledBorder("Hotel Details"));
         // create panel for manager
         JPanel panel1 = new JPanel();
-        panel1.setLayout(new GridLayout(6, 2, 0, 3));
+        panel1.setLayout(new GridLayout(7, 2, 0, 3));
         panel1.setBorder(BorderFactory.createTitledBorder("Assign Manager"));
 
         // hotel label
@@ -179,6 +183,22 @@ class Chairman extends JDialog implements ActionListener {
         // hotel address field
         hotelAddress = new JTextField();
         panel.add(hotelAddress);
+
+        // hotel phone
+        JLabel hPhone = new JLabel(" Hotel Phone Number");
+        panel.add(hPhone);
+
+        // hotel phone field
+        hotelPhone = new JTextField();
+        panel.add(hotelPhone);
+
+        // hotel email
+        JLabel hEmail = new JLabel(" Hotel Email ID");
+        panel.add(hEmail);
+
+        // hotel email field
+        hotelEmail = new JTextField();
+        panel.add(hotelEmail);
 
         // Manager name label
         JLabel manager = new JLabel(" Manager Name (*)");
@@ -224,9 +244,17 @@ class Chairman extends JDialog implements ActionListener {
         JLabel eID = new JLabel(" Email ID");
         panel1.add(eID);
 
-        // Manager age field
+        // Manager email field
         email = new JTextField();
         panel1.add(email);
+
+        // Manager address label
+        JLabel addr = new JLabel(" Address");
+        panel1.add(addr);
+
+        // Manager address field
+        managerAddress = new JTextField();
+        panel1.add(managerAddress);
 
         submit.setBackground(Color.ORANGE);
         add(panel, BorderLayout.NORTH);
@@ -238,7 +266,7 @@ class Chairman extends JDialog implements ActionListener {
         submit.setIcon(submitIcon);
         submit.setBackground(Color.DARK_GRAY);
         submit.setForeground(Color.GREEN);
-        setSize(500, 350);
+        setSize(500, 400);
         setLocation(login.getLocationOnScreen());
         setVisible(true);
     }

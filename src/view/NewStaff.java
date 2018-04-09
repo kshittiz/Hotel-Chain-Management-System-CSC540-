@@ -20,8 +20,9 @@ import javax.swing.JTextField;
 @SuppressWarnings("serial")
 public class NewStaff extends JDialog implements ActionListener {
 
-    JLabel name, ssn, jobTitle, age, department, gender, skill, privilege, type, phone, email;
-    JTextField nameT, ssnT, titleT, ageT, skillT, typeT, phoneT, emailT;
+    JLabel name, ssn, jobTitle, age, department, gender, skill, privilege, type, phone, email,
+            address;
+    JTextField nameT, ssnT, titleT, ageT, skillT, typeT, phoneT, emailT, addressT;
     JComboBox<String> departmentB = new JComboBox<String>(new String[] { "Manager", "Catering",
             "Cleaning", "Front Desk" });
     JComboBox<String> privilegeB = new JComboBox<String>(new String[] { "Cleaning", "Catering",
@@ -31,7 +32,7 @@ public class NewStaff extends JDialog implements ActionListener {
 
     public NewStaff(Manager manager) {
         super(manager, "New staff Member", true);
-        JPanel panel = new JPanel(new GridLayout(11, 2, 0, 3));
+        JPanel panel = new JPanel(new GridLayout(12, 2, 0, 3));
         name = new JLabel(" Name (*)");
         ssn = new JLabel(" SSN (*)");
         jobTitle = new JLabel(" Job Title (*)");
@@ -43,6 +44,7 @@ public class NewStaff extends JDialog implements ActionListener {
         type = new JLabel(" speciality");
         phone = new JLabel(" Phone");
         email = new JLabel(" Email");
+        address = new JLabel(" Address");
 
         nameT = new JTextField();
         ssnT = new JTextField();
@@ -52,6 +54,7 @@ public class NewStaff extends JDialog implements ActionListener {
         typeT = new JTextField();
         phoneT = new JTextField();
         emailT = new JTextField();
+        addressT = new JTextField();
 
         panel.add(name);
         panel.add(nameT);
@@ -93,6 +96,9 @@ public class NewStaff extends JDialog implements ActionListener {
         panel.add(email);
         panel.add(emailT);
 
+        panel.add(address);
+        panel.add(addressT);
+
         add(panel, BorderLayout.CENTER);
 
         ImageIcon saveIcon = new ImageIcon(new ImageIcon("images/submit.png").getImage()
@@ -105,7 +111,7 @@ public class NewStaff extends JDialog implements ActionListener {
         getRootPane().setDefaultButton(save);
 
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        setSize(dim.width / 4, dim.height / 3);
+        setSize((dim.width - 20) / 3, (dim.height - 30) / 2);
         setLocation(manager.getLocation());
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setVisible(true);
