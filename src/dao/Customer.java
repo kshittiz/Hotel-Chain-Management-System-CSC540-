@@ -17,7 +17,8 @@ public class Customer extends People {
             PreparedStatement exe = c.prepareStatement(
                     "insert into customer(pid,date_of_birth) values(?, ?)");
             exe.setInt(1, obj1.getInt("pid"));
-            exe.setString(2, obj1.getString("date_of_birth"));
+            exe.setString(2,
+                    obj1.getString("date_of_birth"));
             exe.executeQuery();
 
         } catch (Exception e) {
@@ -26,8 +27,9 @@ public class Customer extends People {
 
         return obj1.getInt("pid");
     }
-    public void deletePerson(int pid) {
-        Connection c = Database.getConnection();
+
+    public boolean deletePerson(int pid) {
+        
         try {
             PreparedStatement exe = c.prepareStatement(
                     " Delete from customer where pid=?");
@@ -35,37 +37,32 @@ public class Customer extends People {
 
             exe.executeQuery();
 
-            c.close();
+       
         } catch (Exception e) {
             System.out.println(e);
+            return false;
         }
-
+        return true;
     }
-    public void updatePerson(String date_of_birth, int pid) {
-        Connection c = Database.getConnection();
+
+    public boolean updatePerson(String date_of_birth,
+            int pid) {
+      
         try {
 
             PreparedStatement exe = c.prepareStatement(
                     "update customer set date_of_birth=? where pid =?");
 
             exe.setString(1, date_of_birth);
-            
-            
 
             exe.setInt(2, pid);
 
             exe.executeQuery();
 
-            c.close();
         } catch (Exception e) {
             System.out.println(e);
+            return false;
         }
-
+        return true;
     }
-    /*public static void main(String[] args)
-    {
-        Customer c= new Customer();
-        c.updatePerson("1/1/1",15);
-    }
-*/
 }

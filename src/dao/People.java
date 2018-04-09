@@ -10,10 +10,6 @@ public class People {
 
     private static Connection c = null;
 
-    public enum type {
-        customer, staff, chairman;
-    }
-
     public static void setConnnection(Connection conn) {
         c = conn;
     }
@@ -40,7 +36,8 @@ public class People {
     public static String getTypeBySSN(String ssn) {
         String type = null;
         try {
-            PreparedStatement exe = c.prepareStatement("SELECT type from people where ssn = ?");
+            PreparedStatement exe = c.prepareStatement(
+                    "SELECT type from people where ssn = ?");
             exe.setString(1, ssn);
             ResultSet result = exe.executeQuery();
             if (result.next())
@@ -54,7 +51,8 @@ public class People {
     public static boolean checkSSNAvailability(String ssn) {
         boolean check = false;
         try {
-            PreparedStatement exe = c.prepareStatement("SELECT name from people where ssn = ?");
+            PreparedStatement exe = c.prepareStatement(
+                    "SELECT name from people where ssn = ?");
             exe.setString(1, ssn);
             ResultSet result = exe.executeQuery();
             check = result.next();
@@ -64,23 +62,25 @@ public class People {
         return check;
     }
 
-    public void deletePerson(int pid) {
-        Connection c = Database.getConnection();
+    public boolean deletePerson(int pid) {
+       
         try {
-            PreparedStatement exe = c.prepareStatement(" Delete from people where pid=?");
+            PreparedStatement exe = c.prepareStatement(
+                    " Delete from people where pid=?");
             exe.setInt(1, pid);
 
             exe.executeQuery();
 
-            c.close();
+            
         } catch (Exception e) {
             System.out.println(e);
+            return false;
         }
-
+        return true;
     }
 
-    public void updatePerson(JSONObject obj2) {
-        Connection c = Database.getConnection();
+    public boolean updatePerson(JSONObject obj2) {
+        
         try {
             PreparedStatement exe = c.prepareStatement(
                     "update people set name=?,SSN=?,type=? where pid =?");
@@ -92,16 +92,19 @@ public class People {
 
             exe.executeQuery();
 
-            c.close();
+          
         } catch (Exception e) {
             System.out.println(e);
+            return false;
         }
+        return true;
     }
 
     public static int getPIDbySSN(String ssn) {
         int pid = 0;
         try {
-            PreparedStatement exe = c.prepareStatement("SELECT pid from people where ssn = ?");
+            PreparedStatement exe = c.prepareStatement(
+                    "SELECT pid from people where ssn = ?");
             exe.setString(1, ssn);
             ResultSet result = exe.executeQuery();
             if (result.next())

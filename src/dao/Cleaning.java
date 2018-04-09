@@ -14,8 +14,8 @@ public class Cleaning extends Staff {
 
     public int addPerson(JSONObject obj1) {
         try {
-            PreparedStatement exe = c.prepareStatement(
-                    "insert into cleaning_staff(pid, type) values(?, ?)");
+            PreparedStatement exe = c
+                    .prepareStatement("insert into cleaning_staff(pid, type) values(?, ?)");
             exe.setInt(1, obj1.getInt("pid"));
             exe.setString(2, obj1.getString("type"));
             exe.executeQuery();
@@ -26,27 +26,28 @@ public class Cleaning extends Staff {
         return obj1.getInt("pid");
 
     }
-    public void deletePerson(int pid) {
-        Connection c = Database.getConnection();
+
+    public boolean deletePerson(int pid) {
+
         try {
-            PreparedStatement exe = c.prepareStatement(
-                    " Delete from cleaning_staff where pid=?");
+            PreparedStatement exe = c.prepareStatement(" Delete from cleaning_staff where pid=?");
             exe.setInt(1, pid);
 
             exe.executeQuery();
 
-            c.close();
         } catch (Exception e) {
             System.out.println(e);
+            return false;
         }
-
+        return true;
     }
-    public void updatePerson(JSONObject obj2, int pid) {
-        Connection c = Database.getConnection();
+
+    public boolean updatePerson(JSONObject obj2, int pid) {
+
         try {
 
-            PreparedStatement exe = c.prepareStatement(
-                    "update cleaning_staff set type=? where pid =?");
+            PreparedStatement exe = c
+                    .prepareStatement("update cleaning_staff set type=? where pid =?");
 
             exe.setString(1, obj2.getString("type"));
 
@@ -54,23 +55,11 @@ public class Cleaning extends Staff {
 
             exe.executeQuery();
 
-            c.close();
         } catch (Exception e) {
             System.out.println(e);
+            return false;
         }
-
+        return true;
     }
-   /* public static void main(String[] args)
-    {
-        Cleaning cl = new Cleaning();
-        JSONObject o = new JSONObject();
-        
-        o.put("type","kachrawala");
-        
-       
-        
-        cl.deletePerson(11);
-        cl.updatePerson(o,12);
-    }*/
 
 }

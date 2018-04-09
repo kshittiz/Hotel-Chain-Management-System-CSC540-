@@ -1,9 +1,8 @@
 package dao;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-
 public class RoomCategory {
+
     private static Connection c = null;
 
     public static void setConnnection(Connection conn) {
@@ -31,3 +30,4 @@ public class RoomCategory {
     }
 
 }
+
