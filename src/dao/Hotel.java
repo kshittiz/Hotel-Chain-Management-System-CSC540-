@@ -7,9 +7,14 @@ import java.sql.Statement;
 import java.sql.ResultSet;
 
 public class Hotel {
+    private static Connection c = null;
+
+    public static void setConnnection(Connection conn) {
+        c = conn;
+    }
+
     public int addHotel(String name, String address) {
         int hotelId = 0;
-        Connection c = Database.getConnection();
         try {
             PreparedStatement exe = c.prepareStatement(
                     "insert into hotel(hotel_name,hotel_address) values(?, ?)",
@@ -21,15 +26,14 @@ public class Hotel {
             ResultSet result = exe.getGeneratedKeys();
             if (result.next())
                 hotelId = result.getInt(1);
-            c.close();
+
         } catch (Exception e) {
             System.out.println(e);
         }
         return hotelId;
     }
 
-    public void deleteHotel(int hotel_id) {
-        Connection c = Database.getConnection();
+    public boolean deleteHotel(int hotel_id) {
         try {
             PreparedStatement exe = c.prepareStatement(
                     " Delete from hotel where hotel_id=?",
@@ -38,16 +42,16 @@ public class Hotel {
 
             exe.executeQuery();
 
-            c.close();
         } catch (Exception e) {
             System.out.println(e);
+            return false;
         }
-
+        return true;
     }
 
-    public void updateHotel(int hotel_id, String hotel_name,
-            String hotel_address) {
-        Connection c = Database.getConnection();
+    public boolean updateHotel(int hotel_id,
+            String hotel_name, String hotel_address) {
+
         try {
             PreparedStatement exe = c.prepareStatement(
                     "update hotel set hotel_name=?,hotel_address=? where hotel_id =?",
@@ -58,20 +62,11 @@ public class Hotel {
 
             exe.executeQuery();
 
-            c.close();
         } catch (Exception e) {
             System.out.println(e);
+            return false;
         }
-
+        return true;
     }
 
-    /*
-     * public static void main(String[] args) {
-     * 
-     * Hotel h = new Hotel();
-     * 
-     * h.addHotel("lolol", "lollo");
-     * 
-     * }
-     */
 }
