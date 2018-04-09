@@ -8,18 +8,25 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
+import dao.Database;
+import dao.RoomCategory;
 
 public class Manager extends JFrame implements ActionListener, ListSelectionListener {
 
@@ -27,9 +34,9 @@ public class Manager extends JFrame implements ActionListener, ListSelectionList
      * 
      */
     private static final long serialVersionUID = 1L;
-    JButton submit;
+    static JButton submit;
     JList<String> addList, fetchList, upList, rmList;;
-    JLabel opLabel;
+    static JLabel opLabel;
     String action = null;
 
     // 421319931
@@ -40,7 +47,7 @@ public class Manager extends JFrame implements ActionListener, ListSelectionList
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.setBackground(Color.DARK_GRAY);
         tabbedPane.setForeground(Color.WHITE);
-        //getContentPane().setBackground(Color.GRAY);
+        // getContentPane().setBackground(Color.GRAY);
         JPanel add = new JPanel(new BorderLayout());
         ImageIcon addIcon = new ImageIcon(new ImageIcon("images/add.png").getImage()
                 .getScaledInstance(30, 30, Image.SCALE_SMOOTH));
@@ -140,6 +147,17 @@ public class Manager extends JFrame implements ActionListener, ListSelectionList
         case "Add new staff member":
             new NewStaff(this);
             break;
+        case "Add new room category":
+            new NewRoomCategory(this);
+            break;
+        case "Add new room":
+            break;
+        case "Add new service type":
+            break;
+        case "Add new service":
+            break;
+        case "Add new discount":
+            break;
         }
     }
 
@@ -149,6 +167,72 @@ public class Manager extends JFrame implements ActionListener, ListSelectionList
         opLabel.setForeground(null);
         opLabel.setText("Please select single operation from above and click submit");
         action = (String) ((JList<String>) le.getSource()).getSelectedValue();
+    }
+
+}
+
+@SuppressWarnings("serial")
+class NewRoomCategory extends JDialog implements ActionListener {
+
+    JLabel category, occupancy, rate;
+    JComboBox<Integer> occupancyB = new JComboBox<Integer>(new Integer[] { 1, 2, 3, 4 });
+    JTextField categoryT, rateT;
+
+    JButton save = new JButton("Save");
+
+    public NewRoomCategory(Manager manager) {
+        super(manager, "New Room Category details", true);
+        JPanel panel = new JPanel(new GridLayout(3, 2, 0, 3));
+        category = new JLabel(" Category (*)");
+        occupancy = new JLabel(" Occupancy");
+        rate = new JLabel(" Nightly Rate (*) [$]");
+
+        categoryT = new JTextField();
+        rateT = new JTextField();
+
+        panel.add(category);
+        panel.add(categoryT);
+
+        panel.add(occupancy);
+        panel.add(occupancyB);
+
+        panel.add(rate);
+        panel.add(rateT);
+
+        add(panel, BorderLayout.CENTER);
+
+        ImageIcon saveIcon = new ImageIcon(new ImageIcon("images/submit.png").getImage()
+                .getScaledInstance(30, 22, Image.SCALE_SMOOTH));
+        save.setIcon(saveIcon);
+        save.setBackground(Color.DARK_GRAY);
+        save.setForeground(Color.GREEN);
+        save.addActionListener(this);
+        add(save, BorderLayout.SOUTH);
+        getRootPane().setDefaultButton(save);
+
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        setSize(dim.width / 4, dim.height / 6);
+        setLocation(manager.getLocation());
+        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        setVisible(true);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        Connection conn = Database.getConnection();
+        RoomCategory.setConnnection(conn);
+        RoomCategory rc = new RoomCategory();
+        if (!rc.createRoomCategory(LoginHMS.hid, categoryT.getText(), (int) occupancyB
+                .getSelectedItem(), Integer.parseInt(rateT.getText()))) {
+            Manager.opLabel.setText("Room Category not saved, error in input!");
+            Manager.opLabel.setForeground(Color.RED);
+        } else {
+            Manager.opLabel.setText("Room Category saved successfully!");
+            Manager.opLabel.setForeground(Color.GREEN);
+        }
+
+        this.dispose();
+        Database.endConnnection(conn);
     }
 
 }

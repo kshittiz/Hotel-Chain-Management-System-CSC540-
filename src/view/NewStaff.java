@@ -106,7 +106,7 @@ public class NewStaff extends JDialog implements ActionListener {
 
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         setSize(dim.width / 4, dim.height / 3);
-        setLocation(110, 110);
+        setLocation(manager.getLocation());
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setVisible(true);
     }
