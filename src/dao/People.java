@@ -10,9 +10,9 @@ public class People {
 
     private static Connection c = null;
 
-    public enum type {
+    /*public enum type {
         customer, staff, chairman;
-    }
+    }*/
 
     public static void setConnnection(Connection conn) {
         c = conn;
