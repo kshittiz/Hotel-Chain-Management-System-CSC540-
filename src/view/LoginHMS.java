@@ -96,7 +96,6 @@ public class LoginHMS extends JFrame implements ActionListener {
         People.setConnnection(conn);
         HotelPeopleLinks.setConnnection(conn);
         pid = People.getPIDbySSN(ssn);
-        Database.endConnnection(conn);
         if (duty.equals("Front Desk Representative")) {
             hid = HotelPeopleLinks.getHotelIdsByPeopleId(pid).get(0);
             user = FrontDeskService.getNameLinkedwithSSN(ssn);
@@ -122,6 +121,7 @@ public class LoginHMS extends JFrame implements ActionListener {
                 new Error(this);
             Database.endConnnection(c);
         }
+        Database.endConnnection(conn);
 
     }
 
