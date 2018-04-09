@@ -4,12 +4,14 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -19,6 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import dao.Database;
+import dao.HotelPeopleLinks;
 import dao.People;
 import service.FrontDeskService;
 import service.ManagerService;
@@ -31,6 +34,10 @@ public class LoginHMS extends JFrame implements ActionListener {
     JTextField ssnText;
     JComboBox<String> viewList;
     String user;
+    static int hid; // After login (staff has only one hid), person's hotel id
+                    // will be stored here for further reference
+    static int pid; // After login, people id will be stored here for further
+                    // reference
 
     public LoginHMS() {
         // create frame
@@ -46,7 +53,7 @@ public class LoginHMS extends JFrame implements ActionListener {
         panel.add(ssnLabel);
 
         // ssn text field
-        ssnText = new JTextField();
+        ssnText = new JTextField("421319931");
         panel.add(ssnText);
 
         // view label
@@ -85,6 +92,12 @@ public class LoginHMS extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         String ssn = ssnText.getText();
         String duty = (String) viewList.getSelectedItem();
+        Connection conn = Database.getConnection();
+        People.setConnnection(conn);
+        HotelPeopleLinks.setConnnection(conn);
+        pid = People.getPIDbySSN(ssn);
+        hid = HotelPeopleLinks.getHotelIdsByPeopleId(pid).get(0);
+        Database.endConnnection(conn);
         if (duty.equals("Front Desk Representative")) {
             user = FrontDeskService.getNameLinkedwithSSN(ssn);
             if (user == null)
@@ -220,8 +233,11 @@ class Chairman extends JDialog implements ActionListener {
         add(panel1, BorderLayout.CENTER);
         add(submit, BorderLayout.SOUTH);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        getRootPane().setDefaultButton(submit);
-
+        ImageIcon submitIcon = new ImageIcon(new ImageIcon("images/submit.png").getImage()
+                .getScaledInstance(30, 22, Image.SCALE_SMOOTH));
+        submit.setIcon(submitIcon);
+        submit.setBackground(Color.DARK_GRAY);
+        submit.setForeground(Color.GREEN);
         setSize(500, 350);
         setLocation(login.getLocationOnScreen());
         setVisible(true);
