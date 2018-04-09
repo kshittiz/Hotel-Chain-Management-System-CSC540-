@@ -1,10 +1,6 @@
 package dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.Iterator;
-import org.json.JSONObject;
 public class RoomCategory {
 
     private static Connection c = null;
