@@ -5,9 +5,15 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 
 public class Discount {
-    public void discount(String billing_type,
+    private static Connection c = null;
+
+    public static void setConnnection(Connection conn) {
+        c = conn;
+    }
+
+    public boolean discount(String billing_type,
             int discount) {
-        Connection c = Database.getConnection();
+
         try {
             PreparedStatement exe = c.prepareStatement(
                     "insert into discount(billing_type,discount) values(?, ?)",
@@ -15,22 +21,12 @@ public class Discount {
             exe.setString(1, billing_type);
             exe.setInt(2, discount);
             exe.executeQuery();
-            c.close();
+
         } catch (Exception e) {
             System.out.println(e);
+            return false;
         }
-       
-
+        return true;
     }
-    public static void main(String[] args)
-    {
-       Discount d = new Discount();
-       d.discount("Credit Card",5);
-    }
-    
 
 }
-/*
- * CREATE TABLE discount( billing_type varchar(30) PRIMARY KEY, discount int NOT
- * NULL DEFAULT 0 );
- */
