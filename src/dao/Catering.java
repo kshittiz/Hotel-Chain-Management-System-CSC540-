@@ -26,8 +26,9 @@ public class Catering extends Staff {
         return obj1.getInt("pid");
 
     }
-    public void deletePerson(int pid) {
-        Connection c = Database.getConnection();
+
+    public boolean deletePerson(int pid) {
+
         try {
             PreparedStatement exe = c.prepareStatement(
                     " Delete from catering_staff where pid=?");
@@ -35,14 +36,15 @@ public class Catering extends Staff {
 
             exe.executeQuery();
 
-            c.close();
         } catch (Exception e) {
             System.out.println(e);
+            return false;
         }
+        return true;
 
     }
-    public void updatePerson(JSONObject obj2, int pid) {
-        Connection c = Database.getConnection();
+
+    public boolean updatePerson(JSONObject obj2, int pid) {
         try {
 
             PreparedStatement exe = c.prepareStatement(
@@ -54,22 +56,11 @@ public class Catering extends Staff {
 
             exe.executeQuery();
 
-            c.close();
         } catch (Exception e) {
             System.out.println(e);
+            return false;
         }
-
+        return true;
     }
-    /*public static void main(String[] args)
-    {
-        Catering cl = new Catering();
-        JSONObject o = new JSONObject();
-        
-        o.put("skill","Pakoda pro");
-        
-       
-        
-        cl.deletePerson(7);
-        cl.updatePerson(o,8);
-    }*/
+
 }
