@@ -162,22 +162,28 @@ public class Manager extends JFrame implements ActionListener, ListSelectionList
             new NewDiscount(this);
             break;
         case "Remove staff member":
-            new DeleteStaff(this);
+            new DeleteOperations(this, "Remove staff member",
+                    "Details of all staff members, Select ID column and click delete!");
             break;
         case "Remove room category":
-            new DeleteRoomCategory(this);
+            new DeleteOperations(this, "Remove room category",
+                    "Room categories available, select room category or occupancy or both and click delete!");
             break;
         case "Remove room":
-            new DeleteRoom(this);
+            new DeleteOperations(this, "Remove room",
+                    "All rooms available in hotel, select room number and click delete!");
             break;
         case "Remove service type":
-            new DeleteServiceType(this);
+            new DeleteOperations(this, "Remove service type",
+                    "All types of services available in hotel chain, Select type and click delete!");
             break;
         case "Remove Services offered":
-            new DeleteService(this);
+            new DeleteOperations(this, "Remove Services offered",
+                    "All services offered, select service number and click delete!");
             break;
         case "Remove discount":
-            new DeleteDiscount(this);
+            new DeleteOperations(this, "Remove discount",
+                    "All types of discounts offered in hotel chain, Select type and click delete!");
             break;
         }
     }
