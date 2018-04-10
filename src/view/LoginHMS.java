@@ -118,7 +118,6 @@ public class LoginHMS extends JFrame implements ActionListener {
                 this.setVisible(false);
             }
         } else {
-            People.setConnnection(conn);
             if ((duty.toLowerCase()).equals(People.getTypeBySSN(ssn)))
                 new Chairman(this);
             else
