@@ -14,8 +14,29 @@ import com.sun.xml.internal.ws.org.objectweb.asm.Type;
 
 public class Staff extends People {
     private static Connection c = null;
-    private static String[] strings = { "ID(*)", "Name", "Job Title", "Age", "Department" };
-    public static Vector<String> COLUMNS = new Vector<String>(Arrays.asList(strings));
+    private static String[] staff = { "ID(*)", "Name", "Job Title", "Age", "Department" };
+    public static Vector<String> STAFF_COLUMNS = new Vector<String>(Arrays.asList(staff));
+
+    private static String[] managerStaff = { "ID(*)", "Name", "Job Title", "Age", "Department",
+            "Privilege" };
+    public static Vector<String> MANAGER_STAFF_COLUMNS = new Vector<String>(Arrays.asList(
+            managerStaff));
+
+    private static String[] cateringStaff = { "ID(*)", "Name", "Job Title", "Age", "Department",
+            "Skill" };
+    public static Vector<String> CATERING_STAFF_COLUMNS = new Vector<String>(Arrays.asList(
+            cateringStaff));
+
+    private static String[] cleaningStaff = { "ID(*)", "Name", "Job Title", "Age", "Department",
+            "Speciality" };
+
+    public static Vector<String> CLEANING_STAFF_COLUMNS = new Vector<String>(Arrays.asList(
+            cleaningStaff));
+
+    private static String[] frontDeskStaff = { "ID(*)", "Name", "Job Title", "Age", "Department",
+            "Gender" };
+    public static Vector<String> FRONT_DESK_Staff_COLUMNS = new Vector<String>(Arrays.asList(
+            frontDeskStaff));
 
     public static void setConnnection(Connection conn) {
         c = conn;
@@ -77,12 +98,26 @@ public class Staff extends People {
         return true;
     }
 
-    public Vector<Vector<Object>> getStaffDetails() {
+    public Vector<Vector<Object>> getStaffDetails(String staffType) {
         Vector<Vector<Object>> data = null;
         try {
+            PreparedStatement exe = null;
+            if ("manager".equals(staffType))
+                exe = c.prepareStatement(
+                        "Select pid,name,job_title,age,department,privilege from people natural join staff natural join manager");
+            else if ("catering".equals(staffType))
+                exe = c.prepareStatement(
+                        "Select pid,name,job_title,age,department,skill from people natural join staff natural join catering_staff");
+            else if ("cleaning".equals(staffType))
+                exe = c.prepareStatement(
+                        "Select pid,name,job_title,age,department,speciality from people natural join staff natural join cleaning_staff");
+            else if ("front_desk".equals(staffType))
+                exe = c.prepareStatement(
+                        "Select pid,name,job_title,age,department,gender from people natural join staff natural join front_desk");
+            else
+                exe = c.prepareStatement(
+                        "Select pid,name,job_title,age,department from people natural join staff");
 
-            PreparedStatement exe = c.prepareStatement(
-                    "Select pid,name,job_title,age,department from people natural join staff where pid <> (Select pid from manager where privilege = 'full_access')");
             ResultSet result = exe.executeQuery();
             ResultSetMetaData metaData = result.getMetaData();
             int columnCount = metaData.getColumnCount();

@@ -108,11 +108,11 @@ public class ManagerService {
         }
     }
 
-    public static Vector<Vector<Object>> getStaffDetails() {
+    public static Vector<Vector<Object>> getStaffDetails(String type) {
         Connection c = Database.getConnection();
         Staff.setConnnection(c);
         Staff s = new Staff();
-        Vector<Vector<Object>> data = s.getStaffDetails();
+        Vector<Vector<Object>> data = s.getStaffDetails(type);
         Database.endConnnection(c);
         return data;
     }

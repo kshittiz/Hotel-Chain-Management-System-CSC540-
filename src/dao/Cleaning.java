@@ -14,9 +14,9 @@ public class Cleaning extends Staff {
 
     public int addPerson(JSONObject obj1) throws Exception {
         PreparedStatement exe = c.prepareStatement(
-                "insert into cleaning_staff(pid, type) values(?, ?)");
+                "insert into cleaning_staff(pid, speciality) values(?, ?)");
         exe.setInt(1, obj1.getInt("pid"));
-        exe.setString(2, obj1.getString("type"));
+        exe.setString(2, obj1.getString("speciality"));
         exe.executeQuery();
 
         return obj1.getInt("pid");
@@ -42,9 +42,9 @@ public class Cleaning extends Staff {
         try {
 
             PreparedStatement exe = c.prepareStatement(
-                    "update cleaning_staff set type=? where pid =?");
+                    "update cleaning_staff set speciality=? where pid =?");
 
-            exe.setString(1, obj2.getString("type"));
+            exe.setString(1, obj2.getString("speciality"));
 
             exe.setInt(2, pid);
 

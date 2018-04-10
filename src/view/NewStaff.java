@@ -24,9 +24,9 @@ import service.ManagerService;
 @SuppressWarnings("serial")
 public class NewStaff extends JDialog implements ActionListener {
 
-    JLabel name, ssn, jobTitle, age, department, gender, skill, privilege, type, phone, email,
+    JLabel name, ssn, jobTitle, age, department, gender, skill, privilege, speciality, phone, email,
             address;
-    JTextField nameT, ssnT, titleT, ageT, skillT, typeT, phoneT, emailT, addressT;
+    JTextField nameT, ssnT, titleT, ageT, skillT, specialityT, phoneT, emailT, addressT;
     JComboBox<String> departmentB = new JComboBox<String>(new String[] { "Manager", "Catering",
             "Cleaning", "Front_Desk" });
     JComboBox<String> privilegeB = new JComboBox<String>(new String[] { "Cleaning", "Catering",
@@ -45,7 +45,7 @@ public class NewStaff extends JDialog implements ActionListener {
         gender = new JLabel(" Gender");
         skill = new JLabel(" Skill");
         privilege = new JLabel(" Privilege");
-        type = new JLabel(" speciality");
+        speciality = new JLabel(" speciality");
         phone = new JLabel(" Phone");
         email = new JLabel(" Email");
         address = new JLabel(" Address");
@@ -55,7 +55,7 @@ public class NewStaff extends JDialog implements ActionListener {
         titleT = new JTextField();
         ageT = new JTextField();
         skillT = new JTextField();
-        typeT = new JTextField();
+        specialityT = new JTextField();
         phoneT = new JTextField();
         emailT = new JTextField();
         addressT = new JTextField();
@@ -89,10 +89,10 @@ public class NewStaff extends JDialog implements ActionListener {
         skillT.setEnabled(false);
         skill.setEnabled(false);
 
-        panel.add(type);
-        panel.add(typeT);
-        typeT.setEnabled(false);
-        type.setEnabled(false);
+        panel.add(speciality);
+        panel.add(specialityT);
+        specialityT.setEnabled(false);
+        speciality.setEnabled(false);
 
         panel.add(phone);
         panel.add(phoneT);
@@ -128,40 +128,40 @@ public class NewStaff extends JDialog implements ActionListener {
                 privilegeB.setEnabled(true);
                 genderB.setEnabled(false);
                 skillT.setEnabled(false);
-                typeT.setEnabled(false);
+                specialityT.setEnabled(false);
                 privilege.setEnabled(true);
                 gender.setEnabled(false);
                 skill.setEnabled(false);
-                type.setEnabled(false);
+                speciality.setEnabled(false);
 
             } else if ("Catering".equals(departmentB.getSelectedItem())) {
                 privilegeB.setEnabled(false);
                 genderB.setEnabled(false);
                 skillT.setEnabled(true);
-                typeT.setEnabled(false);
+                specialityT.setEnabled(false);
                 privilege.setEnabled(false);
                 gender.setEnabled(false);
                 skill.setEnabled(true);
-                type.setEnabled(false);
+                speciality.setEnabled(false);
 
             } else if ("Cleaning".equals(departmentB.getSelectedItem())) {
                 privilegeB.setEnabled(false);
                 genderB.setEnabled(false);
                 skillT.setEnabled(false);
-                typeT.setEnabled(true);
+                specialityT.setEnabled(true);
                 privilege.setEnabled(false);
                 gender.setEnabled(false);
                 skill.setEnabled(false);
-                type.setEnabled(true);
+                speciality.setEnabled(true);
             } else {
                 privilegeB.setEnabled(false);
                 genderB.setEnabled(true);
                 skillT.setEnabled(false);
-                typeT.setEnabled(false);
+                specialityT.setEnabled(false);
                 privilege.setEnabled(false);
                 gender.setEnabled(true);
                 skill.setEnabled(false);
-                type.setEnabled(false);
+                speciality.setEnabled(false);
             }
         }
 
@@ -180,7 +180,7 @@ public class NewStaff extends JDialog implements ActionListener {
             input.put("privilege", privilegeB.getSelectedItem().toString().toLowerCase());
             input.put("gender", genderB.getSelectedItem().toString().toLowerCase());
             input.put("skill", skillT.getText());
-            input.put("type", typeT.getText());
+            input.put("speciality", specialityT.getText());
             input.put("phone", phoneT.getText());
             input.put("email", emailT.getText());
             input.put("peopleType", "staff");
