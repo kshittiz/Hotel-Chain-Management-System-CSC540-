@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+
 import org.json.JSONObject;
 
 public class People {
@@ -14,23 +15,19 @@ public class People {
         c = conn;
     }
 
-    public int addPerson(JSONObject obj1) {
+    public int addPerson(JSONObject obj1) throws Exception {
         int peopleId = 0;
-        try {
-            PreparedStatement exe = c.prepareStatement(
-                    "insert into people(name,ssn, address, type) values(?, ?, ?, ?)",
-                    Statement.RETURN_GENERATED_KEYS);
-            exe.setString(1, obj1.getString("name"));
-            exe.setInt(2, obj1.getInt("SSN"));
-            exe.setString(3, obj1.getString("address"));
-            exe.setString(4, obj1.getString("type"));
-            exe.executeQuery();
-            ResultSet result = exe.getGeneratedKeys();
-            if (result.next())
-                peopleId = result.getInt(1);
-        } catch (Exception e) {
-            System.out.println(e);
-        }
+        PreparedStatement exe = c.prepareStatement(
+                "insert into people(name,ssn, address, type) values(?, ?, ?, ?)",
+                Statement.RETURN_GENERATED_KEYS);
+        exe.setString(1, obj1.getString("name"));
+        exe.setInt(2, obj1.getInt("SSN"));
+        exe.setString(3, obj1.getString("address"));
+        exe.setString(4, obj1.getString("peopleType"));
+        exe.executeQuery();
+        ResultSet result = exe.getGeneratedKeys();
+        if (result.next())
+            peopleId = result.getInt(1);
         return peopleId;
     }
 

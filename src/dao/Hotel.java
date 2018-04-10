@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class Hotel {
     private static Connection c = null;
@@ -13,30 +14,25 @@ public class Hotel {
         c = conn;
     }
 
-    public int addHotel(String name, String address) {
+    public int addHotel(String name, String address) throws SQLException {
         int hotelId = 0;
-        try {
-            PreparedStatement exe = c.prepareStatement(
-                    "insert into hotel(hotel_name,hotel_address) values(?, ?)",
-                    Statement.RETURN_GENERATED_KEYS);
-            exe.setString(1, name);
-            exe.setString(2, address);
+        PreparedStatement exe = c.prepareStatement(
+                "insert into hotel(hotel_name,hotel_address) values(?, ?)",
+                Statement.RETURN_GENERATED_KEYS);
+        exe.setString(1, name);
+        exe.setString(2, address);
 
-            exe.executeQuery();
-            ResultSet result = exe.getGeneratedKeys();
-            if (result.next())
-                hotelId = result.getInt(1);
+        exe.executeQuery();
+        ResultSet result = exe.getGeneratedKeys();
+        if (result.next())
+            hotelId = result.getInt(1);
 
-        } catch (Exception e) {
-            System.out.println(e);
-        }
         return hotelId;
     }
 
     public boolean deleteHotel(int hotel_id) {
         try {
-            PreparedStatement exe = c.prepareStatement(
-                    " Delete from hotel where hotel_id=?",
+            PreparedStatement exe = c.prepareStatement(" Delete from hotel where hotel_id=?",
                     Statement.RETURN_GENERATED_KEYS);
             exe.setInt(1, hotel_id);
 
@@ -49,8 +45,7 @@ public class Hotel {
         return true;
     }
 
-    public boolean updateHotel(int hotel_id,
-            String hotel_name, String hotel_address) {
+    public boolean updateHotel(int hotel_id, String hotel_name, String hotel_address) {
 
         try {
             PreparedStatement exe = c.prepareStatement(

@@ -12,19 +12,14 @@ public class Cleaning extends Staff {
         c = conn;
     }
 
-    public int addPerson(JSONObject obj1) {
-        try {
-            PreparedStatement exe = c
-                    .prepareStatement("insert into cleaning_staff(pid, type) values(?, ?)");
-            exe.setInt(1, obj1.getInt("pid"));
-            exe.setString(2, obj1.getString("type"));
-            exe.executeQuery();
+    public int addPerson(JSONObject obj1) throws Exception {
+        PreparedStatement exe = c.prepareStatement(
+                "insert into cleaning_staff(pid, type) values(?, ?)");
+        exe.setInt(1, obj1.getInt("pid"));
+        exe.setString(2, obj1.getString("type"));
+        exe.executeQuery();
 
-        } catch (Exception e) {
-            System.out.println(e);
-        }
         return obj1.getInt("pid");
-
     }
 
     public boolean deletePerson(int pid) {
@@ -46,8 +41,8 @@ public class Cleaning extends Staff {
 
         try {
 
-            PreparedStatement exe = c
-                    .prepareStatement("update cleaning_staff set type=? where pid =?");
+            PreparedStatement exe = c.prepareStatement(
+                    "update cleaning_staff set type=? where pid =?");
 
             exe.setString(1, obj2.getString("type"));
 

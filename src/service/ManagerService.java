@@ -9,8 +9,12 @@ import org.json.JSONObject;
 
 import dao.Catering;
 import dao.Cleaning;
+import dao.ContactInfo;
+import dao.ContactLinks;
 import dao.Database;
 import dao.FrontDesk;
+import dao.HotelPeopleLinks;
+import dao.Manager;
 import dao.People;
 import dao.Staff;
 
@@ -38,25 +42,59 @@ public class ManagerService {
         try {
             // staring a transaction to add values in people heirarchy
             c.setAutoCommit(false);
+            People.setConnnection(c);
             People p = new People();
-            p.addPerson(obj);
+            int pid = p.addPerson(obj);
+            obj.put("pid", pid);
+
+            Staff.setConnnection(c);
             p = new Staff();
             p.addPerson(obj);
-            if ("front_desk".equals(obj.getString("department"))) {
+            if ("manager".equals(obj.getString("department"))) {
+                Manager.setConnnection(c);
+                p = new Manager();
+                p.addPerson(obj);
+            } else if ("front_desk".equals(obj.getString("department"))) {
+                FrontDesk.setConnnection(c);
                 p = new FrontDesk();
                 p.addPerson(obj);
             } else if ("catering".equals(obj.getString("department"))) {
+                Catering.setConnnection(c);
                 p = new Catering();
                 p.addPerson(obj);
             } else {
+                Cleaning.setConnnection(c);
                 p = new Cleaning();
                 p.addPerson(obj);
             }
+            // setting hotel_people_links
+            HotelPeopleLinks.setConnnection(c);
+            HotelPeopleLinks hpl = new HotelPeopleLinks();
+            hpl.addHotelPeopleLinks(obj.getInt("hotel_serving"), pid);
+
+            // setting contact_info
+            ContactInfo.setConnnection(c);
+            ContactInfo info = new ContactInfo();
+            String phone = obj.optString("phone").isEmpty() ? null : obj.optString("phone");
+            String email = obj.optString("email").isEmpty() ? null : obj.optString("email");
+            int contact_id = info.addContactInfo(phone, email);
+
+            // setting contact links
+            ContactLinks.setConnnection(c);
+            ContactLinks link = new ContactLinks();
+            link.CreateContactLinks(pid, contact_id, "people");
+
+            // Committing transaction
             c.commit();
             // transaction ends
             return true;
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
+            try {
+                c.rollback();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
             e.printStackTrace();
             return false;
         } finally {

@@ -6,6 +6,8 @@ import java.sql.Statement;
 
 import org.json.JSONObject;
 
+import com.sun.xml.internal.ws.org.objectweb.asm.Type;
+
 public class Staff extends People {
     private static Connection c = null;
 
@@ -13,20 +15,21 @@ public class Staff extends People {
         c = conn;
     }
 
-    public int addPerson(JSONObject obj1) {
-        try {
-            PreparedStatement exe = c.prepareStatement(
-                    "insert into staff(pid, job_title, hotel_serving, age, department) values(?,?,?,?,?)",
-                    Statement.RETURN_GENERATED_KEYS);
-            exe.setInt(1, obj1.getInt("pid"));
-            exe.setString(2, obj1.getString("job_title"));
-            exe.setInt(3, obj1.getInt("hotel_serving"));
-            exe.setInt(4, obj1.getInt("age"));
-            exe.setString(5, obj1.getString("department"));
-            exe.executeQuery();
-        } catch (Exception e) {
-            System.out.println(e);
-        }
+    public int addPerson(JSONObject obj1) throws Exception {
+        PreparedStatement exe = c.prepareStatement(
+                "insert into staff(pid, job_title, hotel_serving, age, department) values(?,?,?,?,?)",
+                Statement.RETURN_GENERATED_KEYS);
+        exe.setInt(1, obj1.getInt("pid"));
+        exe.setString(2, obj1.getString("job_title"));
+        exe.setInt(3, obj1.getInt("hotel_serving"));
+        Integer age = (obj1.optInt("age") == 0) ? null : obj1.optInt("age");
+        if (age != null)
+            exe.setInt(4, age);
+        else
+            exe.setNull(4, Type.INT);
+        exe.setString(5, obj1.getString("department"));
+        exe.executeQuery();
+
         return obj1.getInt("pid");
     }
 

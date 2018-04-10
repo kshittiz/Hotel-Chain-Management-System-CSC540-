@@ -3,6 +3,7 @@ package dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
@@ -13,22 +14,19 @@ public class HotelPeopleLinks {
         c = conn;
     }
 
-    public int addHotelPeopleLinks(int hotel_id, int pid) {
+    public int addHotelPeopleLinks(int hotel_id, int pid) throws SQLException {
         int id = 0;
-        try {
-            PreparedStatement exe = c.prepareStatement(
-                    "insert into hotel_people_links(hotel_id,pid) values(?, ?)",
-                    Statement.RETURN_GENERATED_KEYS);
-            exe.setInt(1, hotel_id);
-            exe.setInt(2, pid);
+        PreparedStatement exe = c.prepareStatement(
+                "insert into hotel_people_links(hotel_id,pid) values(?, ?)",
+                Statement.RETURN_GENERATED_KEYS);
+        exe.setInt(1, hotel_id);
+        exe.setInt(2, pid);
 
-            exe.executeQuery();
-            ResultSet result = exe.getGeneratedKeys();
-            if (result.next())
-                id = result.getInt(1);
-        } catch (Exception e) {
-            System.out.println(e);
-        }
+        exe.executeQuery();
+        ResultSet result = exe.getGeneratedKeys();
+        if (result.next())
+            id = result.getInt(1);
+
         return id;
     }
 

@@ -12,26 +12,19 @@ public class Catering extends Staff {
         c = conn;
     }
 
-    public int addPerson(JSONObject obj1) {
-        try {
-            PreparedStatement exe = c.prepareStatement(
-                    "insert into  catering_staff(pid, skill) values(?, ?)");
-            exe.setInt(1, obj1.getInt("pid"));
-            exe.setString(2, obj1.getString("skill"));
-            exe.executeQuery();
-
-        } catch (Exception e) {
-            System.out.println(e);
-        }
+    public int addPerson(JSONObject obj1) throws Exception {
+        PreparedStatement exe = c.prepareStatement(
+                "insert into  catering_staff(pid, skill) values(?, ?)");
+        exe.setInt(1, obj1.getInt("pid"));
+        exe.setString(2, obj1.getString("skill"));
+        exe.executeQuery();
         return obj1.getInt("pid");
-
     }
 
     public boolean deletePerson(int pid) {
 
         try {
-            PreparedStatement exe = c.prepareStatement(
-                    " Delete from catering_staff where pid=?");
+            PreparedStatement exe = c.prepareStatement(" Delete from catering_staff where pid=?");
             exe.setInt(1, pid);
 
             exe.executeQuery();

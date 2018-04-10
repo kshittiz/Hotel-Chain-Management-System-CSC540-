@@ -17,6 +17,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.json.JSONObject;
+
+import service.ManagerService;
+
 @SuppressWarnings("serial")
 public class NewStaff extends JDialog implements ActionListener {
 
@@ -24,9 +28,9 @@ public class NewStaff extends JDialog implements ActionListener {
             address;
     JTextField nameT, ssnT, titleT, ageT, skillT, typeT, phoneT, emailT, addressT;
     JComboBox<String> departmentB = new JComboBox<String>(new String[] { "Manager", "Catering",
-            "Cleaning", "Front Desk" });
+            "Cleaning", "Front_Desk" });
     JComboBox<String> privilegeB = new JComboBox<String>(new String[] { "Cleaning", "Catering",
-            "Front Desk" });
+            "Front_Desk" });
     JComboBox<String> genderB = new JComboBox<String>(new String[] { "Female", "Male", "Other" });
     JButton save = new JButton("Save");
 
@@ -159,6 +163,36 @@ public class NewStaff extends JDialog implements ActionListener {
                 skill.setEnabled(false);
                 type.setEnabled(false);
             }
+        }
+
+        if (e.getSource() == save) {
+            JSONObject input = new JSONObject();
+            if (!nameT.getText().isEmpty())
+                input.put("name", nameT.getText());
+
+            input.put("SSN", ssnT.getText());
+            input.put("address", addressT.getText());
+            input.put("job_title", titleT.getText());
+            if (!ageT.getText().isEmpty())
+                input.put("age", ageT.getText());
+
+            input.put("department", departmentB.getSelectedItem().toString().toLowerCase());
+            input.put("privilege", privilegeB.getSelectedItem().toString().toLowerCase());
+            input.put("gender", genderB.getSelectedItem().toString().toLowerCase());
+            input.put("skill", skillT.getText());
+            input.put("type", typeT.getText());
+            input.put("phone", phoneT.getText());
+            input.put("email", emailT.getText());
+            input.put("peopleType", "staff");
+            input.put("hotel_serving", LoginHMS.hid);
+            if (!ManagerService.addNewStaff(input)) {
+                Manager.opLabel.setText("Staff member not added, error in input!");
+                Manager.opLabel.setForeground(Color.RED);
+            } else {
+                Manager.opLabel.setText("Staff member added successfully!");
+                Manager.opLabel.setForeground(Color.GREEN);
+            }
+            this.dispose();
         }
     }
 

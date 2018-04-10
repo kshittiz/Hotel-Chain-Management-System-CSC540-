@@ -2,7 +2,9 @@ package dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class FrontDesk extends Staff {
@@ -12,32 +14,24 @@ public class FrontDesk extends Staff {
         c = conn;
     }
 
-    public int addPerson(JSONObject obj1) {
-        try {
-            PreparedStatement exe = c.prepareStatement(
-                    "insert into front_desk(pid, gender) values(?, ?)");
-            exe.setInt(1, obj1.getInt("pid"));
-            exe.setString(2, obj1.getString("gender"));
-            exe.executeQuery();
-
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-
+    public int addPerson(JSONObject obj1) throws JSONException, SQLException {
+        PreparedStatement exe = c.prepareStatement(
+                "insert into front_desk(pid, gender) values(?, ?)");
+        exe.setInt(1, obj1.getInt("pid"));
+        exe.setString(2, obj1.getString("gender"));
+        exe.executeQuery();
         return obj1.getInt("pid");
 
     }
 
     public boolean deletePerson(int pid) {
-        
+
         try {
-            PreparedStatement exe = c.prepareStatement(
-                    " Delete from front_desk where pid=?");
+            PreparedStatement exe = c.prepareStatement(" Delete from front_desk where pid=?");
             exe.setInt(1, pid);
 
             exe.executeQuery();
 
-      
         } catch (Exception e) {
             System.out.println(e);
             return false;
@@ -46,7 +40,7 @@ public class FrontDesk extends Staff {
     }
 
     public boolean updatePerson(JSONObject obj2, int pid) {
-       
+
         try {
 
             PreparedStatement exe = c.prepareStatement(
@@ -58,7 +52,6 @@ public class FrontDesk extends Staff {
 
             exe.executeQuery();
 
-          
         } catch (Exception e) {
             System.out.println(e);
             return false;
