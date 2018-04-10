@@ -2,7 +2,11 @@ package dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.Statement;
+import java.util.Arrays;
+import java.util.Vector;
 
 import org.json.JSONObject;
 
@@ -10,6 +14,8 @@ import com.sun.xml.internal.ws.org.objectweb.asm.Type;
 
 public class Staff extends People {
     private static Connection c = null;
+    private static String[] strings = { "ID(*)", "Name", "Job Title", "Age", "Department" };
+    public static Vector<String> COLUMNS = new Vector<String>(Arrays.asList(strings));
 
     public static void setConnnection(Connection conn) {
         c = conn;
@@ -69,6 +75,32 @@ public class Staff extends People {
             return false;
         }
         return true;
+    }
+
+    public Vector<Vector<Object>> getStaffDetails() {
+        Vector<Vector<Object>> data = null;
+        try {
+
+            PreparedStatement exe = c.prepareStatement(
+                    "Select pid,name,job_title,age,department from people natural join staff where pid <> (Select pid from manager where privilege = 'full_access')");
+            ResultSet result = exe.executeQuery();
+            ResultSetMetaData metaData = result.getMetaData();
+            int columnCount = metaData.getColumnCount();
+            // Data of the table
+            data = new Vector<Vector<Object>>();
+            while (result.next()) {
+                Vector<Object> vector = new Vector<Object>();
+                for (int i = 1; i <= columnCount; i++) {
+                    vector.add(result.getObject(i));
+                }
+                data.add(vector);
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return data;
     }
 
 }

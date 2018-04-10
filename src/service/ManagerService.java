@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Vector;
 
 import org.json.JSONObject;
 
@@ -12,10 +13,15 @@ import dao.Cleaning;
 import dao.ContactInfo;
 import dao.ContactLinks;
 import dao.Database;
+import dao.Discount;
 import dao.FrontDesk;
 import dao.HotelPeopleLinks;
 import dao.Manager;
 import dao.People;
+import dao.Room;
+import dao.RoomCategory;
+import dao.Service;
+import dao.ServiceType;
 import dao.Staff;
 
 public class ManagerService {
@@ -40,7 +46,7 @@ public class ManagerService {
     public static boolean addNewStaff(JSONObject obj) {
         Connection c = Database.getConnection();
         try {
-            // staring a transaction to add values in people heirarchy
+            // staring a transaction to add values in people hierarchy
             c.setAutoCommit(false);
             People.setConnnection(c);
             People p = new People();
@@ -100,5 +106,59 @@ public class ManagerService {
         } finally {
             Database.endConnnection(c);
         }
+    }
+
+    public static Vector<Vector<Object>> getStaffDetails() {
+        Connection c = Database.getConnection();
+        Staff.setConnnection(c);
+        Staff s = new Staff();
+        Vector<Vector<Object>> data = s.getStaffDetails();
+        Database.endConnnection(c);
+        return data;
+    }
+
+    public static Vector<Vector<Object>> getRoomDetails() {
+        Connection c = Database.getConnection();
+        Room.setConnnection(c);
+        Room r = new Room();
+        Vector<Vector<Object>> data = r.getRoomDetails();
+        Database.endConnnection(c);
+        return data;
+    }
+
+    public static Vector<Vector<Object>> getRoomCategoryDetails() {
+        Connection c = Database.getConnection();
+        RoomCategory.setConnnection(c);
+        RoomCategory rc = new RoomCategory();
+        Vector<Vector<Object>> data = rc.getRoomDetails();
+        Database.endConnnection(c);
+        return data;
+    }
+
+    public static Vector<Vector<Object>> getServiceDetails() {
+        Connection c = Database.getConnection();
+        Service.setConnnection(c);
+        Service s = new Service();
+        Vector<Vector<Object>> data = s.getServiceDetails();
+        Database.endConnnection(c);
+        return data;
+    }
+
+    public static Vector<Vector<Object>> getServiceTypeDetails() {
+        Connection c = Database.getConnection();
+        ServiceType.setConnnection(c);
+        ServiceType s = new ServiceType();
+        Vector<Vector<Object>> data = s.getServiceTypeDetails();
+        Database.endConnnection(c);
+        return data;
+    }
+
+    public static Vector<Vector<Object>> getDiscountDetails() {
+        Connection c = Database.getConnection();
+        Discount.setConnnection(c);
+        Discount d = new Discount();
+        Vector<Vector<Object>> data = d.getDiscountDetails();
+        Database.endConnnection(c);
+        return data;
     }
 }

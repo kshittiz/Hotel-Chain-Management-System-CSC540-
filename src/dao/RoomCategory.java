@@ -3,7 +3,10 @@ package dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Vector;
 
 public class RoomCategory {
 
@@ -12,6 +15,8 @@ public class RoomCategory {
     private int occupancy;
     private int nightly_rate;
     private static Connection c = null;
+    private static String[] strings = { "Room Category (*)", "Occupancy (*)", "Nightly Rate [$]" };
+    public static Vector<String> COLUMNS = new Vector<String>(Arrays.asList(strings));
 
     public int getHid() {
         return hid;
@@ -88,4 +93,29 @@ public class RoomCategory {
         return list;
     }
 
+    public Vector<Vector<Object>> getRoomDetails() {
+        Vector<Vector<Object>> data = null;
+        try {
+
+            PreparedStatement exe = c.prepareStatement(
+                    "Select room_category,occupancy,nightly_rate from room_category");
+            ResultSet result = exe.executeQuery();
+            ResultSetMetaData metaData = result.getMetaData();
+            int columnCount = metaData.getColumnCount();
+            // Data of the table
+            data = new Vector<Vector<Object>>();
+            while (result.next()) {
+                Vector<Object> vector = new Vector<Object>();
+                for (int i = 1; i <= columnCount; i++) {
+                    vector.add(result.getObject(i));
+                }
+                data.add(vector);
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return data;
+    }
 }

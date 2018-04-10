@@ -3,10 +3,15 @@ package dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Vector;
 
 public class ServiceType {
     private static Connection c = null;
+    private static String[] strings = { "Service Type (*)", "Price [$]" };
+    public static Vector<String> COLUMNS = new Vector<String>(Arrays.asList(strings));
 
     public static void setConnnection(Connection conn) {
         c = conn;
@@ -41,5 +46,30 @@ public class ServiceType {
             return null;
         }
         return list.toArray(new String[list.size()]);
+    }
+
+    public Vector<Vector<Object>> getServiceTypeDetails() {
+        Vector<Vector<Object>> data = null;
+        try {
+
+            PreparedStatement exe = c.prepareStatement("Select * from service_type");
+            ResultSet result = exe.executeQuery();
+            ResultSetMetaData metaData = result.getMetaData();
+            int columnCount = metaData.getColumnCount();
+            // Data of the table
+            data = new Vector<Vector<Object>>();
+            while (result.next()) {
+                Vector<Object> vector = new Vector<Object>();
+                for (int i = 1; i <= columnCount; i++) {
+                    vector.add(result.getObject(i));
+                }
+                data.add(vector);
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return data;
     }
 }
