@@ -92,10 +92,15 @@ public class LoginHMS extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         String ssn = ssnText.getText();
         String duty = (String) viewList.getSelectedItem();
+        // Getting connection
         Connection conn = Database.getConnection();
+        // Setting connection in people class
         People.setConnnection(conn);
+        // Setting connection in HotelPeopleLinks
         HotelPeopleLinks.setConnnection(conn);
+        // Setting pid for logged in person in class variable for future use
         pid = People.getPIDbySSN(ssn);
+
         if (duty.equals("Front Desk Representative")) {
             hid = HotelPeopleLinks.getHotelIdsByPeopleId(pid).get(0);
             user = FrontDeskService.getNameLinkedwithSSN(ssn);
@@ -113,14 +118,14 @@ public class LoginHMS extends JFrame implements ActionListener {
                 this.setVisible(false);
             }
         } else {
-            Connection c = Database.getConnection();
-            People.setConnnection(c);
+            People.setConnnection(conn);
             if ((duty.toLowerCase()).equals(People.getTypeBySSN(ssn)))
                 new Chairman(this);
             else
                 new Error(this);
-            Database.endConnnection(c);
         }
+
+        // Ending connection, Always use this function for closing connection
         Database.endConnnection(conn);
 
     }

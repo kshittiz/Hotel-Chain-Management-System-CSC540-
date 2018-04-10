@@ -126,7 +126,7 @@ public class Manager extends JFrame implements ActionListener, ListSelectionList
         add(end, BorderLayout.SOUTH);
         getRootPane().setDefaultButton(submit);
 
-        setSize(dim.width / 3, dim.height / 3);
+        setSize(dim.width / 3, (dim.height - 100) / 2);
         setLocation(100, 100);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
