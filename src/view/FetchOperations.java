@@ -76,9 +76,8 @@ public class FetchOperations extends JDialog implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == extra) {
-            if ("complete staff".equals(null))
-                tableModel.setDataVector(ManagerService.getStaffDetails((String) extra
-                        .getSelectedItem()), Staff.MANAGER_STAFF_COLUMNS);
+            if ("complete staff".equals(extra.getSelectedItem()))
+                tableModel.setDataVector(ManagerService.getStaffDetails(null), Staff.STAFF_COLUMNS);
             if ("manager".equals(extra.getSelectedItem()))
                 tableModel.setDataVector(ManagerService.getStaffDetails((String) extra
                         .getSelectedItem()), Staff.MANAGER_STAFF_COLUMNS);
