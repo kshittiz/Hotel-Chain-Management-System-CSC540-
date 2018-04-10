@@ -162,8 +162,18 @@ public class Manager extends JFrame implements ActionListener, ListSelectionList
         case "Add new discount":
             new NewDiscount(this);
             break;
+        case "See your hotel details":
+            new FetchOperations(this, "See your hotel details", "Your hotel details");
+            break;
+        case "See all hotels in chain":
+            new FetchOperations(this, "See all hotels in chain", "All hotels in your hotel chain");
+            break;
         case "See your staff details":
             new FetchOperations(this, "See your staff details", "Details of all staff members");
+            break;
+        case "See all customers in your hotel":
+            new FetchOperations(this, "See all customers in your hotel",
+                    "Details of all customers in your hotel");
             break;
         case "See all room categories in your hotel":
             new FetchOperations(this, "See all room categories in your hotel",
@@ -195,7 +205,7 @@ public class Manager extends JFrame implements ActionListener, ListSelectionList
             break;
         case "Remove room":
             new DeleteOperations(this, "Remove room",
-                    "All rooms available in hotel, select room number and click delete!");
+                    "All rooms available in your hotel, select room number and click delete!");
             break;
         case "Remove service type":
             new DeleteOperations(this, "Remove service type",

@@ -14,7 +14,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import dao.Customer;
 import dao.Discount;
+import dao.Hotel;
 import dao.Room;
 import dao.RoomCategory;
 import dao.Service;
@@ -35,14 +37,27 @@ public class FetchOperations extends JDialog implements ActionListener {
         JLabel heading = new JLabel(msg);
         table = new JTable(tableModel);
         switch (title) {
+        case "See your hotel details":
+            tableModel.setDataVector(ManagerService.getHotelDetails(LoginHMS.hid), Hotel.COLUMNS);
+            setSize(dim.width / 2, dim.height / 5);
+            break;
+        case "See all hotels in chain":
+            tableModel.setDataVector(ManagerService.getHotelDetails(0), Hotel.COLUMNS);
+            setSize(dim.width / 2, dim.height / 3);
+            break;
         case "See your staff details":
             extra = new JComboBox<String>(new String[] { "complete staff", "manager", "catering",
                     "cleaning", "front_desk" });
             panel.add(extra, BorderLayout.SOUTH);
             extra.addActionListener(this);
             tableModel.setDataVector(ManagerService.getStaffDetails(null), Staff.STAFF_COLUMNS);
+            setSize((dim.width + 200) / 2, dim.height / 3);
+            break;
+        case "See all customers in your hotel":
+            tableModel.setDataVector(ManagerService.getCustomerDetails(), Customer.COLUMNS);
             setSize(dim.width / 2, dim.height / 3);
             break;
+
         case "See all room categories in your hotel":
             tableModel.setDataVector(ManagerService.getRoomCategoryDetails(), RoomCategory.COLUMNS);
             setSize(dim.width / 2, dim.height / 3);

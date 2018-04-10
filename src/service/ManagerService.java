@@ -12,9 +12,11 @@ import dao.Catering;
 import dao.Cleaning;
 import dao.ContactInfo;
 import dao.ContactLinks;
+import dao.Customer;
 import dao.Database;
 import dao.Discount;
 import dao.FrontDesk;
+import dao.Hotel;
 import dao.HotelPeopleLinks;
 import dao.Manager;
 import dao.People;
@@ -108,11 +110,29 @@ public class ManagerService {
         }
     }
 
+    public static Vector<Vector<Object>> getHotelDetails(int hid) {
+        Connection c = Database.getConnection();
+        Hotel.setConnnection(c);
+        Hotel rc = new Hotel();
+        Vector<Vector<Object>> data = rc.getHotelDetails(hid);
+        Database.endConnnection(c);
+        return data;
+    }
+
     public static Vector<Vector<Object>> getStaffDetails(String type) {
         Connection c = Database.getConnection();
         Staff.setConnnection(c);
         Staff s = new Staff();
         Vector<Vector<Object>> data = s.getStaffDetails(type);
+        Database.endConnnection(c);
+        return data;
+    }
+
+    public static Vector<Vector<Object>> getCustomerDetails() {
+        Connection c = Database.getConnection();
+        Customer.setConnnection(c);
+        Customer s = new Customer();
+        Vector<Vector<Object>> data = s.getCustomerDetails();
         Database.endConnnection(c);
         return data;
     }

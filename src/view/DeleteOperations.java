@@ -40,13 +40,13 @@ public class DeleteOperations extends JDialog implements ActionListener {
         switch (title) {
         case "Remove staff member":
             tableModel.setDataVector(ManagerService.getStaffDetails(null), Staff.STAFF_COLUMNS);
-            setSize(dim.width / 2, dim.height / 3);
+            setSize((dim.width) / 2, dim.height / 3);
             break;
         case "Remove room category":
             tableModel.setDataVector(ManagerService.getRoomCategoryDetails(), RoomCategory.COLUMNS);
             setSize(dim.width / 2, dim.height / 3);
             break;
-        case "See all rooms in your hotel":
+        case "Remove room":
             tableModel.setDataVector(ManagerService.getRoomDetails(), Room.COLUMNS);
             setSize(dim.width / 2, dim.height / 3);
 
