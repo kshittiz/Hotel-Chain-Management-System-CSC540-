@@ -34,10 +34,12 @@ public class LoginHMS extends JFrame implements ActionListener {
     JTextField ssnText;
     JComboBox<String> viewList;
     String user;
-    static int hid; // After login (staff has only one hid), person's hotel id
-                    // will be stored here for further reference
-    static int pid; // After login, people id will be stored here for further
-                    // reference
+    public static int hid; // After login (staff has only one hid), person's
+                           // hotel id
+    // will be stored here for further reference
+    public static int pid; // After login, people id will be stored here for
+                           // further
+    // reference
 
     public LoginHMS() {
         // create frame

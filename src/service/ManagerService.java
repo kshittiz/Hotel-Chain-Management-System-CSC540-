@@ -128,6 +128,15 @@ public class ManagerService {
         return data;
     }
 
+    public static Vector<Vector<Object>> getStaffDetailsGroupedByRole() {
+        Connection c = Database.getConnection();
+        Staff.setConnnection(c);
+        Staff s = new Staff();
+        Vector<Vector<Object>> data = s.getStaffDetailsGroupedByRole();
+        Database.endConnnection(c);
+        return data;
+    }
+
     public static Vector<Vector<Object>> getCustomerDetails() {
         Connection c = Database.getConnection();
         Customer.setConnnection(c);
@@ -178,6 +187,15 @@ public class ManagerService {
         Discount.setConnnection(c);
         Discount d = new Discount();
         Vector<Vector<Object>> data = d.getDiscountDetails();
+        Database.endConnnection(c);
+        return data;
+    }
+
+    public static Vector<Vector<Object>> getOccupancyStats(String type, String city) {
+        Connection c = Database.getConnection();
+        Room.setConnnection(c);
+        Room r = new Room();
+        Vector<Vector<Object>> data = r.getOccupancyStats(type, city);
         Database.endConnnection(c);
         return data;
     }

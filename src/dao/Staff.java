@@ -18,6 +18,10 @@ public class Staff extends People {
             "Department" };
     public static Vector<String> STAFF_COLUMNS = new Vector<String>(Arrays.asList(staff));
 
+    private static String[] colums = { "Count", "Name", "SSN", "Address", "Job Title", "Age",
+            "Department" };
+    public static Vector<String> COLUMNS = new Vector<String>(Arrays.asList(colums));
+
     private static String[] managerStaff = { "ID(*)", "Name", "SSN", "Address", "Job Title", "Age",
             "Department", "Privilege" };
     public static Vector<String> MANAGER_STAFF_COLUMNS = new Vector<String>(Arrays.asList(
@@ -119,6 +123,31 @@ public class Staff extends People {
                 exe = c.prepareStatement(
                         "Select pid,name,ssn, address,job_title,age,department from people natural join staff");
 
+            ResultSet result = exe.executeQuery();
+            ResultSetMetaData metaData = result.getMetaData();
+            int columnCount = metaData.getColumnCount();
+            // Data of the table
+            data = new Vector<Vector<Object>>();
+            while (result.next()) {
+                Vector<Object> vector = new Vector<Object>();
+                for (int i = 1; i <= columnCount; i++) {
+                    vector.add(result.getObject(i));
+                }
+                data.add(vector);
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return data;
+    }
+
+    public Vector<Vector<Object>> getStaffDetailsGroupedByRole() {
+        Vector<Vector<Object>> data = null;
+        try {
+            PreparedStatement exe = c.prepareStatement(
+                    "Select count(pid), name,ssn, address,job_title,age,department from people natural join staff group by department");
             ResultSet result = exe.executeQuery();
             ResultSetMetaData metaData = result.getMetaData();
             int columnCount = metaData.getColumnCount();

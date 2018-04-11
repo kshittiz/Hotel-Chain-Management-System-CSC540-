@@ -1,17 +1,21 @@
 package view;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import dao.Customer;
@@ -29,6 +33,9 @@ public class FetchOperations extends JDialog implements ActionListener {
     JTable table;
     DefaultTableModel tableModel = new DefaultTableModel();
     JComboBox<String> extra;
+    JComboBox<String> occup;
+    JCheckBox role;
+    String city = "";
 
     public FetchOperations(Manager manager, String title, String msg) {
         super(manager, title, true);
@@ -49,9 +56,11 @@ public class FetchOperations extends JDialog implements ActionListener {
             extra = new JComboBox<String>(new String[] { "complete staff", "manager", "catering",
                     "cleaning", "front_desk" });
             panel.add(extra, BorderLayout.SOUTH);
+            role = new JCheckBox("Group by Department/Role ");
+            panel.add(role, BorderLayout.EAST);
             extra.addActionListener(this);
             tableModel.setDataVector(ManagerService.getStaffDetails(null), Staff.STAFF_COLUMNS);
-            setSize((dim.width + 200) / 2, dim.height / 3);
+            setSize((dim.width + 500) / 2, dim.height / 3);
             break;
         case "See all customers in your hotel":
             tableModel.setDataVector(ManagerService.getCustomerDetails(), Customer.COLUMNS);
@@ -78,7 +87,19 @@ public class FetchOperations extends JDialog implements ActionListener {
             tableModel.setDataVector(ManagerService.getDiscountDetails(), Discount.COLUMNS);
             setSize(dim.width / 3, dim.height / 3);
             break;
+        case "See occupancy statistics":
+            city = "";
+            occup = new JComboBox<String>(new String[] { "Occupancy group by all hotels",
+                    "Occupancy by room type", "Occupancy by city", "Occupancy by dates",
+                    "Total Occupancy", "% of rooms occupied" });
+            panel.add(occup, BorderLayout.SOUTH);
+            occup.addActionListener(this);
+            tableModel.setDataVector(ManagerService.getOccupancyStats(
+                    "Occupancy group by all hotels", null), Room.GRP_HOTELS_COLUMNS);
+            setSize(dim.width / 3, dim.height / 3);
+            break;
         }
+
         panel.add(heading, BorderLayout.NORTH);
         panel.add(new JScrollPane(table), BorderLayout.CENTER);
 
@@ -91,21 +112,78 @@ public class FetchOperations extends JDialog implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == extra) {
-            if ("complete staff".equals(extra.getSelectedItem()))
-                tableModel.setDataVector(ManagerService.getStaffDetails(null), Staff.STAFF_COLUMNS);
-            if ("manager".equals(extra.getSelectedItem()))
-                tableModel.setDataVector(ManagerService.getStaffDetails((String) extra
-                        .getSelectedItem()), Staff.MANAGER_STAFF_COLUMNS);
-            if ("cleaning".equals(extra.getSelectedItem()))
-                tableModel.setDataVector(ManagerService.getStaffDetails((String) extra
-                        .getSelectedItem()), Staff.CLEANING_STAFF_COLUMNS);
-            if ("catering".equals(extra.getSelectedItem()))
-                tableModel.setDataVector(ManagerService.getStaffDetails((String) extra
-                        .getSelectedItem()), Staff.CLEANING_STAFF_COLUMNS);
-            if ("front_desk".equals(extra.getSelectedItem()))
-                tableModel.setDataVector(ManagerService.getStaffDetails((String) extra
-                        .getSelectedItem()), Staff.FRONT_DESK_Staff_COLUMNS);
+            String action = (String) extra.getSelectedItem();
+
+            if (role.isSelected())
+                tableModel.setDataVector(ManagerService.getStaffDetailsGroupedByRole(),
+                        Staff.COLUMNS);
+            else {
+                if ("complete staff".equals(action))
+                    tableModel.setDataVector(ManagerService.getStaffDetails(null),
+                            Staff.STAFF_COLUMNS);
+                if ("manager".equals(action))
+                    tableModel.setDataVector(ManagerService.getStaffDetails(action),
+                            Staff.MANAGER_STAFF_COLUMNS);
+                if ("cleaning".equals(action))
+                    tableModel.setDataVector(ManagerService.getStaffDetails(action),
+                            Staff.CLEANING_STAFF_COLUMNS);
+                if ("catering".equals(action))
+                    tableModel.setDataVector(ManagerService.getStaffDetails(action),
+                            Staff.CLEANING_STAFF_COLUMNS);
+                if ("front_desk".equals(action))
+                    tableModel.setDataVector(ManagerService.getStaffDetails(action),
+                            Staff.FRONT_DESK_Staff_COLUMNS);
+            }
+        }
+        if (e.getSource() == occup) {
+            String action = (String) occup.getSelectedItem();
+            if ("Occupancy group by all hotels".equals(action))
+                tableModel.setDataVector(ManagerService.getOccupancyStats(action, null),
+                        Room.GRP_HOTELS_COLUMNS);
+            if ("Occupancy by room type".equals(action))
+                tableModel.setDataVector(ManagerService.getOccupancyStats(action, null),
+                        Room.GRP_RTYPE_COLUMNS);
+            if ("Occupancy by city".equals(action)) {
+                new Query(this);
+                tableModel.setDataVector(ManagerService.getOccupancyStats(action, city),
+                        Room.GRP_RCITY_COLUMNS);
+            }
+            if ("Occupancy by dates".equals(action))
+                tableModel.setDataVector(ManagerService.getOccupancyStats(action, null),
+                        Room.GRP_RDATES_COLUMNS);
+            if ("Total Occupancy".equals(action))
+                tableModel.setDataVector(ManagerService.getOccupancyStats(action, null),
+                        Room.TOT_OCCUP_COLUMNS);
+            if ("% of rooms occupied".equals(action))
+                tableModel.setDataVector(ManagerService.getOccupancyStats(action, null),
+                        Room.PER_OCCUP_COLUMNS);
         }
     }
 
+}
+
+@SuppressWarnings("serial")
+class Query extends JDialog implements ActionListener {
+    JTextField city = new JTextField();
+    JButton submit = new JButton("submit");
+    FetchOperations ops;
+
+    Query(FetchOperations ops) {
+        super(ops, "Enter city", true);
+        this.ops = ops;
+        add(city, BorderLayout.CENTER);
+        add(submit, BorderLayout.SOUTH);
+        submit.addActionListener(this);
+        submit.setBackground(Color.ORANGE);
+        setSize(300, 100);
+        setLocation(ops.getLocation());
+        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        setVisible(true);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        ops.city = city.getText();
+        this.dispose();
+    }
 }
