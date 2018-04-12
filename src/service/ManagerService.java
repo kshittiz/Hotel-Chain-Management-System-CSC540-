@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Vector;
 
 import org.json.JSONObject;
@@ -25,6 +26,7 @@ import dao.RoomCategory;
 import dao.Service;
 import dao.ServiceType;
 import dao.Staff;
+import view.LoginHMS;
 
 public class ManagerService {
     public static String getNameLinkedwithSSN(String ssn) {
@@ -123,7 +125,7 @@ public class ManagerService {
         Connection c = Database.getConnection();
         Staff.setConnnection(c);
         Staff s = new Staff();
-        Vector<Vector<Object>> data = s.getStaffDetails(type);
+        Vector<Vector<Object>> data = s.getStaffDetails(type, LoginHMS.hid);
         Database.endConnnection(c);
         return data;
     }
@@ -132,7 +134,7 @@ public class ManagerService {
         Connection c = Database.getConnection();
         Staff.setConnnection(c);
         Staff s = new Staff();
-        Vector<Vector<Object>> data = s.getStaffDetailsGroupedByRole();
+        Vector<Vector<Object>> data = s.getStaffDetailsGroupedByRole(LoginHMS.hid);
         Database.endConnnection(c);
         return data;
     }
@@ -141,7 +143,7 @@ public class ManagerService {
         Connection c = Database.getConnection();
         Customer.setConnnection(c);
         Customer s = new Customer();
-        Vector<Vector<Object>> data = s.getCustomerDetails();
+        Vector<Vector<Object>> data = s.getCustomerDetails(LoginHMS.hid);
         Database.endConnnection(c);
         return data;
     }
@@ -150,7 +152,7 @@ public class ManagerService {
         Connection c = Database.getConnection();
         Room.setConnnection(c);
         Room r = new Room();
-        Vector<Vector<Object>> data = r.getRoomDetails();
+        Vector<Vector<Object>> data = r.getRoomDetails(LoginHMS.hid);
         Database.endConnnection(c);
         return data;
     }
@@ -159,7 +161,7 @@ public class ManagerService {
         Connection c = Database.getConnection();
         RoomCategory.setConnnection(c);
         RoomCategory rc = new RoomCategory();
-        Vector<Vector<Object>> data = rc.getRoomDetails();
+        Vector<Vector<Object>> data = rc.getRoomCategoriesForTable(LoginHMS.hid);
         Database.endConnnection(c);
         return data;
     }
@@ -168,7 +170,7 @@ public class ManagerService {
         Connection c = Database.getConnection();
         Service.setConnnection(c);
         Service s = new Service();
-        Vector<Vector<Object>> data = s.getServiceDetails();
+        Vector<Vector<Object>> data = s.getServiceDetails(LoginHMS.hid);
         Database.endConnnection(c);
         return data;
     }
@@ -195,8 +197,73 @@ public class ManagerService {
         Connection c = Database.getConnection();
         Room.setConnnection(c);
         Room r = new Room();
-        Vector<Vector<Object>> data = r.getOccupancyStats(type, city);
+        Vector<Vector<Object>> data = r.getOccupancyStats(type, city, LoginHMS.hid);
         Database.endConnnection(c);
         return data;
+    }
+
+    public static boolean deleteStaff(HashMap<String, String> values) {
+        boolean result = false;
+        Connection c = Database.getConnection();
+        People.setConnnection(c);
+        People p = new People();
+        int pid = Integer.parseInt(values.get("ID(*)"));
+        if (pid != LoginHMS.pid)
+            result = p.deletePerson(pid);
+        Database.endConnnection(c);
+        return result;
+    }
+
+    public static boolean deleteRoom(HashMap<String, String> values) {
+        boolean result = false;
+        Connection c = Database.getConnection();
+        Room.setConnnection(c);
+        Room r = new Room();
+        int rid = Integer.parseInt(values.get("Room Number (*)"));
+        if (r.getRoomAvailability(rid, LoginHMS.hid))
+            result = r.deleteRoom(rid, LoginHMS.hid);
+        Database.endConnnection(c);
+        return result;
+    }
+
+    public static boolean deleteRoomCategory(HashMap<String, String> values) {
+        Connection c = Database.getConnection();
+        RoomCategory.setConnnection(c);
+        RoomCategory r = new RoomCategory();
+        String category = values.get("Room Category (*)");
+        int occup = Integer.parseInt(values.get("Occupancy (*)"));
+        boolean result = r.deleteRoomCategory(category, LoginHMS.hid, occup);
+        Database.endConnnection(c);
+        return result;
+    }
+
+    public static boolean deleteServiceType(HashMap<String, String> values) {
+        Connection c = Database.getConnection();
+        ServiceType.setConnnection(c);
+        ServiceType st = new ServiceType();
+        String type = values.get("Service Type (*)");
+        boolean result = st.deleteServiceType(type);
+        Database.endConnnection(c);
+        return result;
+    }
+
+    public static boolean deleteService(HashMap<String, String> values) {
+        Connection c = Database.getConnection();
+        Service.setConnnection(c);
+        Service st = new Service();
+        int service_num = Integer.parseInt(values.get("Service Number (*)"));
+        boolean result = st.deleteService(service_num, LoginHMS.hid);
+        Database.endConnnection(c);
+        return result;
+    }
+
+    public static boolean deleteDiscount(HashMap<String, String> values) {
+        Connection c = Database.getConnection();
+        Discount.setConnnection(c);
+        Discount dis = new Discount();
+        String billing_type = values.get("Billing Type (*)");
+        boolean result = dis.deleteDiscount(billing_type);
+        Database.endConnnection(c);
+        return result;
     }
 }

@@ -63,12 +63,13 @@ public class Customer extends People {
         return true;
     }
 
-    public Vector<Vector<Object>> getCustomerDetails() {
+    public Vector<Vector<Object>> getCustomerDetails(int hid) {
         Vector<Vector<Object>> data = null;
         try {
 
             PreparedStatement exe = c.prepareStatement(
-                    "Select pid,name,ssn,address,date_of_birth from people natural join customer");
+                    "Select pid,name,ssn,address,date_of_birth from people natural join hotel_people_links natural join customer where hotel_id = ?");
+            exe.setInt(1, hid);
             ResultSet result = exe.executeQuery();
             ResultSetMetaData metaData = result.getMetaData();
             int columnCount = metaData.getColumnCount();

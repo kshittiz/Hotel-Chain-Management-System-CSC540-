@@ -7,6 +7,9 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.HashMap;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -30,6 +33,8 @@ public class DeleteOperations extends JDialog implements ActionListener {
     JTable table;
     JButton delete = new JButton("delete");
     DefaultTableModel tableModel = new DefaultTableModel();
+    HashMap<String, String> valuesSelected = new HashMap<String, String>();
+    String title;
 
     public DeleteOperations(Manager manager, String title, String msg) {
         super(manager, title, true);
@@ -37,6 +42,7 @@ public class DeleteOperations extends JDialog implements ActionListener {
         JPanel panel = new JPanel(new BorderLayout());
         JLabel heading = new JLabel(msg);
         table = new JTable(tableModel);
+        this.title = title;
         switch (title) {
         case "Remove staff member":
             tableModel.setDataVector(ManagerService.getStaffDetails(null), Staff.STAFF_COLUMNS);
@@ -67,6 +73,7 @@ public class DeleteOperations extends JDialog implements ActionListener {
 
             break;
         }
+        table.addMouseListener(new TableListener(this));
         panel.add(heading, BorderLayout.NORTH);
         panel.add(new JScrollPane(table), BorderLayout.CENTER);
         ImageIcon saveIcon = new ImageIcon(new ImageIcon("images/remove.png").getImage()
@@ -85,6 +92,83 @@ public class DeleteOperations extends JDialog implements ActionListener {
     }
 
     @Override
-    public void actionPerformed(ActionEvent arg0) {
+    public void actionPerformed(ActionEvent e) {
+        // System.out.println(valuesSelected);
+        switch (title) {
+        case "Remove staff member":
+            if (ManagerService.deleteStaff(valuesSelected)) {
+                Manager.opLabel.setText("Record deleted Successfully!");
+                Manager.opLabel.setForeground(Color.GREEN);
+            } else {
+                Manager.opLabel.setText("Record not deleted (possibly in use)!");
+                Manager.opLabel.setForeground(Color.RED);
+            }
+            break;
+        case "Remove room category":
+            if (ManagerService.deleteRoomCategory(valuesSelected)) {
+                Manager.opLabel.setText("Record deleted Successfully!");
+                Manager.opLabel.setForeground(Color.GREEN);
+            } else {
+                Manager.opLabel.setText("Record not deleted (possibly in use)!");
+                Manager.opLabel.setForeground(Color.RED);
+            }
+            break;
+        case "Remove room":
+            if (ManagerService.deleteRoom(valuesSelected)) {
+                Manager.opLabel.setText("Record deleted Successfully!");
+                Manager.opLabel.setForeground(Color.GREEN);
+            } else {
+                Manager.opLabel.setText("Record not deleted (possibly in use)!");
+                Manager.opLabel.setForeground(Color.RED);
+            }
+            break;
+        case "Remove service type":
+            if (ManagerService.deleteServiceType(valuesSelected)) {
+                Manager.opLabel.setText("Record deleted Successfully!");
+                Manager.opLabel.setForeground(Color.GREEN);
+            } else {
+                Manager.opLabel.setText("Record not deleted (possibly in use)!");
+                Manager.opLabel.setForeground(Color.RED);
+            }
+            break;
+        case "Remove Services offered":
+            if (ManagerService.deleteService(valuesSelected)) {
+                Manager.opLabel.setText("Record deleted Successfully!");
+                Manager.opLabel.setForeground(Color.GREEN);
+            } else {
+                Manager.opLabel.setText("Record not deleted (possibly in use)!");
+                Manager.opLabel.setForeground(Color.RED);
+            }
+            break;
+        case "Remove discount":
+            if (ManagerService.deleteDiscount(valuesSelected)) {
+                Manager.opLabel.setText("Record deleted Successfully!");
+                Manager.opLabel.setForeground(Color.GREEN);
+            } else {
+                Manager.opLabel.setText("Record not deleted!");
+                Manager.opLabel.setForeground(Color.RED);
+            }
+            break;
+        }
+        this.dispose();
+    }
+}
+
+class TableListener extends MouseAdapter {
+    DeleteOperations dp;
+
+    TableListener(DeleteOperations dp) {
+        this.dp = dp;
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        JTable table = (JTable) e.getSource();
+        int row = table.getSelectedRow();
+        int column = table.getSelectedColumn();
+        Object o = table.getValueAt(row, column);
+        if (o != null)
+            dp.valuesSelected.put(table.getColumnName(column), o.toString());
+
     }
 }

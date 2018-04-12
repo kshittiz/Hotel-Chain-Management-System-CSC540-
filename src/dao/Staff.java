@@ -102,25 +102,27 @@ public class Staff extends People {
         return true;
     }
 
-    public Vector<Vector<Object>> getStaffDetails(String staffType) {
+    public Vector<Vector<Object>> getStaffDetails(String staffType, int hid) {
         Vector<Vector<Object>> data = null;
         try {
             PreparedStatement exe = null;
             if ("manager".equals(staffType))
                 exe = c.prepareStatement(
-                        "Select pid,name,ssn, address,job_title,age,department,privilege from people natural join staff natural join manager");
+                        "Select pid,name,ssn, address,job_title,age,department,privilege from people natural join staff natural join manager where hotel_serving = ?");
             else if ("catering".equals(staffType))
                 exe = c.prepareStatement(
-                        "Select pid,name,ssn, address,job_title,age,department,skill from people natural join staff natural join catering_staff");
+                        "Select pid,name,ssn, address,job_title,age,department,skill from people natural join staff natural join catering_staff where hotel_serving = ?");
             else if ("cleaning".equals(staffType))
                 exe = c.prepareStatement(
-                        "Select pid,name,ssn, address,job_title,age,department,speciality from people natural join staff natural join cleaning_staff");
+                        "Select pid,name,ssn, address,job_title,age,department,speciality from people natural join staff natural join cleaning_staff where hotel_serving = ?");
             else if ("front_desk".equals(staffType))
                 exe = c.prepareStatement(
-                        "Select pid,name,ssn, address,job_title,age,department,gender from people natural join staff natural join front_desk");
+                        "Select pid,name,ssn, address,job_title,age,department,gender from people natural join staff natural join front_desk where hotel_serving = ?");
             else
                 exe = c.prepareStatement(
-                        "Select pid,name,ssn, address,job_title,age,department from people natural join staff");
+                        "Select pid,name,ssn, address,job_title,age,department from people natural join staff where hotel_serving = ?");
+
+            exe.setInt(1, hid);
 
             ResultSet result = exe.executeQuery();
             ResultSetMetaData metaData = result.getMetaData();
@@ -142,11 +144,12 @@ public class Staff extends People {
         return data;
     }
 
-    public Vector<Vector<Object>> getStaffDetailsGroupedByRole() {
+    public Vector<Vector<Object>> getStaffDetailsGroupedByRole(int hid) {
         Vector<Vector<Object>> data = null;
         try {
             PreparedStatement exe = c.prepareStatement(
-                    "Select count(pid),department from people natural join staff group by department");
+                    "Select count(pid),department from people natural join staff where hotel_serving = ? group by department ");
+            exe.setInt(1, hid);
             ResultSet result = exe.executeQuery();
             ResultSetMetaData metaData = result.getMetaData();
             int columnCount = metaData.getColumnCount();

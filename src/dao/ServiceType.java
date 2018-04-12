@@ -72,4 +72,17 @@ public class ServiceType {
 
         return data;
     }
+
+    public boolean deleteServiceType(String type) {
+        try {
+            PreparedStatement exe = c.prepareStatement(" Delete from service_type where type=?");
+            exe.setString(1, type);
+            exe.executeQuery();
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+        return true;
+    }
 }

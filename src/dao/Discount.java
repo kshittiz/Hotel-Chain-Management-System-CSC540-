@@ -58,4 +58,19 @@ public class Discount {
 
         return data;
     }
+
+    public boolean deleteDiscount(String billing_type) {
+        try {
+            PreparedStatement exe = c.prepareStatement(
+                    " Delete from discount where billing_type=?");
+            exe.setString(1, billing_type);
+            exe.executeQuery();
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+        return true;
+    }
+
 }

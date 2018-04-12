@@ -34,12 +34,13 @@ public class Service {
         return true;
     }
 
-    public Vector<Vector<Object>> getStaffDetails() {
+    public Vector<Vector<Object>> getServiceDetails(int hid) {
         Vector<Vector<Object>> data = null;
         try {
 
             PreparedStatement exe = c.prepareStatement(
-                    "Select pid,job_title,age,department from staff");
+                    "Select service_num, type from service where hotel_id = ?");
+            exe.setInt(1, hid);
             ResultSet result = exe.executeQuery();
             ResultSetMetaData metaData = result.getMetaData();
             int columnCount = metaData.getColumnCount();
@@ -60,28 +61,19 @@ public class Service {
         return data;
     }
 
-    public Vector<Vector<Object>> getServiceDetails() {
-        Vector<Vector<Object>> data = null;
+    public boolean deleteService(int service_num, int hid) {
         try {
-
-            PreparedStatement exe = c.prepareStatement("Select service_num, type from service");
-            ResultSet result = exe.executeQuery();
-            ResultSetMetaData metaData = result.getMetaData();
-            int columnCount = metaData.getColumnCount();
-            // Data of the table
-            data = new Vector<Vector<Object>>();
-            while (result.next()) {
-                Vector<Object> vector = new Vector<Object>();
-                for (int i = 1; i <= columnCount; i++) {
-                    vector.add(result.getObject(i));
-                }
-                data.add(vector);
-            }
+            PreparedStatement exe = c.prepareStatement(
+                    " Delete from service where service_num = ? and hotel_id=?");
+            exe.setInt(1, service_num);
+            exe.setInt(2, hid);
+            exe.executeQuery();
 
         } catch (Exception e) {
             System.out.println(e);
+            return false;
         }
-
-        return data;
+        return true;
     }
+
 }
