@@ -5,31 +5,27 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Date;
 
-public class CheckIn {
+public class ContactLinks {
     private static Connection c = null;
 
     public static void setConnnection(Connection conn) {
         c = conn;
     }
 
-    public int checkIn(int pid, int guests, Date checkin, Date checkout) throws SQLException {
-        int cid = 0;
+    public int CreateContactLinks(int link_id, int contact_id, String type) throws SQLException {
+        int id = 0;
         PreparedStatement exe = c.prepareStatement(
-                "insert into checkin(pid,guests,checkin,checkout) values(?, ?,?,?)",
+                "insert into contact_links(link_id,contact_id, type) values(?, ?, ?)",
                 Statement.RETURN_GENERATED_KEYS);
-        exe.setInt(1, pid);
-        exe.setInt(2, guests);
-
-        exe.setDate(3, new java.sql.Date(checkin.getTime()));
-        exe.setDate(4, new java.sql.Date(checkout.getTime()));
+        exe.setInt(1, link_id);
+        exe.setInt(2, contact_id);
+        exe.setString(3, type);
         exe.executeQuery();
         ResultSet result = exe.getGeneratedKeys();
         if (result.next())
-            cid = result.getInt(1);
-
-        return cid;
+            id = result.getInt(1);
+        return id;
     }
 
 }
