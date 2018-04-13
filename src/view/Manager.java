@@ -65,7 +65,8 @@ public class Manager extends JFrame implements ActionListener, ListSelectionList
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         // building UI for ADD operation
         String[] addOps = { "Add new staff member", "Add new room category", "Add new room",
-                "Add new service type", "Add new service", "Add new discount" };
+                "Add new service type", "Add new service", "Add new discount",
+                "Add contact details" };
         addList = new JList<String>(addOps);
         addList.setVisibleRowCount(5);
         addList.setBorder(BorderFactory.createTitledBorder("Available operations"));
@@ -89,8 +90,7 @@ public class Manager extends JFrame implements ActionListener, ListSelectionList
         // building UI for UPDATE operation
         String[] upOps = { "Update staff member details", "Update hotel details",
                 "Update room category", "Update room details", "Update service type in hotel chain",
-                "Update services offered", "Update discount details",
-                "Update personal contact information" };
+                "Update services offered", "Update discount details", "Update contact details" };
         upList = new JList<String>(upOps);
         upList.setVisibleRowCount(5);
         upList.setBorder(BorderFactory.createTitledBorder("Available operations"));

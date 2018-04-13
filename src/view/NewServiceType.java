@@ -8,7 +8,6 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -17,8 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import dao.Database;
-import dao.ServiceType;
+import service.ManagerService;
 
 @SuppressWarnings("serial")
 public class NewServiceType extends JDialog implements ActionListener {
@@ -63,24 +61,14 @@ public class NewServiceType extends JDialog implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Connection conn = Database.getConnection();
-        ServiceType.setConnnection(conn);
-        ServiceType st = new ServiceType();
-        try {
-            if (!st.addServiceType(typeT.getText(), Integer.parseInt(priceT.getText()))) {
-                Manager.opLabel.setText("Service type not saved, error in input!");
-                Manager.opLabel.setForeground(Color.RED);
-            } else {
-                Manager.opLabel.setText("Service type saved successfully!");
-                Manager.opLabel.setForeground(Color.GREEN);
-            }
-        } catch (Exception ex) {
-            System.out.println((ex));
+        if (!ManagerService.addNewServiceType(typeT.getText(), priceT.getText())) {
             Manager.opLabel.setText("Service type not saved, error in input!");
             Manager.opLabel.setForeground(Color.RED);
+        } else {
+            Manager.opLabel.setText("Service type saved successfully!");
+            Manager.opLabel.setForeground(Color.GREEN);
         }
         this.dispose();
-        Database.endConnnection(conn);
     }
 
 }

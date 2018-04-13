@@ -47,6 +47,13 @@ public class ManagerService {
         return name;
     }
 
+    /**
+     * Adding staff member in people hierarchy using transaction
+     * 
+     * @param JSONOBject
+     *            obj
+     * @return boolean
+     */
     public static boolean addNewStaff(JSONObject obj) {
         Connection c = Database.getConnection();
         try {
@@ -110,6 +117,154 @@ public class ManagerService {
         } finally {
             Database.endConnnection(c);
         }
+    }
+
+    /**
+     * Adding contact details using transaction
+     * 
+     * @param id
+     * @param phone_number
+     * @param email
+     * @param type
+     * @return boolean
+     */
+    public boolean addPersonalContactInfo(int id, String phone_number, String email, String type) {
+        Connection c = Database.getConnection();
+        try {
+            // staring a transaction to add values in contact table
+            c.setAutoCommit(false);
+            ContactInfo.setConnnection(c);
+            ContactInfo ci = new ContactInfo();
+            int contact_id = ci.addContactInfo(phone_number, email);
+            ContactLinks.setConnnection(c);
+            ContactLinks cl = new ContactLinks();
+            if ("people".equals(type))
+                cl.CreateContactLinks(id, contact_id, "people");
+            else
+                cl.CreateContactLinks(id, contact_id, "hotel");
+
+            // Committing transaction
+            c.commit();
+            // transaction ends
+            return true;
+        } catch (Exception e) {
+            try {
+                c.rollback();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+            e.printStackTrace();
+            return false;
+        } finally {
+            Database.endConnnection(c);
+        }
+    }
+
+    public static boolean addNewRoom(String roomN, int hid, String category, String occup,
+            String avail) {
+        boolean result = false;
+        Connection conn = Database.getConnection();
+        Room.setConnnection(conn);
+        Room r = new Room();
+        try {
+            if (r.createRoom(Integer.parseInt(roomN), hid, category, Integer.parseInt(occup),
+                    avail)) {
+                result = true;
+            } else {
+                result = false;
+            }
+        } catch (Exception ex) {
+            System.out.println(ex);
+            result = false;
+        }
+
+        Database.endConnnection(conn);
+        return result;
+
+    }
+
+    public static boolean addNewCategory(int hid, String category, int occup, String rate) {
+        boolean result = false;
+        Connection conn = Database.getConnection();
+        RoomCategory.setConnnection(conn);
+        RoomCategory rc = new RoomCategory();
+        try {
+            if (rc.createRoomCategory(hid, category, occup, Integer.parseInt(rate))) {
+                result = true;
+            } else {
+                result = false;
+            }
+        } catch (Exception ex) {
+            System.out.println(ex);
+            result = false;
+        }
+
+        Database.endConnnection(conn);
+        return result;
+
+    }
+
+    public static boolean addNewService(String serviceN, int hid, String type) {
+        boolean result = false;
+        Connection conn = Database.getConnection();
+        Service.setConnnection(conn);
+        Service s = new Service();
+        try {
+            if (s.addService(Integer.parseInt(serviceN), hid, type)) {
+                result = true;
+            } else {
+                result = false;
+            }
+        } catch (Exception ex) {
+            System.out.println(ex);
+            result = false;
+        }
+
+        Database.endConnnection(conn);
+        return result;
+
+    }
+
+    public static boolean addNewServiceType(String type, String price) {
+        boolean result = false;
+        Connection conn = Database.getConnection();
+        ServiceType.setConnnection(conn);
+        ServiceType st = new ServiceType();
+        try {
+            if (st.addServiceType(type, Integer.parseInt(price))) {
+                result = true;
+            } else {
+                result = false;
+            }
+        } catch (Exception ex) {
+            System.out.println(ex);
+            result = false;
+        }
+
+        Database.endConnnection(conn);
+        return result;
+
+    }
+
+    public static boolean addNewDiscount(String billing_type, String disc) {
+        boolean result = false;
+        Connection conn = Database.getConnection();
+        Discount.setConnnection(conn);
+        Discount d = new Discount();
+        try {
+            if (d.addDiscount(billing_type, Integer.parseInt(disc))) {
+                result = true;
+            } else {
+                result = false;
+            }
+        } catch (Exception ex) {
+            System.out.println(ex);
+            result = false;
+        }
+
+        Database.endConnnection(conn);
+        return result;
+
     }
 
     public static Vector<Vector<Object>> getHotelDetails(int hid) {

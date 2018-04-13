@@ -34,4 +34,19 @@ public class ContactInfo {
         return contact_id;
     }
 
+    public boolean deleteContact(int contact_id) {
+
+        try {
+            PreparedStatement exe = c.prepareStatement(
+                    " Delete from contact_info where contact_id=?");
+            exe.setInt(1, contact_id);
+
+            exe.executeQuery();
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+        return true;
+    }
 }

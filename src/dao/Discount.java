@@ -17,7 +17,7 @@ public class Discount {
         c = conn;
     }
 
-    public boolean discount(String billing_type, int discount) {
+    public boolean addDiscount(String billing_type, int discount) {
 
         try {
             PreparedStatement exe = c.prepareStatement(
