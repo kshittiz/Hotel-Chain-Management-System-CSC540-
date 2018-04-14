@@ -37,6 +37,7 @@ public class Manager extends JFrame implements ActionListener, ListSelectionList
     JList<String> addList, fetchList, upList, rmList;;
     static JLabel opLabel;
     String action = null;
+
     Vector<Vector<Object>> contactData;
 
     // 421319931
@@ -72,6 +73,7 @@ public class Manager extends JFrame implements ActionListener, ListSelectionList
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         // building UI for ADD operation
         String[] addOps = { "Add new staff member", "Add new room category", "Add new room",
+
                 "Add new service type", "Add new service", "Add new discount",
                 "Add contact details" };
         addList = new JList<String>(addOps);
@@ -96,6 +98,7 @@ public class Manager extends JFrame implements ActionListener, ListSelectionList
 
         // building UI for UPDATE operation
         String[] upOps = { "Update staff member details", "Update hotel details",
+
                 "Update room details", "Update contact details" };
         upList = new JList<String>(upOps);
         upList.setVisibleRowCount(5);
@@ -169,6 +172,7 @@ public class Manager extends JFrame implements ActionListener, ListSelectionList
         case "Add new discount":
             new NewDiscount(this);
             break;
+
         case "Add contact details":
             new ContactDetails(this, "Add contact details");
             break;
@@ -209,6 +213,7 @@ public class Manager extends JFrame implements ActionListener, ListSelectionList
         case "See occupancy statistics":
             new FetchOperations(this, "See occupancy statistics", "Occupancy statistics");
             break;
+
         case "See contact details":
             new ContactDetails(this, "See contact details");
             break;
@@ -253,6 +258,7 @@ public class Manager extends JFrame implements ActionListener, ListSelectionList
             new DeleteOperations(this, "Remove discount",
                     "All types of discounts offered in hotel chain, Select type and click delete!");
             break;
+
         case "Remove contact details":
             new ContactDetails(this, "Remove contact details");
             break;

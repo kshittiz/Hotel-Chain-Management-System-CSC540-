@@ -18,7 +18,6 @@ public class Discount {
     }
 
     public boolean addDiscount(String billing_type, int discount) {
-
         try {
             PreparedStatement exe = c.prepareStatement(
                     "insert into discount(billing_type,discount) values(?, ?)",
@@ -72,5 +71,4 @@ public class Discount {
         }
         return true;
     }
-
 }

@@ -47,6 +47,7 @@ public class NewStaff extends JDialog implements ActionListener {
         privilege = new JLabel(" Privilege");
         speciality = new JLabel(" speciality");
         phone = new JLabel(" Phone");
+
         email = new JLabel(" Email");
         address = new JLabel(" Address");
 

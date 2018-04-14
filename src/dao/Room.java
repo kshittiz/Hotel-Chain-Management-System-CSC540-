@@ -64,6 +64,7 @@ public class Room {
         try {
 
             PreparedStatement exe = c.prepareStatement(
+
                     "Select room_num, room_category,occupancy,availability from room where hotel_id = ?");
             exe.setInt(1, hid);
             ResultSet result = exe.executeQuery();
@@ -99,6 +100,7 @@ public class Room {
             case "Occupancy by room type":
                 exe = c.prepareStatement(
                         " select count(hotel_id), room_category, availability from hotel natural join room where availability = 'available' and hotel_id=? group by room_category");
+
                 exe.setInt(1, hid);
                 break;
             case "Occupancy by city":
@@ -193,5 +195,4 @@ public class Room {
         }
         return true;
     }
-
 }

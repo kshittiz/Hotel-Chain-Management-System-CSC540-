@@ -39,6 +39,7 @@ public class Service {
         try {
 
             PreparedStatement exe = c.prepareStatement(
+
                     "Select service_num, type from service where hotel_id = ?");
             exe.setInt(1, hid);
             ResultSet result = exe.executeQuery();

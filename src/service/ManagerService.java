@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -26,6 +27,7 @@ import dao.RoomCategory;
 import dao.Service;
 import dao.ServiceType;
 import dao.Staff;
+
 import view.LoginHMS;
 
 public class ManagerService {
@@ -524,5 +526,4 @@ public class ManagerService {
         }
         return result;
     }
-
 }

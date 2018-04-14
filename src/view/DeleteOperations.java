@@ -7,6 +7,7 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
@@ -33,6 +34,7 @@ public class DeleteOperations extends JDialog implements ActionListener {
     JTable table;
     JButton delete = new JButton("delete");
     DefaultTableModel tableModel = new DefaultTableModel();
+
     HashMap<String, String> valuesSelected = new HashMap<String, String>();
     String title;
 
@@ -92,6 +94,7 @@ public class DeleteOperations extends JDialog implements ActionListener {
     }
 
     @Override
+
     public void actionPerformed(ActionEvent e) {
         // System.out.println(valuesSelected);
         switch (title) {

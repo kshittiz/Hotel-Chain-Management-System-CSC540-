@@ -55,7 +55,8 @@ public class LoginHMS extends JFrame implements ActionListener {
         panel.add(ssnLabel);
 
         // ssn text field
-        ssnText = new JTextField("421319931");
+        ssnText = new JTextField("771319931");
+
         panel.add(ssnText);
 
         // view label
