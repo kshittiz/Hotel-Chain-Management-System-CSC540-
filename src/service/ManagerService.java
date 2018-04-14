@@ -43,9 +43,13 @@ public class ManagerService {
             c.close();
         } catch (Exception e) {
             System.out.println(e);
+        } finally {
+            Database.endConnnection(c);
         }
         return name;
     }
+
+    // ADD Operations
 
     /**
      * Adding staff member in people hierarchy using transaction
@@ -177,9 +181,10 @@ public class ManagerService {
         } catch (Exception ex) {
             System.out.println(ex);
             result = false;
+        } finally {
+            Database.endConnnection(conn);
         }
 
-        Database.endConnnection(conn);
         return result;
 
     }
@@ -198,9 +203,9 @@ public class ManagerService {
         } catch (Exception ex) {
             System.out.println(ex);
             result = false;
+        } finally {
+            Database.endConnnection(conn);
         }
-
-        Database.endConnnection(conn);
         return result;
 
     }
@@ -219,9 +224,9 @@ public class ManagerService {
         } catch (Exception ex) {
             System.out.println(ex);
             result = false;
+        } finally {
+            Database.endConnnection(conn);
         }
-
-        Database.endConnnection(conn);
         return result;
 
     }
@@ -240,9 +245,10 @@ public class ManagerService {
         } catch (Exception ex) {
             System.out.println(ex);
             result = false;
+        } finally {
+            Database.endConnnection(conn);
         }
 
-        Database.endConnnection(conn);
         return result;
 
     }
@@ -261,13 +267,15 @@ public class ManagerService {
         } catch (Exception ex) {
             System.out.println(ex);
             result = false;
+        } finally {
+            Database.endConnnection(conn);
         }
 
-        Database.endConnnection(conn);
         return result;
 
     }
 
+    // FETCH Operations
     public static Vector<Vector<Object>> getHotelDetails(int hid) {
         Connection c = Database.getConnection();
         Hotel.setConnnection(c);
@@ -365,20 +373,84 @@ public class ManagerService {
             ContactInfo.setConnnection(c);
             ContactInfo ci = new ContactInfo();
             data = ci.getContactDetails(Integer.parseInt(id), type);
-            Database.endConnnection(c);
         } catch (Exception e) {
             System.out.println(e);
             return null;
+        } finally {
+            Database.endConnnection(c);
         }
         return data;
     }
 
+    // UPDATE OPERATIONS
+    public static boolean updateStaff(HashMap<String, String> values, int pid) {
+        Connection c = Database.getConnection();
+        try {
+            People.setConnnection(c); // updating fields in people
+            Staff.setConnnection(c); // updating fields in staff
+
+            People p = new People();
+            p.updatePerson(values, pid);
+            p = new Staff();
+            p.updatePerson(values, pid);
+
+        } catch (Exception e) {
+            return false;
+        } finally {
+            Database.endConnnection(c);
+        }
+        return true;
+    }
+
+    public static boolean updateRoom(HashMap<String, String> values, int room_num) {
+        Connection c = Database.getConnection();
+        try {
+            Room.setConnnection(c);
+            Room r = new Room();
+            r.updateRoom(values, room_num);
+        } catch (Exception e) {
+            return false;
+        } finally {
+            Database.endConnnection(c);
+        }
+        return true;
+    }
+
+    public static boolean updateHotel(HashMap<String, String> values) {
+        Connection c = Database.getConnection();
+        try {
+            Hotel.setConnnection(c);
+            Hotel h = new Hotel();
+            h.updateHotel(values);
+        } catch (Exception e) {
+            return false;
+        } finally {
+            Database.endConnnection(c);
+        }
+        return true;
+    }
+
+    public static boolean updateContact(HashMap<String, String> values, int cid) {
+        Connection c = Database.getConnection();
+        try {
+            ContactInfo.setConnnection(c);
+            ContactInfo ci = new ContactInfo();
+            ci.updateContactDetails(values, cid);
+        } catch (Exception e) {
+            return false;
+        } finally {
+            Database.endConnnection(c);
+        }
+        return true;
+    }
+
+    // DELETE OPERATIONS
     public static boolean deleteStaff(HashMap<String, String> values) {
         boolean result = false;
         Connection c = Database.getConnection();
         People.setConnnection(c);
         People p = new People();
-        int pid = Integer.parseInt(values.get("ID(*)"));
+        int pid = Integer.parseInt(values.get("ID (*)"));
         if (pid != LoginHMS.pid)
             result = p.deletePerson(pid);
         Database.endConnnection(c);

@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Vector;
 
 import org.json.JSONObject;
@@ -14,7 +15,7 @@ import com.sun.xml.internal.ws.org.objectweb.asm.Type;
 
 public class Staff extends People {
     private static Connection c = null;
-    private static String[] staff = { "ID(*)", "Name", "SSN", "Address", "Job Title", "Age",
+    private static String[] staff = { "ID (*)", "Name", "SSN", "Address", "Job Title", "Age",
             "Department" };
     public static Vector<String> STAFF_COLUMNS = new Vector<String>(Arrays.asList(staff));
 
@@ -79,27 +80,26 @@ public class Staff extends People {
         return true;
     }
 
-    public boolean updatePerson(JSONObject obj2, int pid) {
-
-        try {
-
-            PreparedStatement exe = c.prepareStatement(
-                    "update staff set job_title=?,hotel_serving=?,age=?,department=? where pid =?");
-
-            exe.setString(1, obj2.getString("job_title"));
-            exe.setInt(2, obj2.getInt("hotel_serving"));
-            exe.setInt(3, obj2.getInt("age"));
-            exe.setString(4, obj2.getString("department"));
-
-            exe.setInt(5, pid);
-
-            exe.executeQuery();
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return false;
+    public void updatePerson(HashMap<String, String> values, int pid) throws Exception {
+        String staffQuery = "UPDATE staff set";
+        boolean check = false;
+        if (values.containsKey("job_title")) {
+            staffQuery = staffQuery + " job_title='" + values.get("job_title").toString() + "',";
+            check = true;
         }
-        return true;
+
+        if (values.containsKey("age")) {
+            staffQuery = staffQuery + " age=" + values.get("age").toString() + ",";
+            check = true;
+        }
+
+        String finalQueryStaff = staffQuery.subSequence(0, staffQuery.length() - 1).toString();
+
+        finalQueryStaff = finalQueryStaff + " where pid =" + pid;
+        if (check) {
+            Statement exe = c.createStatement();
+            exe.executeQuery(finalQueryStaff);
+        }
     }
 
     public Vector<Vector<Object>> getStaffDetails(String staffType, int hid) {

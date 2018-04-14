@@ -5,7 +5,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Vector;
+
+import view.LoginHMS;
 
 public class Room {
     private static Connection c = null;
@@ -160,6 +163,19 @@ public class Room {
             return false;
         }
         return result;
+    }
+
+    public void updateRoom(HashMap<String, String> values, int room_num) throws Exception {
+        String query = "UPDATE room set";
+        if (values.containsKey("availability"))
+            query = query + " availability= ?";
+
+        query = query + " where room_num = ? and hotel_id= ?";
+        PreparedStatement exe = c.prepareStatement(query);
+        exe.setString(1, values.get("availability").toString());
+        exe.setInt(2, room_num);
+        exe.setInt(3, LoginHMS.hid);
+        exe.executeQuery();
     }
 
     public boolean deleteRoom(int room_num, int hid) {

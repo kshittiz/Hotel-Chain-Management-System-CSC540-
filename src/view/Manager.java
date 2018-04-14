@@ -149,6 +149,8 @@ public class Manager extends JFrame implements ActionListener, ListSelectionList
 
         // switch case for each operations a manager can perform
         switch (action) {
+
+        // ADD operations
         case "Add new staff member":
             new NewStaff(this);
             break;
@@ -170,6 +172,7 @@ public class Manager extends JFrame implements ActionListener, ListSelectionList
         case "Add contact details":
             new ContactDetails(this, "Add contact details");
             break;
+        // FETCH operations
         case "See your hotel details":
             new FetchOperations(this, "See your hotel details", "Your hotel details");
             break;
@@ -209,6 +212,23 @@ public class Manager extends JFrame implements ActionListener, ListSelectionList
         case "See contact details":
             new ContactDetails(this, "See contact details");
             break;
+        // UPDATE operations
+        case "Update staff member details":
+            new UpdateOperations(this, "Update staff member details",
+                    "Click on each cell and change values (one row at a time), submit your changes using update button to update data");
+            break;
+        case "Update hotel details":
+            new UpdateOperations(this, "Update hotel details",
+                    "Click on each cell and change values (one row at a time), submit your changes using update button to update data");
+            break;
+        case "Update room details":
+            new UpdateOperations(this, "Update room details",
+                    "Click on each cell and change values (one row at a time), submit your changes using update button to update data");
+            break;
+        case "Update contact details":
+            new ContactDetails(this, "Update contact details");
+            break;
+        // REMOVE operations
         case "Remove staff member":
             new DeleteOperations(this, "Remove staff member",
                     "Details of all staff members, Select ID column and click delete!");
@@ -269,7 +289,7 @@ class ContactDetails extends JDialog implements ActionListener {
         super(manager, title, true);
         this.manager = manager;
         this.title = title;
-        if ("See contact details".equals(title)) {
+        if ("See contact details".equals(title) || "Update contact details".equals(title)) {
             add(label, BorderLayout.WEST);
             add(id, BorderLayout.CENTER);
             label.setText(" Enter ID ");
@@ -311,6 +331,18 @@ class ContactDetails extends JDialog implements ActionListener {
                     id.getText());
             if (manager.contactData != null) {
                 new FetchOperations(manager, "See contact details", "Contact Lookup");
+            } else {
+                Manager.opLabel.setText("Record can not be fetched, error in input!");
+                Manager.opLabel.setForeground(Color.RED);
+            }
+            this.dispose();
+
+        } else if ("Update contact details".equals(title)) {
+            manager.contactData = ManagerService.getContactDetails((String) type.getSelectedItem(),
+                    id.getText());
+            if (manager.contactData != null) {
+                new UpdateOperations(manager, "Update contact details",
+                        "Click on each cell and change values (one row at a time), submit your changes using update button to update data");
             } else {
                 Manager.opLabel.setText("Record can not be fetched, error in input!");
                 Manager.opLabel.setForeground(Color.RED);
