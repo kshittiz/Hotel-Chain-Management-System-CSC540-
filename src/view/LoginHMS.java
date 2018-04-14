@@ -56,6 +56,7 @@ public class LoginHMS extends JFrame implements ActionListener {
 
         // ssn text field
         ssnText = new JTextField("771319931");
+
         panel.add(ssnText);
 
         // view label
@@ -105,7 +106,6 @@ public class LoginHMS extends JFrame implements ActionListener {
 
         if (duty.equals("Front Desk Representative")) {
             hid = HotelPeopleLinks.getHotelIdsByPeopleId(pid).get(0);
-            
             user = FrontDeskService.getNameLinkedwithSSN(ssn);
             if (user == null)
                 new Error(this);

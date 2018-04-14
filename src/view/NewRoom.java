@@ -22,8 +22,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import dao.Database;
-import dao.Room;
+
 import dao.RoomCategory;
+import service.ManagerService;
 
 @SuppressWarnings("serial")
 public class NewRoom extends JDialog implements ActionListener {
@@ -87,27 +88,16 @@ public class NewRoom extends JDialog implements ActionListener {
         if (e.getSource() == categoryB) {
             occupancyT.setText(category_occupancy.get(categoryB.getSelectedItem()));
         } else {
-            Connection conn = Database.getConnection();
-            Room.setConnnection(conn);
-            Room r = new Room();
-            try {
-                if (!r.createRoom(Integer.parseInt(roomN.getText()), LoginHMS.hid,
-                        (String) categoryB.getSelectedItem(), Integer.parseInt(occupancyT
-                                .getText()), (String) availabilityB.getSelectedItem())) {
-                    Manager.opLabel.setText("Room not saved, error in input!");
-                    Manager.opLabel.setForeground(Color.RED);
-                } else {
-                    Manager.opLabel.setText("Room saved successfully!");
-                    Manager.opLabel.setForeground(Color.GREEN);
-                }
-            } catch (Exception ex) {
-                System.out.println(ex);
+            if (!ManagerService.addNewRoom(roomN.getText(), LoginHMS.hid, (String) categoryB
+                    .getSelectedItem(), occupancyT.getText(), (String) availabilityB
+                            .getSelectedItem())) {
                 Manager.opLabel.setText("Room not saved, error in input!");
                 Manager.opLabel.setForeground(Color.RED);
+            } else {
+                Manager.opLabel.setText("Room saved successfully!");
+                Manager.opLabel.setForeground(Color.GREEN);
             }
-
             this.dispose();
-            Database.endConnnection(conn);
         }
     }
 

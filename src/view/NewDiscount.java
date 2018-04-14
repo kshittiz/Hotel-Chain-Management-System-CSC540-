@@ -8,7 +8,6 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -17,8 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import dao.Database;
-import dao.Discount;
+import service.ManagerService;
 
 @SuppressWarnings("serial")
 public class NewDiscount extends JDialog implements ActionListener {
@@ -63,24 +61,14 @@ public class NewDiscount extends JDialog implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Connection conn = Database.getConnection();
-        Discount.setConnnection(conn);
-        Discount disc = new Discount();
-        try {
-            if (!disc.discount(pT.getText(), Integer.parseInt(dT.getText()))) {
-                Manager.opLabel.setText("Discount not saved, error in input!");
-                Manager.opLabel.setForeground(Color.RED);
-            } else {
-                Manager.opLabel.setText("Discount saved successfully!");
-                Manager.opLabel.setForeground(Color.GREEN);
-            }
-        } catch (Exception ex) {
-            System.out.println(ex);
+        if (!ManagerService.addNewDiscount(pT.getText(), dT.getText())) {
             Manager.opLabel.setText("Discount not saved, error in input!");
             Manager.opLabel.setForeground(Color.RED);
+        } else {
+            Manager.opLabel.setText("Discount saved successfully!");
+            Manager.opLabel.setForeground(Color.GREEN);
         }
         this.dispose();
-        Database.endConnnection(conn);
     }
 
 }

@@ -93,12 +93,13 @@ public class RoomCategory {
         return list;
     }
 
-    public Vector<Vector<Object>> getRoomDetails() {
+    public Vector<Vector<Object>> getRoomCategoriesForTable(int hid) {
         Vector<Vector<Object>> data = null;
         try {
 
             PreparedStatement exe = c.prepareStatement(
-                    "Select room_category,occupancy,nightly_rate from room_category");
+                    "Select room_category,occupancy,nightly_rate from room_category where hotel_id = ?");
+            exe.setInt(1, hid);
             ResultSet result = exe.executeQuery();
             ResultSetMetaData metaData = result.getMetaData();
             int columnCount = metaData.getColumnCount();
@@ -117,5 +118,22 @@ public class RoomCategory {
         }
 
         return data;
+    }
+
+    public boolean deleteRoomCategory(String category, int hid, int occup) {
+
+        try {
+            PreparedStatement exe = c.prepareStatement(
+                    " Delete from room_category where room_category=? and hotel_id=? and occupancy=?");
+            exe.setString(1, category);
+            exe.setInt(2, hid);
+            exe.setInt(3, occup);
+            exe.executeQuery();
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+        return true;
     }
 }

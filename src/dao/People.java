@@ -22,16 +22,12 @@ public class People {
                 Statement.RETURN_GENERATED_KEYS);
         exe.setString(1, obj1.getString("name"));
         exe.setInt(2, obj1.getInt("SSN"));
-       // exe.setString(2, obj1.getString("SSN"));
-
         exe.setString(3, obj1.getString("address"));
         exe.setString(4, obj1.getString("peopleType"));
         exe.executeQuery();
         ResultSet result = exe.getGeneratedKeys();
         if (result.next())
             peopleId = result.getInt(1);
-        
-        //System.out.println("peopleid"+peopleId);
         return peopleId;
     }
 

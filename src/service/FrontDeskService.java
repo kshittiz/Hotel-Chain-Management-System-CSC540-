@@ -7,7 +7,6 @@ import java.sql.SQLException;
 
 import org.json.JSONObject;
 
-
 import dao.ContactInfo;
 import dao.ContactLinks;
 import dao.Customer;
@@ -20,7 +19,8 @@ public class FrontDeskService {
         String name = null;
         Connection c = Database.getConnection();
         try {
-            PreparedStatement exe = c.prepareStatement("SELECT name from people natural join front_desk where ssn = ?");
+            PreparedStatement exe = c.prepareStatement(
+                    "SELECT name from people natural join front_desk where ssn = ?");
             exe.setString(1, ssn);
             ResultSet result = exe.executeQuery();
             if (result.next())
@@ -31,11 +31,11 @@ public class FrontDeskService {
         }
         return name;
     }
-    public static boolean checkIfPersonPresent(String ssn)
-    {
-    	int count=0;
-    	Connection c = Database.getConnection();
-    	try {
+
+    public static boolean checkIfPersonPresent(String ssn) {
+        int count = 0;
+        Connection c = Database.getConnection();
+        try {
             PreparedStatement exe = c.prepareStatement("SELECT count(*) from people where ssn = ?");
             exe.setString(1, ssn);
             ResultSet result = exe.executeQuery();
@@ -45,11 +45,12 @@ public class FrontDeskService {
         } catch (Exception e) {
             System.out.println(e);
         }
-    	if(count==0)
-    		return false;
-    	else 
-    		return true;
+        if (count == 0)
+            return false;
+        else
+            return true;
     }
+
     public static boolean addNewCustomer(JSONObject obj) {
         Connection c = Database.getConnection();
         try {
@@ -63,7 +64,7 @@ public class FrontDeskService {
             Customer.setConnnection(c);
             p = new Customer();
             p.addPerson(obj);
-            
+
             // setting hotel_people_links
             HotelPeopleLinks.setConnnection(c);
             HotelPeopleLinks hpl = new HotelPeopleLinks();
@@ -75,8 +76,6 @@ public class FrontDeskService {
             String phone = obj.optString("phone").isEmpty() ? null : obj.optString("phone");
             String email = obj.optString("email").isEmpty() ? null : obj.optString("email");
             int contact_id = info.addContactInfo(phone, email);
-            
-            
 
             // setting contact links
             ContactLinks.setConnnection(c);
@@ -100,5 +99,5 @@ public class FrontDeskService {
             Database.endConnnection(c);
         }
     }
-    
+
 }

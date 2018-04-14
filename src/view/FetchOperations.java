@@ -18,6 +18,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
+import dao.ContactInfo;
 import dao.Customer;
 import dao.Discount;
 import dao.Hotel;
@@ -97,6 +98,10 @@ public class FetchOperations extends JDialog implements ActionListener {
             tableModel.setDataVector(ManagerService.getOccupancyStats(
                     "Occupancy group by all hotels", null), Room.GRP_HOTELS_COLUMNS);
             setSize(dim.width / 3, dim.height / 3);
+            break;
+        case "See contact details":
+            tableModel.setDataVector(manager.contactData, ContactInfo.COLUMNS);
+            setSize(dim.width / 4, dim.height / 3);
             break;
         }
 

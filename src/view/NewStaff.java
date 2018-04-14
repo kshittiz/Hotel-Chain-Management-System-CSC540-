@@ -47,7 +47,8 @@ public class NewStaff extends JDialog implements ActionListener {
         privilege = new JLabel(" Privilege");
         speciality = new JLabel(" speciality");
         phone = new JLabel(" Phone");
-        email = new JLabel(" E-Mail Address");
+
+        email = new JLabel(" Email");
         address = new JLabel(" Address");
 
         nameT = new JTextField();
@@ -188,9 +189,6 @@ public class NewStaff extends JDialog implements ActionListener {
             if (!ManagerService.addNewStaff(input)) {
                 Manager.opLabel.setText("Staff member not added, error in input!");
                 Manager.opLabel.setForeground(Color.RED);
-                
-               
-                
             } else {
                 Manager.opLabel.setText("Staff member added successfully!");
                 Manager.opLabel.setForeground(Color.GREEN);

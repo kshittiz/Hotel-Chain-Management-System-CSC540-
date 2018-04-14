@@ -7,8 +7,6 @@ import java.sql.ResultSetMetaData;
 import java.util.Arrays;
 import java.util.Vector;
 
-import view.LoginHMS;
-
 public class Room {
     private static Connection c = null;
     private static String[] strings = { "Room Number (*)", "Category", "Occupancy",
@@ -58,12 +56,14 @@ public class Room {
         return true;
     }
 
-    public Vector<Vector<Object>> getRoomDetails() {
+    public Vector<Vector<Object>> getRoomDetails(int hid) {
         Vector<Vector<Object>> data = null;
         try {
 
             PreparedStatement exe = c.prepareStatement(
-                    "Select room_num, room_category,occupancy,availability from room");
+
+                    "Select room_num, room_category,occupancy,availability from room where hotel_id = ?");
+            exe.setInt(1, hid);
             ResultSet result = exe.executeQuery();
             ResultSetMetaData metaData = result.getMetaData();
             int columnCount = metaData.getColumnCount();
@@ -84,7 +84,7 @@ public class Room {
         return data;
     }
 
-    public Vector<Vector<Object>> getOccupancyStats(String type, String city) {
+    public Vector<Vector<Object>> getOccupancyStats(String type, String city, int hid) {
         Vector<Vector<Object>> data = null;
         try {
 
@@ -97,7 +97,8 @@ public class Room {
             case "Occupancy by room type":
                 exe = c.prepareStatement(
                         " select count(hotel_id), room_category, availability from hotel natural join room where availability = 'available' and hotel_id=? group by room_category");
-                exe.setInt(1, LoginHMS.hid);
+
+                exe.setInt(1, hid);
                 break;
             case "Occupancy by city":
                 exe = c.prepareStatement(
@@ -112,11 +113,13 @@ public class Room {
             case "Total Occupancy":
                 exe = c.prepareStatement(
                         "select count(hotel_id), availability from hotel natural join room where hotel_id = ? group by availability");
-                exe.setInt(1, LoginHMS.hid);
+                exe.setInt(1, hid);
                 break;
             case "% of rooms occupied":
                 exe = c.prepareStatement(
-                        "select hotel_name, (count(*) * 100/(select count(*) from room where hotel_id = 1)) as percentage from room natural join hotel where hotel_id=1 and availability = 'unavailable'");
+                        "select hotel_name, (count(*) * 100/(select count(*) from room where hotel_id = ?)) as percentage from room natural join hotel where hotel_id=? and availability = 'unavailable'");
+                exe.setInt(1, hid);
+                exe.setLong(2, hid);
                 break;
             }
 
@@ -138,5 +141,42 @@ public class Room {
         }
 
         return data;
+    }
+
+    public boolean getRoomAvailability(int room_num, int hid) {
+        boolean result = false;
+        try {
+            String avail = "";
+            PreparedStatement exe = c.prepareStatement(
+                    " Select availability from room where room_num=? and hotel_id = ?");
+            exe.setInt(1, room_num);
+            exe.setInt(2, hid);
+            ResultSet resultSet = exe.executeQuery();
+            if (resultSet.next())
+                avail = resultSet.getString(1);
+            if ("available".equals(avail))
+                result = true;
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+        return result;
+    }
+
+    public boolean deleteRoom(int room_num, int hid) {
+
+        try {
+            PreparedStatement exe = c.prepareStatement(
+                    " Delete from room where room_num=? and hotel_id = ?");
+            exe.setInt(1, room_num);
+            exe.setInt(2, hid);
+            exe.executeQuery();
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+        return true;
     }
 }
