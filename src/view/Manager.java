@@ -278,16 +278,16 @@ class ContactDetails extends JDialog implements ActionListener {
         if ("See contact details".equals(title)) {
             add(label, BorderLayout.WEST);
             add(id, BorderLayout.CENTER);
-            label.setText("Enter ID");
+            label.setText(" Enter ID ");
             add(type, BorderLayout.EAST);
             submit.setText("Fetch record");
         } else if ("Remove contact details".equals(title)) {
             add(label, BorderLayout.WEST);
             add(id, BorderLayout.CENTER);
-            label.setText("Enter Contact ID");
+            label.setText(" Enter Contact ID ");
             submit.setText("Delete record");
         } else {
-            label.setText("Enter Person/Hotel ID");
+            label.setText(" Enter Person/Hotel ID ");
             contact.add(label);
             contact.add(id);
             contact.add(name);
