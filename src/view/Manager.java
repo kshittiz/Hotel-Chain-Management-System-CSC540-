@@ -259,13 +259,13 @@ public class Manager extends JFrame implements ActionListener, ListSelectionList
 class ContactDetails extends JDialog implements ActionListener {
     JTextField id = new JTextField();
     JPanel contact = new JPanel(new GridLayout(3, 2, 0, 3));
-    JLabel name = new JLabel("Phone Number");
-    JLabel email = new JLabel("Email");
+    JLabel name = new JLabel(" Phone Number");
+    JLabel email = new JLabel(" Email");
 
     JTextField nameT = new JTextField();
     JTextField emailT = new JTextField();
 
-    JLabel label = new JLabel(" Enter Contact ID ");
+    JLabel label = new JLabel(" Enter Contact ID");
     JComboBox<String> type = new JComboBox<String>(new String[] { "people", "hotel" });
     JButton submit = new JButton("Delete record");
     Manager manager;
@@ -287,7 +287,7 @@ class ContactDetails extends JDialog implements ActionListener {
             label.setText(" Enter Contact ID ");
             submit.setText("Delete record");
         } else {
-            label.setText(" Enter Person/Hotel ID ");
+            label.setText(" Enter Person/Hotel ID");
             contact.add(label);
             contact.add(id);
             contact.add(name);
