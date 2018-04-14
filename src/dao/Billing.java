@@ -13,8 +13,9 @@ public class Billing {
         c = conn;
     }
 
-    public int addBilling(int cid, int amount, int extra_discount, int tax, String billing_address,
+    public static  int addBilling(int cid, int amount, int extra_discount, int tax, String billing_address,
             String billing_type) throws SQLException {
+        
         int invoice_id = 0;
         PreparedStatement exe = c.prepareStatement(
                 "insert into billing(cid,amount,extra_discount,tax,billing_address,billing_type) values(?,?,?,?,?,?)",
@@ -33,5 +34,6 @@ public class Billing {
 
         return invoice_id;
     }
+   
 
 }

@@ -28,10 +28,20 @@ public class FrontDesk extends JFrame implements ActionListener {
      */
     private static final long serialVersionUID = 1L;
     JTabbedPane tabbedPane;
-    JPanel register, checkin, checkout, billing, regpanel, end;
+    JPanel register, checkin, checkout, billing, regpanel,billingpanel, end,end1;
     JLabel ssnL;
     JTextField ssnT;
-    JButton check, addPerson;
+    JLabel extraDiscountLabel;
+    JTextField extraDiscountText;
+    JLabel taxLabel;
+    JTextField taxText;
+    JLabel billingAdressLabel ;
+    JTextField billingAdressText ;
+    JLabel billingTypeLabel;
+    JTextField billingTypeText;
+    
+    
+    JButton check, addPerson,checkOut;
     // static JLabel opLabel;
 
     public FrontDesk(String name) {
@@ -88,6 +98,61 @@ public class FrontDesk extends JFrame implements ActionListener {
 
         // register.add(end, BorderLayout.SOUTH);
         register.add(new JScrollPane(end), BorderLayout.SOUTH);
+        
+        
+        
+        
+        //UI for billing
+        
+        
+        
+        // UI for check-out
+        billingpanel = new JPanel(new GridLayout(12, 2, 0, 3));
+        ssnL = new JLabel("SSN/DL/Passport Number");
+        ssnT = new JTextField();
+
+        billingpanel.add(ssnL);
+        billingpanel.add(ssnT);
+        
+        extraDiscountLabel=new JLabel("Enter extra discount");
+        extraDiscountText = new JTextField();
+        
+        billingpanel.add(extraDiscountLabel);
+        billingpanel.add(extraDiscountText);
+        
+        taxLabel = new JLabel("Enter tax to be levied"); 
+        taxText = new JTextField();
+        
+        billingpanel.add(taxLabel);
+        billingpanel.add(taxText);
+        
+        billingAdressLabel = new JLabel("Enter the adress"); 
+        billingAdressText = new JTextField();
+        
+        billingpanel.add(billingAdressLabel);
+        billingpanel.add(billingAdressText);
+        
+        billingTypeLabel = new JLabel("Enter the billing type"); 
+        billingTypeText = new JTextField();
+        
+        billingpanel.add(billingTypeLabel);
+        billingpanel.add(billingTypeText);
+     
+        checkout.add(billingpanel);
+        end1 = new JPanel(new GridLayout(2, 1));
+
+        checkOut = new JButton("Check Out and Bil the Customer");
+        end1.add(checkOut);
+        checkOut.addActionListener(this);
+        checkout.add(new JScrollPane(end1), BorderLayout.SOUTH);
+
+        
+        
+        
+        
+        
+        
+        
 
         // UI for check-in
 
@@ -116,6 +181,15 @@ public class FrontDesk extends JFrame implements ActionListener {
         if (action.getSource() == addPerson) {
             new NewCustomer(this, ssnT.getText());
         }
+        if(action.getSource()==checkOut) {
+            boolean check = FrontDeskService.checkIfPersonPresent(ssnT.getText());
+            if (check == false) {
+                new MyDialog("Sorry! No Data present for this Person");
+            } 
+            
+           int amount= FrontDeskService.calculateAmount(ssnT.getText(),extraDiscountText.getText(),billingTypeText.getText(),taxText.getText(),billingAdressText.getText());
+           new MyDialog("The customer has successfully checked out,The total amount is" + Integer.toString(amount) );
+        }
 
     }
 }
@@ -130,7 +204,7 @@ class MyDialog extends JDialog {
         error.setForeground(Color.RED);
         add(error, BorderLayout.CENTER);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        setSize(250, 100);
+        setSize(2500, 1000);
         // setLocation(login.getLocationOnScreen());
         setVisible(true);
     }
