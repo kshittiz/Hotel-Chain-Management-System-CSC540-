@@ -34,7 +34,23 @@ public class Room {
     public static void setConnnection(Connection conn) {
         c = conn;
     }
+    public static boolean updateRoomAvailbility(String newAvailability,int room_num) {
+        try {
+            PreparedStatement exe = c.prepareStatement(
+                    "Update room set availability=? where room_num=?");
+                  
+            exe.setString(1, newAvailability);
+            exe.setInt(2,room_num);
+            exe.executeQuery();
 
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+        return true;
+        
+        
+    }
     public boolean createRoom(int room_num, int hotel_id, String room_category, int occupancy,
             String availability) {
 
@@ -179,4 +195,5 @@ public class Room {
         }
         return true;
     }
+    
 }

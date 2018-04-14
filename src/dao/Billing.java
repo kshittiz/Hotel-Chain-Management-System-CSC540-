@@ -7,10 +7,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class Billing {
+    
+
     private static Connection c = null;
 
     public static void setConnnection(Connection conn) {
-        c = conn;
+       c = conn;
     }
 
     public static  int addBilling(int cid, int amount, int extra_discount, int tax, String billing_address,
@@ -28,11 +30,16 @@ public class Billing {
         exe.setString(6, billing_type);
 
         exe.executeQuery();
+        c.close();
         ResultSet result = exe.getGeneratedKeys();
         if (result.next())
             invoice_id = result.getInt(1);
 
         return invoice_id;
+    }
+    public static void main(String[] args) throws SQLException
+    {
+        Billing.addBilling(2, 2000, 5, 5, "2713 Brigadoon Drive", "cash");
     }
    
 

@@ -31,6 +31,8 @@ public class FrontDesk extends JFrame implements ActionListener {
     JPanel register, checkin, checkout, billing, regpanel,billingpanel, end,end1;
     JLabel ssnL;
     JTextField ssnT;
+    JLabel roomL;
+    JTextField roomT;
     JLabel extraDiscountLabel;
     JTextField extraDiscountText;
     JLabel taxLabel;
@@ -108,11 +110,11 @@ public class FrontDesk extends JFrame implements ActionListener {
         
         // UI for check-out
         billingpanel = new JPanel(new GridLayout(12, 2, 0, 3));
-        ssnL = new JLabel("SSN/DL/Passport Number");
-        ssnT = new JTextField();
+        roomL = new JLabel("Enter the room number to be checked out");
+        roomT = new JTextField();
 
-        billingpanel.add(ssnL);
-        billingpanel.add(ssnT);
+        billingpanel.add(roomL);
+        billingpanel.add(roomT);
         
         extraDiscountLabel=new JLabel("Enter extra discount");
         extraDiscountText = new JTextField();
@@ -182,12 +184,9 @@ public class FrontDesk extends JFrame implements ActionListener {
             new NewCustomer(this, ssnT.getText());
         }
         if(action.getSource()==checkOut) {
-            boolean check = FrontDeskService.checkIfPersonPresent(ssnT.getText());
-            if (check == false) {
-                new MyDialog("Sorry! No Data present for this Person");
-            } 
+           
             
-           int amount= FrontDeskService.calculateAmount(ssnT.getText(),extraDiscountText.getText(),billingTypeText.getText(),taxText.getText(),billingAdressText.getText());
+           int amount= FrontDeskService.calculateAmount(roomT.getText(),extraDiscountText.getText(),billingTypeText.getText(),taxText.getText(),billingAdressText.getText());
            new MyDialog("The customer has successfully checked out,The total amount is" + Integer.toString(amount) );
         }
 

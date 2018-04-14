@@ -17,6 +17,7 @@ import dao.Customer;
 import dao.Database;
 import dao.HotelPeopleLinks;
 import dao.People;
+import dao.Room;
 import view.LoginHMS;
 
 public class FrontDeskService {
@@ -36,13 +37,13 @@ public class FrontDeskService {
         }
         return name;
     }
-    public static int calculateAmount(String SSN,String Discount,String Billing_Type,String tax,String billingadress)
+    public static int calculateAmount(String room_num,String Discount,String Billing_Type,String tax,String billingadress)
     {
         int amount =0;
-        int temphid=0;
+        int temphid=LoginHMS.hid;
         int tempPID=0;
         int tempCID=0;
-        int tempRoomNo =0;
+        int tempRoomNo =Integer.parseInt(room_num);
         String temproom_category = "";
         int tempoccupancy=0;
         int tempNightlyRate=0;
@@ -52,10 +53,11 @@ public class FrontDeskService {
         int tempServiceNum=0;
         String tempServiceType="";
         int finalDiscount=Integer.parseInt(Discount);
-     
+        System.out.println("Hotel id is:"+LoginHMS.hid
+                );
         Connection c = Database.getConnection();
         //getting people id
-        try {
+       /* try {
             PreparedStatement exe = c.prepareStatement(
                     "select pid from people where ssn=? ");
             exe.setInt(1,Integer.parseInt(SSN));
@@ -68,7 +70,8 @@ public class FrontDeskService {
             
         } catch (Exception e) {
             System.out.println(e);
-        }
+        }*/
+        //getting discount based on billing type
         try {
             PreparedStatement exe = c.prepareStatement(
                     "select discount from discount where billing_type=? ");
@@ -83,22 +86,34 @@ public class FrontDeskService {
         } catch (Exception e) {
             System.out.println(e);
         }
-        // getting checkin id
+        // getting cid
         
         try {
             PreparedStatement exe = c.prepareStatement(
-                    "select * from checkin where pid=? ");
-            exe.setInt(1,(tempPID));
+                    "select * from checkin_attributes where hotel_id=? and room_num=? ");
+            exe.setInt(1,(temphid));
+            exe.setInt(2, tempRoomNo);
             ResultSet result = exe.executeQuery();
             if(result.next()) {
             tempCID=result.getInt("cid");
+           
+            
+            }
+            System.out.println(tempCID);
+            
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        try {
+            PreparedStatement exe = c.prepareStatement(
+                    "select * from checkin where cid=? ");
+            exe.setInt(1,(tempCID));
+            ResultSet result = exe.executeQuery();
+            if(result.next()) {
+           
             tempcheckin=result.getDate("checkin");
             tempcheckout=result.getDate("checkout");
              duration  = (int)(tempcheckout.getTime() - tempcheckin.getTime())/(1000 * 60 * 60 * 24);
-             
-             
-
-
             }
             System.out.println(tempCID);
             
@@ -106,7 +121,7 @@ public class FrontDeskService {
             System.out.println(e);
         }
         //getting room number
-        try {
+       /* try {
             PreparedStatement exe = c.prepareStatement(
                     "select * from checkin_attributes where cid=?"
                     );
@@ -120,7 +135,7 @@ public class FrontDeskService {
             
         } catch (Exception e) {
             System.out.println(e);
-        }
+        }*/
         //getting room category and room occupancy 
         try {
             PreparedStatement exe = c.prepareStatement(
@@ -229,7 +244,10 @@ public class FrontDeskService {
             amount=amount+amount*Integer.parseInt(tax)/100;
             System.out.println(amount);
             c.close();
-            
+            Billing.setConnnection(Database.getConnection());
+            Billing.addBilling(tempCID,Integer.parseInt(Discount),amount,Integer.parseInt(tax),billingadress,Billing_Type);
+            Room.setConnnection(Database.getConnection());
+            Room.updateRoomAvailbility("available",tempRoomNo);
         } catch (Exception e) {
             System.out.println(e);
         }
