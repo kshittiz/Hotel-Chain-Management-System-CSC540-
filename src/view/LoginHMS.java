@@ -9,6 +9,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -20,9 +21,16 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.json.JSONObject;
+
+import dao.ContactInfo;
+import dao.ContactLinks;
 import dao.Database;
+import dao.Hotel;
 import dao.HotelPeopleLinks;
+import dao.Manager;
 import dao.People;
+import dao.Staff;
 import service.FrontDeskService;
 import service.ManagerService;
 
@@ -103,28 +111,29 @@ public class LoginHMS extends JFrame implements ActionListener {
         HotelPeopleLinks.setConnnection(conn);
         // Setting pid for logged in person in class variable for future use
         pid = People.getPIDbySSN(ssn);
-
-        if (duty.equals("Front Desk Representative")) {
-            hid = HotelPeopleLinks.getHotelIdsByPeopleId(pid).get(0);
-            user = FrontDeskService.getNameLinkedwithSSN(ssn);
-            if (user == null)
-                new Error(this);
-            else
-                new FrontDesk(user);
-        } else if (duty.equals("Manager")) {
-            hid = HotelPeopleLinks.getHotelIdsByPeopleId(pid).get(0);
-            user = ManagerService.getNameLinkedwithSSN(ssn);
-            if (user == null)
-                new Error(this);
-            else {
-                new Manager(user);
-                this.setVisible(false);
+        if (pid == 0)
+            new Error(this);
+        else {
+            if (duty.equals("Front Desk Representative")) {
+                hid = HotelPeopleLinks.getHotelIdsByPeopleId(pid).get(0);
+                user = FrontDeskService.getNameLinkedwithSSN(ssn);
+                if (user == null)
+                    new Error(this);
+                else
+                    new FrontDesk(user);
+            } else if (duty.equals("Manager")) {
+                hid = HotelPeopleLinks.getHotelIdsByPeopleId(pid).get(0);
+                user = ManagerService.getNameLinkedwithSSN(ssn);
+                if (user == null)
+                    new Error(this);
+                else
+                    new view.Manager(user);
+            } else {
+                if ((duty.toLowerCase()).equals(People.getTypeBySSN(ssn)))
+                    new Chairman(this);
+                else
+                    new Error(this);
             }
-        } else {
-            if ((duty.toLowerCase()).equals(People.getTypeBySSN(ssn)))
-                new Chairman(this);
-            else
-                new Error(this);
         }
 
         // Ending connection, Always use this function for closing connection
@@ -264,6 +273,7 @@ class Chairman extends JDialog implements ActionListener {
         panel1.add(managerAddress);
 
         submit.setBackground(Color.ORANGE);
+        submit.addActionListener(this);
         add(panel, BorderLayout.NORTH);
         add(panel1, BorderLayout.CENTER);
         add(submit, BorderLayout.SOUTH);
@@ -273,13 +283,84 @@ class Chairman extends JDialog implements ActionListener {
         submit.setIcon(submitIcon);
         submit.setBackground(Color.DARK_GRAY);
         submit.setForeground(Color.GREEN);
+        getRootPane().setDefaultButton(submit);
         setSize(500, 400);
         setLocation(login.getLocationOnScreen());
         setVisible(true);
     }
 
+    /**
+     * Creating connection and executing chairman functionality to initialize
+     * database with hotel and general manager. Using transaction mechanism
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
+        JSONObject input = new JSONObject();
+        if (!managerName.getText().isEmpty())
+            input.put("name", managerName.getText());
 
+        input.put("SSN", managerSSN.getText());
+        input.put("address", managerAddress.getText());
+        input.put("job_title", jobTitle.getText());
+        if (!managerAge.getText().isEmpty())
+            input.put("age", managerAge.getText());
+
+        input.put("department", "manager");
+        input.put("privilege", "full_access");
+
+        input.put("phone", phone.getText());
+        input.put("email", email.getText());
+        input.put("peopleType", "staff");
+
+        // building connection
+        Connection c = Database.getConnection();
+        try {
+            // starting transaction
+            c.setAutoCommit(false);
+
+            Hotel.setConnnection(c);
+            People.setConnnection(c);
+            HotelPeopleLinks.setConnnection(c);
+
+            Hotel h = new Hotel();
+            int hid = h.addHotel(hotelName.getText(), hotelAddress.getText());
+            input.put("hotel_serving", hid);
+
+            People p = new People();
+            int pid = p.addPerson(input);
+            input.put("pid", pid);
+            HotelPeopleLinks hpl = new HotelPeopleLinks();
+            hpl.addHotelPeopleLinks(hid, pid);
+
+            Staff.setConnnection(c);
+            p = new Staff();
+            p.addPerson(input);
+            Manager.setConnnection(c);
+            p = new Manager();
+            p.addPerson(input);
+
+            // setting contact info of hotel and manager
+            ContactInfo.setConnnection(c);
+            ContactLinks.setConnnection(c);
+            ContactInfo cInfo = new ContactInfo();
+            ContactLinks clink = new ContactLinks();
+            int contact_id_hotel = cInfo.addContactInfo(hotelPhone.getText(), hotelEmail.getText());
+            clink.CreateContactLinks(hid, contact_id_hotel, "hotel");
+            int contact_id_people = cInfo.addContactInfo(phone.getText(), email.getText());
+            clink.CreateContactLinks(pid, contact_id_people, "people");
+            // committing and ending transaction
+            c.commit();
+
+        } catch (Exception ex) {
+            System.out.println(ex);
+            try {
+                c.rollback();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+        } finally {
+            Database.endConnnection(c);
+        }
+        this.dispose();
     }
 }
