@@ -128,7 +128,8 @@ public class ManagerService {
      * @param type
      * @return boolean
      */
-    public boolean addPersonalContactInfo(int id, String phone_number, String email, String type) {
+    public static boolean addContactInfo(String id, String phone_number, String email,
+            String type) {
         Connection c = Database.getConnection();
         try {
             // staring a transaction to add values in contact table
@@ -139,9 +140,9 @@ public class ManagerService {
             ContactLinks.setConnnection(c);
             ContactLinks cl = new ContactLinks();
             if ("people".equals(type))
-                cl.CreateContactLinks(id, contact_id, "people");
+                cl.CreateContactLinks(Integer.parseInt(id), contact_id, "people");
             else
-                cl.CreateContactLinks(id, contact_id, "hotel");
+                cl.CreateContactLinks(Integer.parseInt(id), contact_id, "hotel");
 
             // Committing transaction
             c.commit();
@@ -357,6 +358,21 @@ public class ManagerService {
         return data;
     }
 
+    public static Vector<Vector<Object>> getContactDetails(String type, String id) {
+        Connection c = Database.getConnection();
+        Vector<Vector<Object>> data;
+        try {
+            ContactInfo.setConnnection(c);
+            ContactInfo ci = new ContactInfo();
+            data = ci.getContactDetails(Integer.parseInt(id), type);
+            Database.endConnnection(c);
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+        return data;
+    }
+
     public static boolean deleteStaff(HashMap<String, String> values) {
         boolean result = false;
         Connection c = Database.getConnection();
@@ -421,4 +437,20 @@ public class ManagerService {
         Database.endConnnection(c);
         return result;
     }
+
+    public static boolean deleteContact(String id) {
+        boolean result = false;
+        Connection c = Database.getConnection();
+        try {
+            ContactInfo.setConnnection(c);
+            ContactInfo ci = new ContactInfo();
+            result = ci.deleteContact(Integer.parseInt(id));
+            Database.endConnnection(c);
+        } catch (Exception e) {
+            System.out.println(e);
+            result = false;
+        }
+        return result;
+    }
+
 }
