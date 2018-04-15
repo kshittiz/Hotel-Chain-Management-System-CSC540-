@@ -49,65 +49,61 @@ public class FrontDeskService {
 
     public static int calculateAmount(String room_num, String Discount, String Billing_Type,
             String tax, String billingadress) throws NumberFormatException, SQLException {
-        //Initializing the connection
+        // Initializing the connection
         Connection c = Database.getConnection();
-        
+
         try {
-        //Initializing auto commit for transaction
-        c.setAutoCommit(false);
-        
-        //Initializing variables from input data
-        int amount = 0;
-        int temphid = LoginHMS.hid;
-        int tempRoomNo = Integer.parseInt(room_num);
-        int finalDiscount = Integer.parseInt(Discount);
-       
-        
-       
-       
-        
-        //Setting the variable values obtained from different classes
-        Billing.setConnnection(c);
-        int intialDiscount=Billing.discountOnBillType(Billing_Type); //Get discount based on payment method
-        CheckInAttributes.setConnnection(c);
-        int tempCID= CheckInAttributes.cidUsingHidRoom_Num(temphid,tempRoomNo ); //Get checkInAttributes
-        CheckIn.setConnnection(c);
-        int duration=CheckIn.durationUsingCID(tempCID);//Get total duration spend by customer in particular room
-        Room.setConnnection(c);
-        String temproom_category = Room.roomCat(tempRoomNo, temphid);//Get room_category
-        int tempoccupancy = Room.roomOccupancy(tempRoomNo, temphid);//Get room occupancy
-        RoomCategory.setConnnection(c);
-        int tempNightlyRate = RoomCategory.nightlyRate(temphid,temproom_category,tempoccupancy);//Get nightly rate for the room at the given hotel
-        RoomServiceLinks.setConnnection(c);
-        int tempServiceNum = RoomServiceLinks.getServiceNumber(temphid, tempRoomNo);
-        Service.setConnnection(c);
-        String tempServiceType = Service.getServiceType(temphid, tempServiceNum); 
-        ServiceType.setConnnection(c);
-        int serviceAmount =ServiceType.getServiceAmount(tempServiceType);
+            // Initializing auto commit for transaction
+            c.setAutoCommit(false);
 
-        
-        //Calculating the total amount
-        amount = amount + tempNightlyRate * duration;
-        amount=amount+serviceAmount;
-        amount = amount - amount * ((finalDiscount + intialDiscount) / 100);
-        amount = amount + amount * Integer.parseInt(tax) / 100;
-        
-        
-        //Makes changes in databases affected by room checkout
-        Billing.setConnnection(c);
-        Billing.addBilling(tempCID, Integer.parseInt(Discount), amount, Integer.parseInt(tax),
-                billingadress, Billing_Type);
-        Room.setConnnection(c);
-        Room.updateRoomAvailbility("available", tempRoomNo);
-        CheckIn.setConnnection(c);
-        CheckIn.updateCheckOutTime(tempCID);
+            // Initializing variables from input data
+            int amount = 0;
+            int temphid = LoginHMS.hid;
+            int tempRoomNo = Integer.parseInt(room_num);
+            int finalDiscount = Integer.parseInt(Discount);
 
-        // Committing transaction
-        c.commit();
-        
-        
-        
-        return amount;
+            // Setting the variable values obtained from different classes
+            Billing.setConnnection(c);
+            int intialDiscount = Billing.discountOnBillType(Billing_Type); // Get discount based on
+                                                                           // payment method
+            CheckInAttributes.setConnnection(c);
+            int tempCID = CheckInAttributes.cidUsingHidRoom_Num(temphid, tempRoomNo); // Get
+                                                                                      // checkInAttributes
+            CheckIn.setConnnection(c);
+            int duration = CheckIn.durationUsingCID(tempCID);// Get total duration spend by customer
+                                                             // in particular room
+            Room.setConnnection(c);
+            String temproom_category = Room.roomCat(tempRoomNo, temphid);// Get room_category
+            int tempoccupancy = Room.roomOccupancy(tempRoomNo, temphid);// Get room occupancy
+            RoomCategory.setConnnection(c);
+            int tempNightlyRate = RoomCategory.nightlyRate(temphid, temproom_category,
+                    tempoccupancy);// Get nightly rate for the room at the given hotel
+            RoomServiceLinks.setConnnection(c);
+            int tempServiceNum = RoomServiceLinks.getServiceNumber(temphid, tempRoomNo);
+            Service.setConnnection(c);
+            String tempServiceType = Service.getServiceType(temphid, tempServiceNum);
+            ServiceType.setConnnection(c);
+            int serviceAmount = ServiceType.getServiceAmount(tempServiceType);
+
+            // Calculating the total amount
+            amount = amount + tempNightlyRate * duration;
+            amount = amount + serviceAmount;
+            amount = amount - amount * ((finalDiscount + intialDiscount) / 100);
+            amount = amount + amount * Integer.parseInt(tax) / 100;
+
+            // Makes changes in databases affected by room checkout
+            Billing.setConnnection(c);
+            Billing.addBilling(tempCID, Integer.parseInt(Discount), amount, Integer.parseInt(tax),
+                    billingadress, Billing_Type);
+            Room.setConnnection(c);
+            Room.updateRoomAvailbility("available", tempRoomNo);
+            CheckIn.setConnnection(c);
+            CheckIn.updateCheckOutTime(tempCID);
+
+            // Committing transaction
+            c.commit();
+
+            return amount;
         } catch (Exception e) {
             try {
                 c.rollback();
@@ -120,8 +116,8 @@ public class FrontDeskService {
             Database.endConnnection(c);
         }
 
-    
     }
+
     public static boolean checkIfPersonPresent(String ssn) {
         int count = 0;
         Connection c = Database.getConnection();
