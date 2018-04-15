@@ -49,16 +49,21 @@ public class FrontDeskService {
 
     public static int calculateAmount(String room_num, String Discount, String Billing_Type,
             String tax, String billingadress) throws NumberFormatException, SQLException {
+        //Initializing the connection
+        Connection c = Database.getConnection();
         
-        //Initialzing variables from input data
+        try {
+        //Initializing auto commit for transaction
+        c.setAutoCommit(false);
+        
+        //Initializing variables from input data
         int amount = 0;
         int temphid = LoginHMS.hid;
         int tempRoomNo = Integer.parseInt(room_num);
         int finalDiscount = Integer.parseInt(Discount);
        
         
-        //Initializing the connection
-        Connection c = Database.getConnection();
+       
        
         
         //Setting the variable values obtained from different classes
@@ -97,12 +102,23 @@ public class FrontDeskService {
         CheckIn.setConnnection(c);
         CheckIn.updateCheckOutTime(tempCID);
 
-
-   
-        //Closing the database connection
-        c.close();
+        // Committing transaction
+        c.commit();
+        
+        
         
         return amount;
+        } catch (Exception e) {
+            try {
+                c.rollback();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+            e.printStackTrace();
+            return 0;
+        } finally {
+            Database.endConnnection(c);
+        }
 
     
     }
