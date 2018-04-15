@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -27,7 +26,6 @@ import dao.RoomCategory;
 import dao.Service;
 import dao.ServiceType;
 import dao.Staff;
-
 import view.LoginHMS;
 
 public class ManagerService {
@@ -450,8 +448,8 @@ public class ManagerService {
     public static boolean deleteStaff(HashMap<String, String> values) {
         boolean result = false;
         Connection c = Database.getConnection();
-        People.setConnnection(c);
-        People p = new People();
+        Staff.setConnnection(c);
+        Staff p = new Staff();
         int pid = Integer.parseInt(values.get("ID (*)"));
         if (pid != LoginHMS.pid)
             result = p.deletePerson(pid);
