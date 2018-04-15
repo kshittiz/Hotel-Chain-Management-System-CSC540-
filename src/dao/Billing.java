@@ -30,16 +30,28 @@ public class Billing {
         exe.setString(6, billing_type);
 
         exe.executeQuery();
-        c.close();
+        
         ResultSet result = exe.getGeneratedKeys();
         if (result.next())
             invoice_id = result.getInt(1);
 
         return invoice_id;
     }
-    public static void main(String[] args) throws SQLException
-    {
-        Billing.addBilling(2, 2000, 5, 5, "2713 Brigadoon Drive", "cash");
+    public static int discountOnBillType(String Billing_Type) {
+        try {
+            PreparedStatement exe = c
+                    .prepareStatement("select discount from discount where billing_type=? ");
+            exe.setString(1, Billing_Type);
+            ResultSet result = exe.executeQuery();
+            if (result.next()) {
+                return result.getInt("discount");
+
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return 0;
     }
    
 

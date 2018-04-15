@@ -136,4 +136,31 @@ public class RoomCategory {
         }
         return true;
     }
+    public static int nightlyRate(int temphid,String temproom_category,int tempoccupancy)
+    {
+        try
+
+        {
+            PreparedStatement exe = c.prepareStatement(
+                    "select nightly_rate from room_category where hotel_id =? and room_category=? and occupancy =?");
+            exe.setInt(1, (temphid));
+            exe.setString(2, (temproom_category));
+            exe.setInt(3, tempoccupancy);
+           
+            ResultSet result = exe.executeQuery();
+            if (result.next()) {
+                return result.getInt("nightly_rate");
+
+            }
+           
+
+            
+
+        }catch(
+        Exception e)
+        {
+            System.out.println(e);
+        }
+        return 0;
+    }
 }

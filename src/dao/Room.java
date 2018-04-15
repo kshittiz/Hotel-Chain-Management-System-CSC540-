@@ -195,5 +195,44 @@ public class Room {
         }
         return true;
     }
+    public static String roomCat(int tempRoomNo,int temphid) {
+    try {
+        PreparedStatement exe = c
+                .prepareStatement("select * from room where room_num=? and hotel_id=?");
+        exe.setInt(1, (tempRoomNo));
+        exe.setInt(2, (temphid));
+     
+        ResultSet result = exe.executeQuery();
+        if (result.next()) {
+            return result.getString("room_category");
+           // tempoccupancy = result.getInt("occupancy");
+        }
+        
+
+    } catch (Exception e) {
+        System.out.println(e);
+    
+    }
+    return "";
+}
+    public static int roomOccupancy(int tempRoomNo,int temphid) {
+        try {
+            PreparedStatement exe = c
+                    .prepareStatement("select * from room where room_num=? and hotel_id=?");
+            exe.setInt(1, (tempRoomNo));
+            exe.setInt(2, (temphid));
+         
+            ResultSet result = exe.executeQuery();
+            if (result.next()) {
+               return result.getInt("occupancy");
+            }
+            
+
+        } catch (Exception e) {
+            System.out.println(e);
+        
+        }
+        return 0;
+    }
     
 }

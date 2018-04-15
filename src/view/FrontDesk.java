@@ -9,6 +9,8 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -69,10 +71,7 @@ public class FrontDesk extends JFrame implements ActionListener {
                 .getScaledInstance(30, 30, Image.SCALE_SMOOTH));
         tabbedPane.addTab("Check-Out Customer", checkoutIcon, checkout);
 
-        billing = new JPanel(new BorderLayout());
-        ImageIcon billingIcon = new ImageIcon(new ImageIcon("images/billing.png").getImage()
-                .getScaledInstance(30, 30, Image.SCALE_SMOOTH));
-        tabbedPane.addTab("Generate Bills", billingIcon, billing);
+
 
         // add(tabbedPane);
         add(tabbedPane, BorderLayout.CENTER);
@@ -186,7 +185,16 @@ public class FrontDesk extends JFrame implements ActionListener {
         if(action.getSource()==checkOut) {
            
             
-           int amount= FrontDeskService.calculateAmount(roomT.getText(),extraDiscountText.getText(),billingTypeText.getText(),taxText.getText(),billingAdressText.getText());
+           int amount=0;
+        try {
+            amount = FrontDeskService.calculateAmount(roomT.getText(),extraDiscountText.getText(),billingTypeText.getText(),taxText.getText(),billingAdressText.getText());
+        } catch (NumberFormatException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
            new MyDialog("The customer has successfully checked out,The total amount is" + Integer.toString(amount) );
         }
 

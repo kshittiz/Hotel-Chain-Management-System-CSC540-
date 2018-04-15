@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
 
 public class ServiceType {
@@ -85,4 +86,34 @@ public class ServiceType {
         }
         return true;
     }
-}
+    public static int getServiceAmount(String tempServiceType)
+    {
+        try
+
+        {
+            PreparedStatement exe = c.prepareStatement("select price from service_type where type=?");
+            exe.setString(1, (tempServiceType));
+
+            List<Integer> tempList = new ArrayList<Integer>();
+
+            ResultSet result = exe.executeQuery();
+            if (result.next()) {
+                tempList.add(result.getInt("price"));
+
+            }
+            int amount=0;
+            for (int i = 0; i < tempList.size(); i++) {
+                amount = amount + tempList.get(i);
+            }
+            
+    
+    }catch(
+            Exception e)
+            {
+                System.out.println(e);
+            }
+
+            return 0;
+            }
+    }
+

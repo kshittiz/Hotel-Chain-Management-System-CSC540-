@@ -76,5 +76,28 @@ public class Service {
         }
         return true;
     }
+public static String getServiceType(int temphid,int tempServiceNum) {
+    try
+    {
+        PreparedStatement exe = c
+                .prepareStatement("select type from service where hotel_id=? and service_num=?");
+        exe.setInt(1, (temphid));
+        exe.setInt(2, (tempServiceNum));
 
+        // System.out.println(temphid);
+        ResultSet result = exe.executeQuery();
+        if (result.next()) {
+           return result.getString("type");
+
+        }
+
+      
+
+    }catch(
+    Exception e)
+    {
+        System.out.println(e);
+    }
+    return "";
+}
 }

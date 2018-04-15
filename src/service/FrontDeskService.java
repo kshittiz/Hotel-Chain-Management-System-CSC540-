@@ -4,6 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -11,6 +14,8 @@ import java.util.List;
 import org.json.JSONObject;
 
 import dao.Billing;
+import dao.CheckIn;
+import dao.CheckInAttributes;
 import dao.ContactInfo;
 import dao.ContactLinks;
 import dao.Customer;
@@ -18,6 +23,10 @@ import dao.Database;
 import dao.HotelPeopleLinks;
 import dao.People;
 import dao.Room;
+import dao.RoomCategory;
+import dao.RoomServiceLinks;
+import dao.Service;
+import dao.ServiceType;
 import view.LoginHMS;
 
 public class FrontDeskService {
@@ -37,224 +46,66 @@ public class FrontDeskService {
         }
         return name;
     }
-    public static int calculateAmount(String room_num,String Discount,String Billing_Type,String tax,String billingadress)
-    {
-        int amount =0;
-        int temphid=LoginHMS.hid;
-        int tempPID=0;
-        int tempCID=0;
-        int tempRoomNo =Integer.parseInt(room_num);
-        String temproom_category = "";
-        int tempoccupancy=0;
-        int tempNightlyRate=0;
-        Date tempcheckin;
-        Date tempcheckout;
-        long duration=0;
-        int tempServiceNum=0;
-        String tempServiceType="";
-        int finalDiscount=Integer.parseInt(Discount);
-        System.out.println("Hotel id is:"+LoginHMS.hid
-                );
-        Connection c = Database.getConnection();
-        //getting people id
-       /* try {
-            PreparedStatement exe = c.prepareStatement(
-                    "select pid from people where ssn=? ");
-            exe.setInt(1,Integer.parseInt(SSN));
-            ResultSet result = exe.executeQuery();
-            if(result.next()) {
-            tempPID=result.getInt("pid");
-           
-            }
-           
-            
-        } catch (Exception e) {
-            System.out.println(e);
-        }*/
-        //getting discount based on billing type
-        try {
-            PreparedStatement exe = c.prepareStatement(
-                    "select discount from discount where billing_type=? ");
-            exe.setString(1,Billing_Type);
-            ResultSet result = exe.executeQuery();
-            if(result.next()) {
-            finalDiscount=result.getInt("discount");
-           
-            }
-           
-            
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        // getting cid
-        
-        try {
-            PreparedStatement exe = c.prepareStatement(
-                    "select * from checkin_attributes where hotel_id=? and room_num=? ");
-            exe.setInt(1,(temphid));
-            exe.setInt(2, tempRoomNo);
-            ResultSet result = exe.executeQuery();
-            if(result.next()) {
-            tempCID=result.getInt("cid");
-           
-            
-            }
-            System.out.println(tempCID);
-            
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        try {
-            PreparedStatement exe = c.prepareStatement(
-                    "select * from checkin where cid=? ");
-            exe.setInt(1,(tempCID));
-            ResultSet result = exe.executeQuery();
-            if(result.next()) {
-           
-            tempcheckin=result.getDate("checkin");
-            tempcheckout=result.getDate("checkout");
-             duration  = (int)(tempcheckout.getTime() - tempcheckin.getTime())/(1000 * 60 * 60 * 24);
-            }
-            System.out.println(tempCID);
-            
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        //getting room number
-       /* try {
-            PreparedStatement exe = c.prepareStatement(
-                    "select * from checkin_attributes where cid=?"
-                    );
-            exe.setInt(1,(tempCID));
-            ResultSet result = exe.executeQuery();
-            if(result.next()) {
-            tempRoomNo=result.getInt("room_num");
-            temphid =result.getInt("hotel_id");
-            }
-            System.out.println(tempRoomNo);
-            
-        } catch (Exception e) {
-            System.out.println(e);
-        }*/
-        //getting room category and room occupancy 
-        try {
-            PreparedStatement exe = c.prepareStatement(
-                    "select * from room where room_num=? and hotel_id=?"
-                    );
-            exe.setInt(1,(tempRoomNo));
-            exe.setInt(2,(temphid));
-            //System.out.println(temphid);
-            ResultSet result = exe.executeQuery();
-            if(result.next()) {
-            temproom_category=result.getString("room_category");
-            tempoccupancy=result.getInt("occupancy");
-            }
-            System.out.println(temproom_category);
-            System.out.println(tempoccupancy);
-            
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        //Getting nightly rate
-        try {
-            PreparedStatement exe = c.prepareStatement(
-                    "select nightly_rate from room_category where hotel_id =? and room_category=? and occupancy =?"
-                   );
-            exe.setInt(1,(temphid));
-            exe.setString(2,(temproom_category));
-            exe.setInt(3,tempoccupancy);
-            //System.out.println(temphid);
-            ResultSet result = exe.executeQuery();
-            if(result.next()) {
-            tempNightlyRate=result.getInt("nightly_rate");
-        
-            }
-            amount =(int) (amount+tempNightlyRate*duration);
-            
-            System.out.println(tempNightlyRate);
-            System.out.println(amount);
-            
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        //Getting service_num
-        try {
-            PreparedStatement exe = c.prepareStatement(
-                    "select service_num from room_service_links where hotel_id_room=? and room_num=?"
-                   );
-            exe.setInt(1,(temphid));
-            exe.setInt(2,(tempRoomNo));
-           
-            //System.out.println(temphid);
-            ResultSet result = exe.executeQuery();
-            if(result.next()) {
-            tempServiceNum=result.getInt("service_num");
-        
-            }
-          
-            
-            System.out.println(tempServiceNum);
-          
-            
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        //Getting service_type
-        try {
-            PreparedStatement exe = c.prepareStatement(
-                    "select type from service where hotel_id=? and service_num=?"
-                   );
-            exe.setInt(1,(temphid));
-            exe.setInt(2,(tempServiceNum));
-           
-            //System.out.println(temphid);
-            ResultSet result = exe.executeQuery();
-            if(result.next()) {
-            tempServiceType=result.getString("type");
-        
-            }
-          
-            
-            System.out.println(tempServiceType);
-          
-            
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        //getting service price
-        try {
-            PreparedStatement exe = c.prepareStatement(
-                    "select price from service_type where type=?"
-                   );
-            exe.setString(1,(tempServiceType));
-            
-           List<Integer> tempList = new ArrayList<Integer>();
-         
-            ResultSet result = exe.executeQuery();
-            if(result.next()) {
-            tempList.add(result.getInt("price"));
-            
-        
-            }
-            for(int i=0;i<tempList.size();i++)
-            {
-          amount=amount+tempList.get(i);
-            }
-            amount =amount -amount*(finalDiscount/100);
-            amount=amount+amount*Integer.parseInt(tax)/100;
-            System.out.println(amount);
-            c.close();
-            Billing.setConnnection(Database.getConnection());
-            Billing.addBilling(tempCID,Integer.parseInt(Discount),amount,Integer.parseInt(tax),billingadress,Billing_Type);
-            Room.setConnnection(Database.getConnection());
-            Room.updateRoomAvailbility("available",tempRoomNo);
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-              
-        return amount;
-    }
 
+    public static int calculateAmount(String room_num, String Discount, String Billing_Type,
+            String tax, String billingadress) throws NumberFormatException, SQLException {
+        
+        //Initialzing variables from input data
+        int amount = 0;
+        int temphid = LoginHMS.hid;
+        int tempRoomNo = Integer.parseInt(room_num);
+        int finalDiscount = Integer.parseInt(Discount);
+       
+        
+        //Initializing the connection
+        Connection c = Database.getConnection();
+       
+        
+        //Setting the variable values obtained from different classes
+        Billing.setConnnection(c);
+        int intialDiscount=Billing.discountOnBillType(Billing_Type); //Get discount based on payment method
+        CheckInAttributes.setConnnection(c);
+        int tempCID= CheckInAttributes.cidUsingHidRoom_Num(temphid,tempRoomNo ); //Get checkInAttributes
+        CheckIn.setConnnection(c);
+        int duration=CheckIn.durationUsingCID(tempCID);//Get total duration spend by customer in particular room
+        Room.setConnnection(c);
+        String temproom_category = Room.roomCat(tempRoomNo, temphid);//Get room_category
+        int tempoccupancy = Room.roomOccupancy(tempRoomNo, temphid);//Get room occupancy
+        RoomCategory.setConnnection(c);
+        int tempNightlyRate = RoomCategory.nightlyRate(temphid,temproom_category,tempoccupancy);//Get nightly rate for the room at the given hotel
+        RoomServiceLinks.setConnnection(c);
+        int tempServiceNum = RoomServiceLinks.getServiceNumber(temphid, tempRoomNo);
+        Service.setConnnection(c);
+        String tempServiceType = Service.getServiceType(temphid, tempServiceNum); 
+        ServiceType.setConnnection(c);
+        int serviceAmount =ServiceType.getServiceAmount(tempServiceType);
+
+        
+        //Calculating the total amount
+        amount = amount + tempNightlyRate * duration;
+        amount=amount+serviceAmount;
+        amount = amount - amount * ((finalDiscount + intialDiscount) / 100);
+        amount = amount + amount * Integer.parseInt(tax) / 100;
+        System.out.println("1");
+        
+        //Makes changes in databases affected by room checkout
+        Billing.setConnnection(c);
+        Billing.addBilling(tempCID, Integer.parseInt(Discount), amount, Integer.parseInt(tax),
+                billingadress, Billing_Type);
+        Room.setConnnection(c);
+        Room.updateRoomAvailbility("available", tempRoomNo);
+        CheckIn.setConnnection(c);
+        CheckIn.updateCheckOutTime(tempCID);
+
+
+   
+        //Closing the database connection
+        c.close();
+        
+        return amount;
+
+    
+    }
     public static boolean checkIfPersonPresent(String ssn) {
         int count = 0;
         Connection c = Database.getConnection();
