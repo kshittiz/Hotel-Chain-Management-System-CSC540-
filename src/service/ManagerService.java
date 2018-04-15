@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -382,6 +383,15 @@ public class ManagerService {
         return data;
     }
 
+    public static double getRevenue(Timestamp startDate, Timestamp endDate) {
+        Connection c = Database.getConnection();
+        Hotel.setConnnection(c);
+        Hotel h = new Hotel();
+        double revenue = h.getRevenue(startDate, endDate, LoginHMS.hid);
+        Database.endConnnection(c);
+        return revenue;
+    }
+
     // UPDATE OPERATIONS
     public static boolean updateStaff(HashMap<String, String> values, int pid) {
         Connection c = Database.getConnection();
@@ -523,5 +533,15 @@ public class ManagerService {
             result = false;
         }
         return result;
+    }
+
+    /**
+     * Helper method to set Room timestamp instance variables for occupancy
+     * query
+     * 
+     */
+    public static void setRoomTimeStamp(Timestamp start, Timestamp end) {
+        Room.start = start;
+        Room.end = end;
     }
 }

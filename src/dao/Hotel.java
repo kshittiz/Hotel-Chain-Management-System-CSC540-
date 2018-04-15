@@ -2,16 +2,16 @@ package dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Vector;
 
 import view.LoginHMS;
-
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 
 public class Hotel {
     private static Connection c = null;
@@ -94,5 +94,27 @@ public class Hotel {
         }
 
         return data;
+    }
+
+    public double getRevenue(Timestamp startDate, Timestamp endDate, int hid) {
+        double revenue = 0;
+        try {
+            PreparedStatement exe = null;
+            exe = c.prepareStatement(
+                    "SELECT SUM(amount) from checkin natural join hotel_checkin_links natural join billing where hotel_id ="
+                            + hid + " and checkout BETWEEN ? and ?;");
+
+            exe.setTimestamp(1, startDate);
+            exe.setTimestamp(2, endDate);
+            ResultSet result = exe.executeQuery();
+            // Data of the table
+            if (result.next())
+                revenue = result.getDouble(1);
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return revenue;
+
     }
 }
