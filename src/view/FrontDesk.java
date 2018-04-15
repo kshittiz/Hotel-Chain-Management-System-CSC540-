@@ -13,6 +13,7 @@ import java.sql.SQLException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -30,7 +31,7 @@ public class FrontDesk extends JFrame implements ActionListener {
      */
     private static final long serialVersionUID = 1L;
     JTabbedPane tabbedPane;
-    JPanel register, checkin, checkout, billing, regpanel,billingpanel, end,end1;
+    JPanel register, checkin, checkout, billing, regpanel, billingpanel, end, end1;
     JLabel ssnL;
     JTextField ssnT;
     JLabel roomL;
@@ -39,13 +40,13 @@ public class FrontDesk extends JFrame implements ActionListener {
     JTextField extraDiscountText;
     JLabel taxLabel;
     JTextField taxText;
-    JLabel billingAdressLabel ;
-    JTextField billingAdressText ;
+    JLabel billingAdressLabel;
+    JTextField billingAdressText;
     JLabel billingTypeLabel;
     JTextField billingTypeText;
-    
-    
-    JButton check, addPerson,checkOut;
+    JComboBox<String> payment;
+
+    JButton check, addPerson, checkOut;
     // static JLabel opLabel;
 
     public FrontDesk(String name) {
@@ -70,8 +71,6 @@ public class FrontDesk extends JFrame implements ActionListener {
         ImageIcon checkoutIcon = new ImageIcon(new ImageIcon("images/checkout.png").getImage()
                 .getScaledInstance(30, 30, Image.SCALE_SMOOTH));
         tabbedPane.addTab("Check-Out Customer", checkoutIcon, checkout);
-
-
 
         // add(tabbedPane);
         add(tabbedPane, BorderLayout.CENTER);
@@ -99,14 +98,9 @@ public class FrontDesk extends JFrame implements ActionListener {
 
         // register.add(end, BorderLayout.SOUTH);
         register.add(new JScrollPane(end), BorderLayout.SOUTH);
-        
-        
-        
-        
-        //UI for billing
-        
-        
-        
+
+        // UI for billing
+
         // UI for check-out
         billingpanel = new JPanel(new GridLayout(12, 2, 0, 3));
         roomL = new JLabel("Enter the room number to be checked out");
@@ -114,46 +108,41 @@ public class FrontDesk extends JFrame implements ActionListener {
 
         billingpanel.add(roomL);
         billingpanel.add(roomT);
-        
-        extraDiscountLabel=new JLabel("Enter extra discount");
+
+        extraDiscountLabel = new JLabel("Enter extra discount");
         extraDiscountText = new JTextField();
-        
+
         billingpanel.add(extraDiscountLabel);
         billingpanel.add(extraDiscountText);
-        
-        taxLabel = new JLabel("Enter tax to be levied"); 
+
+        taxLabel = new JLabel("Enter tax to be levied");
         taxText = new JTextField();
-        
+
         billingpanel.add(taxLabel);
         billingpanel.add(taxText);
-        
-        billingAdressLabel = new JLabel("Enter the adress"); 
+
+        billingAdressLabel = new JLabel("Enter the adress");
         billingAdressText = new JTextField();
-        
+
         billingpanel.add(billingAdressLabel);
         billingpanel.add(billingAdressText);
-        
-        billingTypeLabel = new JLabel("Enter the billing type"); 
-        billingTypeText = new JTextField();
+
+        billingTypeLabel = new JLabel("Enter the billing type");
+        String[] paymentTypes = {"cash","credit card","debit card","Hotel cc"}; //adding billing types to array
+        payment = new JComboBox<String>(paymentTypes); //creating a dropdown menu for billing types
+        payment.setSelectedIndex(0);
         
         billingpanel.add(billingTypeLabel);
-        billingpanel.add(billingTypeText);
-     
+        billingpanel.add(payment);
+        
         checkout.add(billingpanel);
+        
         end1 = new JPanel(new GridLayout(2, 1));
 
         checkOut = new JButton("Check Out and Bil the Customer");
         end1.add(checkOut);
         checkOut.addActionListener(this);
         checkout.add(new JScrollPane(end1), BorderLayout.SOUTH);
-
-        
-        
-        
-        
-        
-        
-        
 
         // UI for check-in
 
@@ -182,20 +171,32 @@ public class FrontDesk extends JFrame implements ActionListener {
         if (action.getSource() == addPerson) {
             new NewCustomer(this, ssnT.getText());
         }
-        if(action.getSource()==checkOut) {
+         
+
+        // action to be perfomed when customer checks out
+        if (action.getSource() == checkOut) {
+            int amount = 0;
+            String paymentTypeTemp =(String) payment.getSelectedItem();
            
-            
-           int amount=0;
-        try {
-            amount = FrontDeskService.calculateAmount(roomT.getText(),extraDiscountText.getText(),billingTypeText.getText(),taxText.getText(),billingAdressText.getText());
-        } catch (NumberFormatException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-           new MyDialog("The customer has successfully checked out,The total amount is" + Integer.toString(amount) );
+            try {
+                amount = FrontDeskService.calculateAmount(roomT.getText(),
+                        extraDiscountText.getText(),paymentTypeTemp,taxText.getText(),
+                        billingAdressText.getText());
+                if (amount > 0) {
+                    new MyDialog("The customer has successfully checked out,The total amount is "
+                            + Integer.toString(amount));
+                } else {
+                    new MyDialog("The room needs to be corrected");
+                }
+            } catch (NumberFormatException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+
+            }
+
         }
 
     }
@@ -211,7 +212,7 @@ class MyDialog extends JDialog {
         error.setForeground(Color.RED);
         add(error, BorderLayout.CENTER);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        setSize(2500, 1000);
+        setSize(1250, 500);
         // setLocation(login.getLocationOnScreen());
         setVisible(true);
     }

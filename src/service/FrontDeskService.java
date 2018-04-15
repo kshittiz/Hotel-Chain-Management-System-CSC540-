@@ -91,7 +91,7 @@ public class FrontDeskService {
         amount=amount+serviceAmount;
         amount = amount - amount * ((finalDiscount + intialDiscount) / 100);
         amount = amount + amount * Integer.parseInt(tax) / 100;
-        System.out.println("1");
+        
         
         //Makes changes in databases affected by room checkout
         Billing.setConnnection(c);
