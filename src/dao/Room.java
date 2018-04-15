@@ -40,7 +40,23 @@ public class Room {
     public static void setConnnection(Connection conn) {
         c = conn;
     }
+    public static boolean updateRoomAvailbility(String newAvailability,int room_num) {
+        try {
+            PreparedStatement exe = c.prepareStatement(
+                    "Update room set availability=? where room_num=?");
+                  
+            exe.setString(1, newAvailability);
+            exe.setInt(2,room_num);
+            exe.executeQuery();
 
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+        return true;
+        
+        
+    }
     public boolean createRoom(int room_num, int hotel_id, String room_category, int occupancy,
             String availability) {
 
@@ -201,4 +217,44 @@ public class Room {
         }
         return true;
     }
+    public static String roomCat(int tempRoomNo,int temphid) {
+    try {
+        PreparedStatement exe = c
+                .prepareStatement("select * from room where room_num=? and hotel_id=?");
+        exe.setInt(1, (tempRoomNo));
+        exe.setInt(2, (temphid));
+     
+        ResultSet result = exe.executeQuery();
+        if (result.next()) {
+            return result.getString("room_category");
+           // tempoccupancy = result.getInt("occupancy");
+        }
+        
+
+    } catch (Exception e) {
+        System.out.println(e);
+    
+    }
+    return "";
+}
+    public static int roomOccupancy(int tempRoomNo,int temphid) {
+        try {
+            PreparedStatement exe = c
+                    .prepareStatement("select * from room where room_num=? and hotel_id=?");
+            exe.setInt(1, (tempRoomNo));
+            exe.setInt(2, (temphid));
+         
+            ResultSet result = exe.executeQuery();
+            if (result.next()) {
+               return result.getInt("occupancy");
+            }
+            
+
+        } catch (Exception e) {
+            System.out.println(e);
+        
+        }
+        return 0;
+    }
+    
 }
