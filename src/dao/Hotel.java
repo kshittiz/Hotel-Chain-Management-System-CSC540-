@@ -4,7 +4,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Vector;
+
+import view.LoginHMS;
+
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -49,23 +53,17 @@ public class Hotel {
         return true;
     }
 
-    public boolean updateHotel(int hotel_id, String hotel_name, String hotel_address) {
+    public void updateHotel(HashMap<String, String> values) throws Exception {
+        String query = "UPDATE hotel set";
+        if (values.containsKey("hotel_name"))
+            query = query + " hotel_name='" + values.get("hotel_name").toString() + "',";
+        if (values.containsKey("hotel_address"))
+            query = query + " hotel_address='" + values.get("hotel_address").toString() + "',";
 
-        try {
-            PreparedStatement exe = c.prepareStatement(
-                    "update hotel set hotel_name=?,hotel_address=? where hotel_id =?",
-                    Statement.RETURN_GENERATED_KEYS);
-            exe.setString(1, hotel_name);
-            exe.setString(2, hotel_address);
-            exe.setInt(3, hotel_id);
-
-            exe.executeQuery();
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return false;
-        }
-        return true;
+        String finalQuery = query.subSequence(0, query.length() - 1).toString();
+        finalQuery = finalQuery + " where hotel_id =" + LoginHMS.hid;
+        Statement exe = c.createStatement();
+        exe.executeQuery(finalQuery);
     }
 
     public Vector<Vector<Object>> getHotelDetails(int hid) {
