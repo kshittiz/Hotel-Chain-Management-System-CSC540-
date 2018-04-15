@@ -76,5 +76,49 @@ public class Service {
         }
         return true;
     }
+    
+    public int getservicenum(String service, int hid)
+    {
+    	int service_num=0;
+    	try {
+            PreparedStatement exe = c.prepareStatement(
+                    "SELECT service_num from service where type=? and hotel_id=?");
+            exe.setString(1, service);
+            exe.setInt(2, hid);
+            
+            
+            //exe.executeQuery();
+            //System.out.println("hid"+hid+"service"+service);
+
+            ResultSet result = exe.executeQuery();
+            if (result.next())
+            	service_num = result.getInt(1);
+
+            //System.out.println("service num"+service_num);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    	return service_num;
+    }
+    public int getStaffServing(int hid,String title)
+    {
+    	int pid=0;
+    	try {
+            PreparedStatement exe = c.prepareStatement(
+                    "SELECT pid from staff where hotel_serving=? and department=?");
+            exe.setInt(1, hid);
+            exe.setString(2, title);
+            //exe.executeQuery();
+            
+            ResultSet result = exe.executeQuery();
+            if (result.next())
+            	pid = result.getInt(1);
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    	return pid;
+    }
+    
 
 }

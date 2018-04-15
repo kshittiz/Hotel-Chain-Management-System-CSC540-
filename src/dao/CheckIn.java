@@ -29,7 +29,25 @@ public class CheckIn {
         if (result.next())
             cid = result.getInt(1);
 
+        //System.out.println("cid"+cid);
         return cid;
+    }
+    public boolean updateRoomAfterCheckIn(int hid, int room_num)
+    {
+    	try {
+            PreparedStatement exe = c.prepareStatement(
+                    "update room set availability='unavailable' where room_num=? and hotel_id=?");
+            exe.setInt(1, room_num);
+            exe.setInt(2,hid);
+           
+
+            exe.executeQuery();
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+        return true;
     }
 
 }
