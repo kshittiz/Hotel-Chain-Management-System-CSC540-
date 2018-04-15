@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.HashMap;
 
 import org.json.JSONObject;
 
@@ -73,25 +74,25 @@ public class People {
         return true;
     }
 
-    public boolean updatePerson(JSONObject obj2) {
-
-        try {
-            PreparedStatement exe = c.prepareStatement(
-                    "update people set name=?,SSN=?,address=?, type=? where pid =?");
-
-            exe.setString(1, obj2.getString("name"));
-            exe.setInt(2, obj2.getInt("SSN"));
-            exe.setString(3, obj2.getString("address"));
-            exe.setString(4, obj2.getString("type"));
-            exe.setInt(5, obj2.getInt("pid"));
-
-            exe.executeQuery();
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return false;
+    public void updatePerson(HashMap<String, String> values, int pid) throws Exception {
+        String peopleQuery = "UPDATE people set";
+        boolean check = false;
+        if (values.containsKey("name")) {
+            peopleQuery = peopleQuery + " name='" + values.get("name").toString() + "',";
+            check = true;
         }
-        return true;
+        if (values.containsKey("address")) {
+            peopleQuery = peopleQuery + " address='" + values.get("address").toString() + "',";
+            check = true;
+        }
+
+        String finalQueryPeople = peopleQuery.subSequence(0, peopleQuery.length() - 1).toString();
+
+        finalQueryPeople = finalQueryPeople + " where pid =" + pid;
+        if (check) {
+            Statement exe = c.createStatement();
+            exe.executeQuery(finalQueryPeople);
+        }
     }
 
     public static int getPIDbySSN(String ssn) {
