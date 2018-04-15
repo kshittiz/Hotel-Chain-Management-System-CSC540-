@@ -13,20 +13,42 @@ public class RoomServiceLinks {
         c = conn;
     }
 
-    public int addRoomServiceLinks(int room_num, int service_id) throws SQLException {
+    public int addRoomServiceLinks(int room_num, int service_id, int hid, int pid)
+            throws SQLException {
         int id = 0;
         PreparedStatement exe = c.prepareStatement(
-                "insert into room_service_links(room_num,service_id) values(?, ?)",
+                "insert into room_service_links(room_num,service_num,hotel_id_room, hotel_id_service,staff_id ) values(?, ?,?,?,?)",
                 Statement.RETURN_GENERATED_KEYS);
         exe.setInt(1, room_num);
         exe.setInt(2, service_id);
+        exe.setInt(3, hid);
+        exe.setInt(4, hid);
+        exe.setInt(5, pid);
+
         exe.executeQuery();
         ResultSet result = exe.getGeneratedKeys();
         if (result.next())
             id = result.getInt(1);
 
         return id;
+    }
 
+    public static int getServiceNumber(int temphid, int tempRoomNo) {
+        try {
+            PreparedStatement exe = c.prepareStatement(
+                    "select service_num from room_service_links where hotel_id_room=? and room_num=?");
+            exe.setInt(1, (temphid));
+            exe.setInt(2, (tempRoomNo));
+            ResultSet result = exe.executeQuery();
+            if (result.next()) {
+                return result.getInt("service_num");
+
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return 0;
     }
 
 }

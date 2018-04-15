@@ -98,14 +98,19 @@ public class People {
     public static int getPIDbySSN(String ssn) {
         int pid = 0;
         try {
-            PreparedStatement exe = c.prepareStatement("SELECT pid from people where ssn = ?");
+            PreparedStatement exe = c.prepareStatement("SELECT pid from people where ssn =?");
             exe.setString(1, ssn);
             ResultSet result = exe.executeQuery();
-            if (result.next())
-                pid = result.getInt(1);
+            //System.out.println(result.toString());
+            if(result.next())
+                pid = result.getInt("pid");
         } catch (Exception e) {
             System.out.println(e);
         }
+
         return pid;
     }
+   
+   
+   
 }

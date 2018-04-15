@@ -22,14 +22,67 @@ public class CheckIn {
         exe.setInt(1, pid);
         exe.setInt(2, guests);
 
-        exe.setDate(3, new java.sql.Date(checkin.getTime()));
-        exe.setDate(4, new java.sql.Date(checkout.getTime()));
+        exe.setTimestamp(3, (java.sql.Timestamp) (checkin));
+        exe.setTimestamp(4, (java.sql.Timestamp) (checkout));
         exe.executeQuery();
         ResultSet result = exe.getGeneratedKeys();
         if (result.next())
             cid = result.getInt(1);
 
+        // System.out.println("cid"+cid);
         return cid;
+    }
+
+    public boolean updateRoomAfterCheckIn(int hid, int room_num) {
+        try {
+            PreparedStatement exe = c.prepareStatement(
+                    "update room set availability='unavailable' where room_num=? and hotel_id=?");
+            exe.setInt(1, room_num);
+            exe.setInt(2, hid);
+            exe.executeQuery();
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean updateCheckOutTime(int cid) {
+        try {
+            PreparedStatement exe = c.prepareStatement(
+                    "update checkin set checkout =? where cid=?");
+            java.util.Date today = new java.util.Date();
+
+            exe.setTimestamp(1, new java.sql.Timestamp(today.getTime()));
+            exe.setInt(2, cid);
+            exe.executeQuery();
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+        return true;
+    }
+
+    public static int durationUsingCID(int tempCID) {
+        try {
+            PreparedStatement exe = c.prepareStatement("select * from checkin where cid=? ");
+            exe.setInt(1, (tempCID));
+            ResultSet result = exe.executeQuery();
+            if (result.next()) {
+
+                java.sql.Timestamp tempcheckin = result.getTimestamp("checkin");
+                java.util.Date today = new java.util.Date();
+                java.sql.Timestamp tempcheckout = new java.sql.Timestamp(today.getTime());
+
+                return (int) ((tempcheckout.getTime() - tempcheckin.getTime()) / (1000 * 24 * 60
+                        * 60));
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return 0;
     }
 
 }

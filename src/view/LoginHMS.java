@@ -111,6 +111,7 @@ public class LoginHMS extends JFrame implements ActionListener {
         HotelPeopleLinks.setConnnection(conn);
         // Setting pid for logged in person in class variable for future use
         pid = People.getPIDbySSN(ssn);
+
         if (pid == 0)
             new Error(this);
         else {
