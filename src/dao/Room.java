@@ -4,8 +4,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.Timestamp;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Vector;
+
+import view.LoginHMS;
 
 public class Room {
     private static Connection c = null;
@@ -30,6 +34,8 @@ public class Room {
 
     private static String[] PER_OCCUP = { "Hotel Name", "Occupancy Percentage" };
     public static Vector<String> PER_OCCUP_COLUMNS = new Vector<String>(Arrays.asList(PER_OCCUP));
+
+    public static Timestamp start, end;
 
     public static void setConnnection(Connection conn) {
         c = conn;
@@ -124,7 +130,10 @@ public class Room {
                 break;
             case "Occupancy by dates":
                 exe = c.prepareStatement(
-                        " select count(hotel_id), hotel_name, availability from hotel natural join room where availability = 'available' group by hotel_id");
+                        "select count(*),availability from checkin natural join checkin_attributes natural join room where hotel_id=? and checkin BETWEEN ? and ? group by availability");
+                exe.setInt(1, hid);
+                exe.setTimestamp(2, start);
+                exe.setTimestamp(3, end);
                 break;
             case "Total Occupancy":
                 exe = c.prepareStatement(
@@ -178,6 +187,19 @@ public class Room {
             return false;
         }
         return result;
+    }
+
+    public void updateRoom(HashMap<String, String> values, int room_num) throws Exception {
+        String query = "UPDATE room set";
+        if (values.containsKey("availability"))
+            query = query + " availability= ?";
+
+        query = query + " where room_num = ? and hotel_id= ?";
+        PreparedStatement exe = c.prepareStatement(query);
+        exe.setString(1, values.get("availability").toString());
+        exe.setInt(2, room_num);
+        exe.setInt(3, LoginHMS.hid);
+        exe.executeQuery();
     }
 
     public boolean deleteRoom(int room_num, int hid) {

@@ -2,12 +2,16 @@ package dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.Statement;
-import java.util.Arrays;
-import java.util.Vector;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Vector;
+
+import view.LoginHMS;
 
 public class Hotel {
     private static Connection c = null;
@@ -49,23 +53,17 @@ public class Hotel {
         return true;
     }
 
-    public boolean updateHotel(int hotel_id, String hotel_name, String hotel_address) {
+    public void updateHotel(HashMap<String, String> values) throws Exception {
+        String query = "UPDATE hotel set";
+        if (values.containsKey("hotel_name"))
+            query = query + " hotel_name='" + values.get("hotel_name").toString() + "',";
+        if (values.containsKey("hotel_address"))
+            query = query + " hotel_address='" + values.get("hotel_address").toString() + "',";
 
-        try {
-            PreparedStatement exe = c.prepareStatement(
-                    "update hotel set hotel_name=?,hotel_address=? where hotel_id =?",
-                    Statement.RETURN_GENERATED_KEYS);
-            exe.setString(1, hotel_name);
-            exe.setString(2, hotel_address);
-            exe.setInt(3, hotel_id);
-
-            exe.executeQuery();
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return false;
-        }
-        return true;
+        String finalQuery = query.subSequence(0, query.length() - 1).toString();
+        finalQuery = finalQuery + " where hotel_id =" + LoginHMS.hid;
+        Statement exe = c.createStatement();
+        exe.executeQuery(finalQuery);
     }
 
     public Vector<Vector<Object>> getHotelDetails(int hid) {
@@ -96,5 +94,27 @@ public class Hotel {
         }
 
         return data;
+    }
+
+    public double getRevenue(Timestamp startDate, Timestamp endDate, int hid) {
+        double revenue = 0;
+        try {
+            PreparedStatement exe = null;
+            exe = c.prepareStatement(
+                    "SELECT SUM(amount) from checkin natural join hotel_checkin_links natural join billing where hotel_id ="
+                            + hid + " and checkout BETWEEN ? and ?;");
+
+            exe.setTimestamp(1, startDate);
+            exe.setTimestamp(2, endDate);
+            ResultSet result = exe.executeQuery();
+            // Data of the table
+            if (result.next())
+                revenue = result.getDouble(1);
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return revenue;
+
     }
 }

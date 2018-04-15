@@ -8,11 +8,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Vector;
 
 public class ContactInfo {
     private static Connection c = null;
-    private static String[] contacts = { "Contact ID", "Phone Number", "Email" };
+    private static String[] contacts = { "Contact ID (*)", "Phone Number", "Email" };
     public static Vector<String> COLUMNS = new Vector<String>(Arrays.asList(contacts));
 
     public static void setConnnection(Connection conn) {
@@ -76,5 +77,18 @@ public class ContactInfo {
         }
 
         return data;
+    }
+
+    public void updateContactDetails(HashMap<String, String> values, int cid) throws Exception {
+        String query = "UPDATE contact_info set";
+        if (values.containsKey("phone_number"))
+            query = query + " phone_number=" + values.get("phone_number").toString() + ",";
+        if (values.containsKey("email"))
+            query = query + " email= '" + values.get("email").toString() + "',";
+
+        String finalQuery = query.subSequence(0, query.length() - 1).toString();
+        PreparedStatement exe = c.prepareStatement(finalQuery + " where contact_id=?");
+        exe.setInt(1, cid);
+        exe.executeQuery();
     }
 }

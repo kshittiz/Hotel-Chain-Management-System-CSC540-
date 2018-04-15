@@ -3,9 +3,14 @@ package view;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -153,9 +158,11 @@ public class FetchOperations extends JDialog implements ActionListener {
                 tableModel.setDataVector(ManagerService.getOccupancyStats(action, city),
                         Room.GRP_RCITY_COLUMNS);
             }
-            if ("Occupancy by dates".equals(action))
+            if ("Occupancy by dates".equals(action)) {
+                new DateQueryOccup(this);
                 tableModel.setDataVector(ManagerService.getOccupancyStats(action, null),
-                        Room.GRP_RDATES_COLUMNS);
+                        Room.TOT_OCCUP_COLUMNS);
+            }
             if ("Total Occupancy".equals(action))
                 tableModel.setDataVector(ManagerService.getOccupancyStats(action, null),
                         Room.TOT_OCCUP_COLUMNS);
@@ -189,6 +196,51 @@ class Query extends JDialog implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         ops.city = city.getText();
+        this.dispose();
+    }
+}
+
+@SuppressWarnings("serial")
+class DateQueryOccup extends JDialog implements ActionListener {
+    JLabel entry = new JLabel("Start Date");
+    JLabel exit = new JLabel("End Date");
+
+    JTextField entryDate = new JTextField("yyyy-mm-dd HH:mm:ss");
+    JTextField exitDate = new JTextField("yyyy-mm-dd HH:mm:ss");
+
+    JButton submit = new JButton("submit");
+    FetchOperations ops;
+
+    DateQueryOccup(FetchOperations ops) {
+        super(ops, "Specify date range", true);
+        this.ops = ops;
+        JPanel panel = new JPanel(new GridLayout(2, 2, 0, 3));
+        panel.add(entry);
+        panel.add(entryDate);
+        panel.add(exit);
+        panel.add(exitDate);
+        add(panel, BorderLayout.CENTER);
+        add(submit, BorderLayout.SOUTH);
+        submit.addActionListener(this);
+        submit.setBackground(Color.ORANGE);
+        setSize(350, 150);
+        setLocation(ops.getLocation());
+        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        setVisible(true);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-mm-dd HH:mm:ss");
+        try {
+            Date startDate = myFormat.parse(entryDate.getText());
+            Date endDate = myFormat.parse(entryDate.getText());
+            ManagerService.setRoomTimeStamp(new Timestamp(startDate.getTime()), new Timestamp(
+                    endDate.getTime()));
+
+        } catch (ParseException e1) {
+            entryDate.setText("Wrong date format used");
+        }
         this.dispose();
     }
 }
