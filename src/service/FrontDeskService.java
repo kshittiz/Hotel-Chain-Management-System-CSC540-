@@ -246,8 +246,8 @@ public class FrontDeskService {
             // setting contact_info
             ContactInfo.setConnnection(c);
             ContactInfo info = new ContactInfo();
-            String phone = obj.optString("phone").isEmpty() ? null : obj.optString("phone");
-            String email = obj.optString("email").isEmpty() ? null : obj.optString("email");
+            String phone = obj.optString("phone");
+            String email = obj.optString("email");
             int contact_id = info.addContactInfo(phone, email);
 
             // setting contact links

@@ -60,7 +60,7 @@ public class FrontDesk extends JFrame implements ActionListener {
     NewCheckIn newcheckin;
     DefaultTableModel tableModel = new DefaultTableModel();
     JTable table = new JTable(tableModel);
-
+    JComboBox<String> associateStaff;
     ArrayList<String> roomnums = new ArrayList<String>();
 
     JLabel roomL;
@@ -317,7 +317,7 @@ public class FrontDesk extends JFrame implements ActionListener {
 
             int my_room = Integer.parseInt(RequestService.room_numC.getSelectedItem().toString());
             String my_service = RequestService.typeC.getSelectedItem().toString();
-
+            int staffId = RequestService.staffIds.get(RequestService.staffC.getSelectedItem());
             Connection c = Database.getConnection();
             Service.setConnnection(c);
             Service s = new Service();
@@ -326,25 +326,8 @@ public class FrontDesk extends JFrame implements ActionListener {
             input.put("room_num", my_room);
             input.put("service_type", my_service);
             input.put("service_num", room_service);
-
-            int mypid = 10;
             input.put("hotel_id", LoginHMS.hid);
-
-            if (my_service.contains("special")) {
-                mypid = s.getStaffServing(LoginHMS.hid, "manager");
-            } else if (my_service.contains("room")) {
-                mypid = s.getStaffServing(LoginHMS.hid, "cleaning");
-
-            } else if (my_service.contains("dry")) {
-                mypid = s.getStaffServing(LoginHMS.hid, "cleaning");
-
-            } else if (my_service.contains("catering")) {
-                mypid = s.getStaffServing(LoginHMS.hid, "catering");
-
-            } else
-                mypid = LoginHMS.pid;
-
-            input.put("staff_id", mypid);
+            input.put("staff_id", staffId);
 
             if (!FrontDeskService.requestNewService(input)) {
                 new MyDialog("Service Requested was not successful");
