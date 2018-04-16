@@ -34,6 +34,14 @@ import dao.ServiceType;
 import dao.Staff;
 import service.ManagerService;
 
+/**
+ * This class is designed to support all the fetch operations by the manager.
+ * All the operations performed by the managers are categorized on the basis of
+ * title passed in the constructor.
+ * 
+ * @author kshittiz
+ *
+ */
 @SuppressWarnings("serial")
 public class FetchOperations extends JDialog implements ActionListener {
     JTable table;
@@ -49,6 +57,9 @@ public class FetchOperations extends JDialog implements ActionListener {
         JPanel panel = new JPanel(new BorderLayout());
         JLabel heading = new JLabel(msg);
         table = new JTable(tableModel);
+
+        // All the actions performed by manager are reflected in a separate UI
+        // controlled by this switch case
         switch (title) {
         case "See your hotel details":
             tableModel.setDataVector(ManagerService.getHotelDetails(LoginHMS.hid), Hotel.COLUMNS);
@@ -124,9 +135,12 @@ public class FetchOperations extends JDialog implements ActionListener {
         if (e.getSource() == extra) {
             String action = (String) extra.getSelectedItem();
 
+            // If group by role/department check box is selected than a separate
+            // data is loaded in the table
             if (role.isSelected())
                 tableModel.setDataVector(ManagerService.getStaffDetailsGroupedByRole(),
                         Staff.COLUMNS);
+            // loading data in table based on the department of staff
             else {
                 if ("complete staff".equals(action))
                     tableModel.setDataVector(ManagerService.getStaffDetails(null),
@@ -145,6 +159,7 @@ public class FetchOperations extends JDialog implements ActionListener {
                             Staff.FRONT_DESK_Staff_COLUMNS);
             }
         }
+        // Loading data in table based on different occupancy operations
         if (e.getSource() == occup) {
             String action = (String) occup.getSelectedItem();
             if ("Occupancy group by all hotels".equals(action))
@@ -174,6 +189,12 @@ public class FetchOperations extends JDialog implements ActionListener {
 
 }
 
+/**
+ * Class that creates dialog box that allow user to enter city
+ * 
+ * @author kshittiz
+ *
+ */
 @SuppressWarnings("serial")
 class Query extends JDialog implements ActionListener {
     JTextField city = new JTextField();
@@ -200,6 +221,12 @@ class Query extends JDialog implements ActionListener {
     }
 }
 
+/**
+ * Class that creates dialog box for allowing using to enter date
+ * 
+ * @author kshittiz
+ *
+ */
 @SuppressWarnings("serial")
 class DateQueryOccup extends JDialog implements ActionListener {
     JLabel entry = new JLabel("Start Date");

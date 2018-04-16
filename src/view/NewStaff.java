@@ -21,6 +21,12 @@ import org.json.JSONObject;
 
 import service.ManagerService;
 
+/**
+ * Class that creates dialog box / UI for adding new staff in manager's hotel
+ * 
+ * @author kshittiz
+ *
+ */
 @SuppressWarnings("serial")
 public class NewStaff extends JDialog implements ActionListener {
 

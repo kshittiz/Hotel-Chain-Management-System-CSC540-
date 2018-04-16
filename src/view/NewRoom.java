@@ -26,6 +26,12 @@ import dao.Database;
 import dao.RoomCategory;
 import service.ManagerService;
 
+/**
+ * Class that creates dialog box / UI for creating new room in manager's hotel
+ * 
+ * @author kshittiz
+ *
+ */
 @SuppressWarnings("serial")
 public class NewRoom extends JDialog implements ActionListener {
 

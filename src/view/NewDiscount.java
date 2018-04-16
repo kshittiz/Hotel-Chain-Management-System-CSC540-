@@ -18,6 +18,12 @@ import javax.swing.JTextField;
 
 import service.ManagerService;
 
+/**
+ * Class that creates Dialog box /UI for adding discount in hotel chain
+ * 
+ * @author kshittiz
+ *
+ */
 @SuppressWarnings("serial")
 public class NewDiscount extends JDialog implements ActionListener {
 

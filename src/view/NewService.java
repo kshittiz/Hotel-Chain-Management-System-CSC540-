@@ -22,6 +22,12 @@ import dao.Database;
 import dao.ServiceType;
 import service.ManagerService;
 
+/**
+ * Class that creates dialog box / UI for creating new services in hotel
+ * 
+ * @author kshittiz
+ *
+ */
 @SuppressWarnings("serial")
 public class NewService extends JDialog implements ActionListener {
 

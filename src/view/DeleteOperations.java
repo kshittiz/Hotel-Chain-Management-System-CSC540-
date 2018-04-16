@@ -29,6 +29,14 @@ import dao.ServiceType;
 import dao.Staff;
 import service.ManagerService;
 
+/**
+ * This class is designed to support all the delete operations by the manager.
+ * All the operations performed by the managers are categorized on the basis of
+ * title passed in the constructor.
+ * 
+ * @author kshittiz
+ *
+ */
 @SuppressWarnings("serial")
 public class DeleteOperations extends JDialog implements ActionListener {
     JTable table;
@@ -44,7 +52,10 @@ public class DeleteOperations extends JDialog implements ActionListener {
         JPanel panel = new JPanel(new BorderLayout());
         JLabel heading = new JLabel(msg);
         table = new JTable(tableModel);
-        this.title = title;
+        this.title = title; // maintaining title at class level for future use
+
+        // All the actions performed by manager are reflected in a separate UI
+        // controlled by this switch case
         switch (title) {
         case "Remove staff member":
             tableModel.setDataVector(ManagerService.getStaffDetails(null), Staff.STAFF_COLUMNS);
@@ -96,7 +107,8 @@ public class DeleteOperations extends JDialog implements ActionListener {
     @Override
 
     public void actionPerformed(ActionEvent e) {
-        // System.out.println(valuesSelected);
+        // All the actions performed by manager are controlled
+        // controlled by this switch case
         switch (title) {
         case "Remove staff member":
             if (ManagerService.deleteStaff(valuesSelected)) {
@@ -157,6 +169,13 @@ public class DeleteOperations extends JDialog implements ActionListener {
     }
 }
 
+/**
+ * Class specifically designed to listen to any updates in table loaded on UI
+ * for view
+ * 
+ * @author kshittiz
+ *
+ */
 class TableListener extends MouseAdapter {
     DeleteOperations dp;
 

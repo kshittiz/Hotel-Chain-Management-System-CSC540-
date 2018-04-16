@@ -18,6 +18,12 @@ import javax.swing.JTextField;
 
 import service.ManagerService;
 
+/**
+ * Class that creates UI for adding new service type in hotel chain
+ * 
+ * @author kshittiz
+ *
+ */
 @SuppressWarnings("serial")
 public class NewServiceType extends JDialog implements ActionListener {
 

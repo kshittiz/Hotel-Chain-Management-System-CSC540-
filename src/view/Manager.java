@@ -31,6 +31,13 @@ import javax.swing.event.ListSelectionListener;
 
 import service.ManagerService;
 
+/**
+ * Major UI class that creates a window with all managers operations and menu
+ * options
+ * 
+ * @author kshittiz
+ *
+ */
 public class Manager extends JFrame implements ActionListener, ListSelectionListener {
 
     /**
@@ -397,6 +404,13 @@ class ContactDetails extends JDialog implements ActionListener {
 
 }
 
+/**
+ * Class that creates dialog box for allowing manager to enter date range for
+ * generating hotel revenue
+ * 
+ * @author kshittiz
+ *
+ */
 @SuppressWarnings("serial")
 class DateQuery extends JDialog implements ActionListener {
     JLabel entry = new JLabel("Start Date");
