@@ -116,7 +116,7 @@ public class FrontDesk extends JFrame implements ActionListener {
         register.add(regpanel);
         // register.add(new JScrollPane(regpanel), BorderLayout.CENTER);
 
-        end = new JPanel(new GridLayout(2, 1));
+        end = new JPanel(new GridLayout(3, 1));
         ImageIcon searchIcon = new ImageIcon(new ImageIcon("images/search.png").getImage()
                 .getScaledInstance(30, 30, Image.SCALE_SMOOTH));
         check = new JButton("Check if customer detail's present", searchIcon);
@@ -133,7 +133,11 @@ public class FrontDesk extends JFrame implements ActionListener {
         end.add(addPerson);
         addPerson.addActionListener(this);
 
-        update = new JButton("Update this Person's Record");
+        ImageIcon upIcon = new ImageIcon(new ImageIcon("images/update.png").getImage()
+                .getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+        update = new JButton("Update this Person's Record", upIcon);
+        update.setBackground(Color.DARK_GRAY);
+        update.setForeground(Color.GREEN);
         end.add(update);
         update.addActionListener(this);
         register.add(new JScrollPane(end), BorderLayout.SOUTH);
@@ -184,7 +188,7 @@ public class FrontDesk extends JFrame implements ActionListener {
 
         checkout.add(billingpanel);
 
-        end1 = new JPanel(new GridLayout(2, 1));
+        end1 = new JPanel(new GridLayout(1, 1));
         checkOut = new JButton("Check out customer & generate bill");
         checkOut.setBackground(Color.DARK_GRAY);
         checkOut.setForeground(Color.ORANGE);
@@ -210,6 +214,8 @@ public class FrontDesk extends JFrame implements ActionListener {
 
         end1 = new JPanel(new GridLayout(1, 1));
         add_service = new JButton("Add Service");
+        add_service.setBackground(Color.DARK_GRAY);
+        add_service.setForeground(Color.GREEN);
         end1.add(add_service);
         add_service.addActionListener(this);
         end1.add(add_service);
@@ -222,6 +228,8 @@ public class FrontDesk extends JFrame implements ActionListener {
         end_rep = new JPanel(new GridLayout(1, 1));
 
         check_rep = new JButton("Get Report");
+        check_rep.setBackground(Color.DARK_GRAY);
+        check_rep.setForeground(Color.GREEN);
         end_rep.add(check_rep);
         report.add(end_rep, BorderLayout.SOUTH);
         check_rep.addActionListener(this);
