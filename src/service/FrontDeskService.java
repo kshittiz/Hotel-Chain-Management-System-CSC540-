@@ -4,8 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import org.json.JSONObject;
 
@@ -16,6 +18,7 @@ import dao.ContactInfo;
 import dao.ContactLinks;
 import dao.Customer;
 import dao.Database;
+import dao.Discount;
 import dao.FrontDeskCheckInLinks;
 import dao.HotelCheckInLinks;
 import dao.HotelPeopleLinks;
@@ -67,7 +70,15 @@ public class FrontDeskService {
         return map;
     }
 
-    public static int calculateAmount(String room_num, String Discount, String Billing_Type,
+    public static List<String> getListOfPayment() { // Obtaining billingTypesList from Discount
+                                                    // table
+        Connection c = Database.getConnection();
+        Discount.setConnnection(c);
+        List<String> returnPaymentList = Discount.getBillingTypes();
+        return returnPaymentList;
+    }
+
+    public static String calculateAmount(String room_num, String Discount, String Billing_Type,
             String tax, String billingadress) throws NumberFormatException, SQLException {
         // Initializing the connection
         Connection c = Database.getConnection();
@@ -99,12 +110,21 @@ public class FrontDeskService {
             int tempNightlyRate = RoomCategory.nightlyRate(temphid, temproom_category,
                     tempoccupancy);// Get nightly rate for the room at the given hotel
 
+            ServiceType.setConnnection(c);
+            int serviceAmount = ServiceType.getServiceAmount(temphid, tempRoomNo); // Obtain total
+                                                                                   // service
+                                                                                   // charges levied
+                                                                                   // on the room
+
+            List<String> servicesUsed = new ArrayList<String>();
+            servicesUsed = ServiceType.getServicesUsed(temphid, tempRoomNo); // obtain the list of
+                                                                             // services used by the
+                                                                             // room
+
             RoomServiceLinks.setConnnection(c);
             int tempServiceNum = RoomServiceLinks.getServiceNumber(temphid, tempRoomNo);
+
             Service.setConnnection(c);
-            String tempServiceType = Service.getServiceType(temphid, tempServiceNum);
-            ServiceType.setConnnection(c);
-            int serviceAmount = ServiceType.getServiceAmount(tempServiceType);
 
             // Calculating the total amount
             amount = amount + tempNightlyRate * duration;
@@ -115,16 +135,33 @@ public class FrontDeskService {
             // Makes changes in databases affected by room checkout
             Billing.setConnnection(c);
             Billing.addBilling(tempCID, Integer.parseInt(Discount), amount, Integer.parseInt(tax),
-                    billingadress, Billing_Type);
+                    billingadress, Billing_Type); // adding entry for the particular room to billing
+                                                  // table
             Room.setConnnection(c);
-            Room.updateRoomAvailbility("available", tempRoomNo);
+            Room.updateRoomAvailbility("available", tempRoomNo); // changing availability of room on
+                                                                 // checkout
             CheckIn.setConnnection(c);
-            CheckIn.updateCheckOutTime(tempCID);
+            CheckIn.updateCheckOutTime(tempCID); // updating checkout time
+            RoomServiceLinks.setConnnection(c);
+            RoomServiceLinks.deleteServiceLinks(temphid, tempRoomNo); // Removing services
+            // records used by customer
+            String finalString = "The Total number of days occupied by the customer is " + duration;
+            finalString = finalString + "The category of room occupied by the customer is: "
+                    + temproom_category;
+            if (serviceAmount != 0) {
+                finalString = finalString + "The services used by the room is:-" + "\n";
+                for (int i = 0; i < servicesUsed.size(); i++) {
+                    finalString = finalString + servicesUsed.get(i) + " ";
+
+                }
+            }
+            finalString = finalString + "The total amount levied on the room is"
+                    + Integer.toString(amount);
 
             // Committing transaction
             c.commit();
 
-            return amount;
+            return finalString;
         } catch (Exception e) {
             try {
                 c.rollback();
@@ -132,7 +169,7 @@ public class FrontDeskService {
                 e1.printStackTrace();
             }
             e.printStackTrace();
-            return 0;
+            return "";
         } finally {
             Database.endConnnection(c);
         }
@@ -243,8 +280,8 @@ public class FrontDeskService {
             c.setAutoCommit(false);
             CheckIn.setConnnection(c);
             CheckIn checkin = new CheckIn();
-            int cid = checkin.checkIn(obj.getInt("pid"), obj.getInt("guests"), (Date) obj.get(
-                    "checkin"), (Date) obj.get("checkout"));
+            int cid = checkin.checkIn(obj.getInt("pid"), obj.getInt("guests"),
+                    (Date) obj.get("checkin"), (Date) obj.get("checkout"));
             checkin.updateRoomAfterCheckIn(LoginHMS.hid, obj.getInt("room_num"));
 
             HotelCheckInLinks.setConnnection(c);
@@ -301,8 +338,8 @@ public class FrontDeskService {
 
             RoomServiceLinks.setConnnection(c);
             RoomServiceLinks roomservice = new RoomServiceLinks();
-            roomservice.addRoomServiceLinks(obj.getInt("room_num"), obj.getInt("service_num"), obj
-                    .getInt("hotel_id"), obj.getInt("staff_id"));
+            roomservice.addRoomServiceLinks(obj.getInt("room_num"), obj.getInt("service_num"),
+                    obj.getInt("hotel_id"), obj.getInt("staff_id"));
 
             // Committing transaction
             c.commit();
