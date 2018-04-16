@@ -52,6 +52,7 @@ public class FrontDesk extends JFrame implements ActionListener {
             end1, report, myreport, end_rep;
     JLabel ssnL, room_numL;
     JTextField ssnT;
+    @SuppressWarnings("rawtypes")
     JComboBox room_numC;
     JButton check, checkOut, addPerson, checkB, add_service, update, check_rep;
     NewCheckIn newcheckin;
@@ -73,6 +74,7 @@ public class FrontDesk extends JFrame implements ActionListener {
     JComboBox<String> payment;
     static Point p;
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public FrontDesk(String name) {
         super("Front Desk View - " + name);
         tabbedPane = new JTabbedPane();
@@ -171,14 +173,13 @@ public class FrontDesk extends JFrame implements ActionListener {
         billingpanel.add(taxLabel);
         billingpanel.add(taxText);
 
-        billingAdressLabel = new JLabel("Enter the adress");
+        billingAdressLabel = new JLabel("Enter the billing adress");
         billingAdressText = new JTextField();
 
         billingpanel.add(billingAdressLabel);
         billingpanel.add(billingAdressText);
 
         billingTypeLabel = new JLabel("Enter the billing type");
-
         List<String> paymentTypesList = FrontDeskService.getListOfPayment();// getting
                                                                             // all
                                                                             // billing
@@ -418,6 +419,7 @@ public class FrontDesk extends JFrame implements ActionListener {
                         .getText(), paymentTypeTemp, taxText.getText(), billingAdressText
                                 .getText());
                 if (finalString != "") {
+
                     new MyDialog3("The customer has successfully checked out " + "\n"
                             + finalString);
                 } else {
@@ -473,14 +475,13 @@ class MyDialog3 extends JDialog {
     JTextArea result;
 
     MyDialog3(String text) {
+        this.setTitle("Itemized receipt");
         result = new JTextArea(text);
-        // super(login, "Error", true);
         result.setEditable(false);
-        result.setForeground(Color.GREEN);
         add(result, BorderLayout.CENTER);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        setSize(250, 100);
-        // setLocation(login.getLocationOnScreen());
+        setSize(500, 300);
+        setLocation(FrontDesk.p);
         setVisible(true);
     }
 }

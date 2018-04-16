@@ -13,6 +13,7 @@ public class NewCheckIn {
 
     JLabel ssnL, guestsL, checkinL, categoryL;
     public static JTextField ssnT, checkinT;
+    @SuppressWarnings("rawtypes")
     JComboBox guestT, categoryT;
     JButton check;
     JPanel end;
