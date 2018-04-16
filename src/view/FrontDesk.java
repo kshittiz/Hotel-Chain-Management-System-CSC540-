@@ -9,11 +9,9 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Vector;
@@ -33,7 +31,6 @@ import javax.swing.table.DefaultTableModel;
 
 import org.json.JSONObject;
 
-import dao.ContactInfo;
 import dao.Database;
 import dao.People;
 import dao.Room;
@@ -48,17 +45,29 @@ public class FrontDesk extends JFrame implements ActionListener {
      */
     private static final long serialVersionUID = 1L;
     JTabbedPane tabbedPane;
-    JPanel register, checkin, checkout, billing, regpanel, end, checkinP, services, end1, report, myreport, end_rep;
+    JPanel register, checkin, checkout, billing, regpanel, billingpanel, end, checkinP, services, end1, report,
+            myreport, end_rep;
     JLabel ssnL, room_numL;
     JTextField ssnT;
     JComboBox room_numC;
-    JButton check, addPerson, checkB, add_service, update, check_rep;
+    JButton check, checkOut, addPerson, checkB, add_service, update, check_rep;
     NewCheckIn newcheckin;
     DefaultTableModel tableModel = new DefaultTableModel();
     JTable table = new JTable(tableModel);
 
     ArrayList<String> roomnums = new ArrayList<String>();
 
+    JLabel roomL;
+    JTextField roomT;
+    JLabel extraDiscountLabel;
+    JTextField extraDiscountText;
+    JLabel taxLabel;
+    JTextField taxText;
+    JLabel billingAdressLabel;
+    JTextField billingAdressText;
+    JLabel billingTypeLabel;
+    JTextField billingTypeText;
+    JComboBox<String> payment;
 
     public FrontDesk(String name) {
         super("Front Desk View - " + name);
@@ -70,10 +79,10 @@ public class FrontDesk extends JFrame implements ActionListener {
 
         ImageIcon registerIcon = new ImageIcon(
                 new ImageIcon("images/add.png").getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+
         tabbedPane.addTab("Register Customer", registerIcon, register);
 
         checkin = new JPanel(new BorderLayout());
-
         ImageIcon checkinIcon = new ImageIcon(
                 new ImageIcon("images/checkin.png").getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
         tabbedPane.addTab("Check-In Customer", checkinIcon, checkin);
@@ -82,8 +91,6 @@ public class FrontDesk extends JFrame implements ActionListener {
         ImageIcon checkoutIcon = new ImageIcon(
                 new ImageIcon("images/checkout.png").getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
         tabbedPane.addTab("Check-Out Customer", checkoutIcon, checkout);
-
-       
 
         services = new JPanel(new BorderLayout());
         ImageIcon servicesIcon = new ImageIcon(
@@ -100,13 +107,13 @@ public class FrontDesk extends JFrame implements ActionListener {
         // UI for register
         regpanel = new JPanel(new GridLayout(12, 2, 0, 3));
         ssnL = new JLabel("SSN");
+
         ssnT = new JTextField();
 
         regpanel.add(ssnL);
         regpanel.add(ssnT);
 
         register.add(regpanel);
-
         end = new JPanel(new GridLayout(3, 1));
 
         check = new JButton("Check if Person Detail's Present");
@@ -121,6 +128,59 @@ public class FrontDesk extends JFrame implements ActionListener {
         end.add(update);
         update.addActionListener(this);
         register.add(new JScrollPane(end), BorderLayout.SOUTH);
+
+        // register.add(end, BorderLayout.SOUTH);
+        register.add(new JScrollPane(end), BorderLayout.SOUTH);
+
+        // UI for billing
+
+        // UI for check-out
+        billingpanel = new JPanel(new GridLayout(12, 2, 0, 3));
+        roomL = new JLabel("Enter the room number to be checked out");
+        roomT = new JTextField();
+
+        billingpanel.add(roomL);
+        billingpanel.add(roomT);
+
+        extraDiscountLabel = new JLabel("Enter extra discount");
+        extraDiscountText = new JTextField();
+
+        billingpanel.add(extraDiscountLabel);
+        billingpanel.add(extraDiscountText);
+
+        taxLabel = new JLabel("Enter tax to be levied");
+        taxText = new JTextField();
+
+        billingpanel.add(taxLabel);
+        billingpanel.add(taxText);
+
+        billingAdressLabel = new JLabel("Enter the adress");
+        billingAdressText = new JTextField();
+
+        billingpanel.add(billingAdressLabel);
+        billingpanel.add(billingAdressText);
+
+        billingTypeLabel = new JLabel("Enter the billing type");
+        String[] paymentTypes = { "cash", "credit card", "debit card", "Hotel cc" }; // adding
+                                                                                     // billing
+                                                                                     // types
+                                                                                     // to
+                                                                                     // array
+        payment = new JComboBox<String>(paymentTypes); // creating a dropdown
+                                                       // menu for billing types
+        payment.setSelectedIndex(0);
+
+        billingpanel.add(billingTypeLabel);
+        billingpanel.add(payment);
+
+        checkout.add(billingpanel);
+
+        end1 = new JPanel(new GridLayout(2, 1));
+
+        checkOut = new JButton("Check Out and Bil the Customer");
+        end1.add(checkOut);
+        checkOut.addActionListener(this);
+        checkout.add(new JScrollPane(end1), BorderLayout.SOUTH);
 
         // UI for check-in
         newcheckin = new NewCheckIn(this);
@@ -188,7 +248,7 @@ public class FrontDesk extends JFrame implements ActionListener {
         }
         dialog.add(new JScrollPane(table), BorderLayout.CENTER);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        dialog.setSize(350, 200);
+        dialog.setSize(500, 200);
         dialog.setVisible(true);
     }
 
@@ -224,7 +284,7 @@ public class FrontDesk extends JFrame implements ActionListener {
             new NewCustomer(this, ssnT.getText());
         }
         if (action.getSource() == add_service) {
-            
+
             int my_room = Integer.parseInt(RequestService.room_numC.getSelectedItem().toString());
             String my_service = RequestService.typeC.getSelectedItem().toString();
 
@@ -236,6 +296,7 @@ public class FrontDesk extends JFrame implements ActionListener {
             input.put("room_num", my_room);
             input.put("service_type", my_service);
             input.put("service_num", room_service);
+
             int mypid = 10;
             input.put("hotel_id", LoginHMS.hid);
 
@@ -262,21 +323,19 @@ public class FrontDesk extends JFrame implements ActionListener {
 
             }
 
-
         }
         if (action.getSource() == checkB) {
             int numguests = Integer.parseInt(newcheckin.guestT.getSelectedItem().toString());
             String category = newcheckin.categoryT.getSelectedItem().toString();
 
-           
             Timestamp date1 = null;
 
             try {
                 date1 = new Timestamp(System.currentTimeMillis());
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
 
             int room_num = 0;
             Map<Integer, String> map = new LinkedHashMap<>();
@@ -316,6 +375,31 @@ public class FrontDesk extends JFrame implements ActionListener {
                 }
             } else
                 new MyDialog("Sorry! No Room Available");
+
+        }
+
+        // action to be perfomed when customer checks out
+        if (action.getSource() == checkOut) {
+            int amount = 0;
+            String paymentTypeTemp = (String) payment.getSelectedItem();
+
+            try {
+                amount = FrontDeskService.calculateAmount(roomT.getText(), extraDiscountText.getText(), paymentTypeTemp,
+                        taxText.getText(), billingAdressText.getText());
+                if (amount > 0) {
+                    new MyDialog("The customer has successfully checked out,The total amount is "
+                            + Integer.toString(amount));
+                } else {
+                    new MyDialog("The room needs to be corrected");
+                }
+            } catch (NumberFormatException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+
+            }
 
         }
 

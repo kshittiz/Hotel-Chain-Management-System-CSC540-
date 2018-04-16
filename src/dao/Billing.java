@@ -7,14 +7,17 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class Billing {
+    
+
     private static Connection c = null;
 
     public static void setConnnection(Connection conn) {
-        c = conn;
+       c = conn;
     }
 
-    public int addBilling(int cid, int amount, int extra_discount, int tax, String billing_address,
+    public static  int addBilling(int cid, int amount, int extra_discount, int tax, String billing_address,
             String billing_type) throws SQLException {
+        
         int invoice_id = 0;
         PreparedStatement exe = c.prepareStatement(
                 "insert into billing(cid,amount,extra_discount,tax,billing_address,billing_type) values(?,?,?,?,?,?)",
@@ -27,11 +30,29 @@ public class Billing {
         exe.setString(6, billing_type);
 
         exe.executeQuery();
+        
         ResultSet result = exe.getGeneratedKeys();
         if (result.next())
             invoice_id = result.getInt(1);
 
         return invoice_id;
     }
+    public static int discountOnBillType(String Billing_Type) {
+        try {
+            PreparedStatement exe = c
+                    .prepareStatement("select discount from discount where billing_type=? ");
+            exe.setString(1, Billing_Type);
+            ResultSet result = exe.executeQuery();
+            if (result.next()) {
+                return result.getInt("discount");
+
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return 0;
+    }
+   
 
 }

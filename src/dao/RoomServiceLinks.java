@@ -11,7 +11,7 @@ import java.util.Vector;
 
 public class RoomServiceLinks {
     private static Connection c = null;
-    private static String[] services = { "Room num", " Staff member", "Job title", "Service provided" };
+    private static String[] services = { "Hotel ID", "Room num", " Staff member", "Job title", "Service provided" };
     public static Vector<String> ROOM_SERVICE_COLUMNS = new Vector<String>(Arrays.asList(services));
 
     public static void setConnnection(Connection conn) {
@@ -35,14 +35,31 @@ public class RoomServiceLinks {
             id = result.getInt(1);
 
         return id;
+    }
 
+    public static int getServiceNumber(int temphid, int tempRoomNo) {
+        try {
+            PreparedStatement exe = c.prepareStatement(
+                    "select service_num from room_service_links where hotel_id_room=? and room_num=?");
+            exe.setInt(1, (temphid));
+            exe.setInt(2, (tempRoomNo));
+            ResultSet result = exe.executeQuery();
+            if (result.next()) {
+                return result.getInt("service_num");
+
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return 0;
     }
 
     public Vector<Vector<Object>> getRoomServicesOfferedByStaff(int room_num, int hid) {
         Vector<Vector<Object>> data = null;
         try {
             PreparedStatement exe = c.prepareStatement(
-                    "select room_num,name,job_title,service.type from room_service_links natural join service join people on staff_id=pid natural join staff where hotel_id_room = ? and room_num=?");
+                    "select hotel_id, room_num,name,job_title,service.type from room_service_links natural join service join people on staff_id=pid natural join staff where hotel_id_room = ? and room_num=?");
             exe.setInt(1, hid);
             exe.setInt(2, room_num);
             ResultSet result = exe.executeQuery();

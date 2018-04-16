@@ -2,6 +2,7 @@ package dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.Statement;
 
 public class CheckInAttributes {
@@ -26,6 +27,24 @@ public class CheckInAttributes {
             return false;
         }
         return true;
+    }
+    public static int cidUsingHidRoom_Num(int temphid,int tempRoomNo){
+        try {
+            PreparedStatement exe = c.prepareStatement(
+                    "select * from checkin_attributes where hotel_id=? and room_num=? ");
+            exe.setInt(1, temphid);
+            exe.setInt(2, tempRoomNo);
+            ResultSet result = exe.executeQuery();
+            if (result.next()) {
+                return result.getInt("cid");
+
+            }
+           
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return 0;
     }
    
   

@@ -5,12 +5,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Vector;
 
 import org.json.JSONObject;
 
+import dao.Billing;
 import dao.CheckIn;
 import dao.CheckInAttributes;
 import dao.ContactInfo;
@@ -21,8 +21,11 @@ import dao.FrontDeskCheckInLinks;
 import dao.HotelCheckInLinks;
 import dao.HotelPeopleLinks;
 import dao.People;
+import dao.Room;
+import dao.RoomCategory;
 import dao.RoomServiceLinks;
 import dao.Service;
+import dao.ServiceType;
 import view.LoginHMS;
 import view.UpdateCustomer;
 
@@ -56,12 +59,96 @@ public class FrontDeskService {
             while (result.next()) {
                 map.put(result.getInt(1), result.getString(2));
             }
+
             c.close();
         } catch (Exception e) {
             System.out.println(e);
         }
 
         return map;
+    }
+
+    public static int calculateAmount(String room_num, String Discount, String Billing_Type, String tax,
+            String billingadress) throws NumberFormatException, SQLException {
+        // Initializing the connection
+        Connection c = Database.getConnection();
+
+        try {
+            // Initializing auto commit for transaction
+            c.setAutoCommit(false);
+
+            // Initializing variables from input data
+            int amount = 0;
+            int temphid = LoginHMS.hid;
+            int tempRoomNo = Integer.parseInt(room_num);
+            int finalDiscount = Integer.parseInt(Discount);
+
+            // Setting the variable values obtained from different classes
+            Billing.setConnnection(c);
+            int intialDiscount = Billing.discountOnBillType(Billing_Type); // Get
+                                                                           // discount
+                                                                           // based
+                                                                           // on
+                                                                           // payment
+                                                                           // method
+            CheckInAttributes.setConnnection(c);
+            int tempCID = CheckInAttributes.cidUsingHidRoom_Num(temphid, tempRoomNo); // Get
+                                                                                      // checkInAttributes
+            CheckIn.setConnnection(c);
+            int duration = CheckIn.durationUsingCID(tempCID);// Get total
+                                                             // duration spend
+                                                             // by customer in
+                                                             // particular room
+            Room.setConnnection(c);
+            String temproom_category = Room.roomCat(tempRoomNo, temphid);// Get
+                                                                         // room_category
+            int tempoccupancy = Room.roomOccupancy(tempRoomNo, temphid);// Get
+                                                                        // room
+                                                                        // occupancy
+            RoomCategory.setConnnection(c);
+            int tempNightlyRate = RoomCategory.nightlyRate(temphid, temproom_category, tempoccupancy);// Get nightly
+                                                                                                      // rate for the
+                                                                                                      // room at the
+                                                                                                      // given
+                                                                                                      // hotel
+            RoomServiceLinks.setConnnection(c);
+            int tempServiceNum = RoomServiceLinks.getServiceNumber(temphid, tempRoomNo);
+            Service.setConnnection(c);
+            String tempServiceType = Service.getServiceType(temphid, tempServiceNum);
+            ServiceType.setConnnection(c);
+            int serviceAmount = ServiceType.getServiceAmount(tempServiceType);
+
+            // Calculating the total amount
+            amount = amount + tempNightlyRate * duration;
+            amount = amount + serviceAmount;
+            amount = amount - amount * ((finalDiscount + intialDiscount) / 100);
+            amount = amount + amount * Integer.parseInt(tax) / 100;
+
+            // Makes changes in databases affected by room checkout
+            Billing.setConnnection(c);
+            Billing.addBilling(tempCID, Integer.parseInt(Discount), amount, Integer.parseInt(tax), billingadress,
+                    Billing_Type);
+            Room.setConnnection(c);
+            Room.updateRoomAvailbility("available", tempRoomNo);
+            CheckIn.setConnnection(c);
+            CheckIn.updateCheckOutTime(tempCID);
+
+            // Committing transaction
+            c.commit();
+
+            return amount;
+        } catch (Exception e) {
+            try {
+                c.rollback();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+            e.printStackTrace();
+            return 0;
+        } finally {
+            Database.endConnnection(c);
+        }
+
     }
 
     public static boolean checkIfPersonPresent(String ssn) {
@@ -169,6 +256,7 @@ public class FrontDeskService {
             CheckIn checkin = new CheckIn();
             int cid = checkin.checkIn(obj.getInt("pid"), obj.getInt("guests"), (Timestamp) obj.get("checkin"),
                     (Timestamp) obj.get("checkout"));
+
             checkin.updateRoomAfterCheckIn(LoginHMS.hid, obj.getInt("room_num"));
 
             HotelCheckInLinks.setConnnection(c);
@@ -279,7 +367,6 @@ public class FrontDeskService {
             ContactInfo info = new ContactInfo();
             int contactid = Integer.parseInt(UpdateCustomer.contactId.getText());
 
-            
             String phone = obj.optString("phone");
             String email = obj.optString("email");
 

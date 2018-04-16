@@ -19,8 +19,8 @@ public class Service {
     public boolean addService(int service_num, int hotel_id, String type) {
 
         try {
-            PreparedStatement exe = c.prepareStatement(
-                    "insert into service(service_num, hotel_id,type) values(?, ?,?)");
+            PreparedStatement exe = c
+                    .prepareStatement("insert into service(service_num, hotel_id,type) values(?, ?,?)");
             exe.setInt(1, service_num);
             exe.setInt(2, hotel_id);
             exe.setString(3, type);
@@ -64,8 +64,7 @@ public class Service {
 
     public boolean deleteService(int service_num, int hid) {
         try {
-            PreparedStatement exe = c.prepareStatement(
-                    " Delete from service where service_num = ? and hotel_id=?");
+            PreparedStatement exe = c.prepareStatement(" Delete from service where service_num = ? and hotel_id=?");
             exe.setInt(1, service_num);
             exe.setInt(2, hid);
             exe.executeQuery();
@@ -76,46 +75,55 @@ public class Service {
         }
         return true;
     }
-    
-    public int getservicenum(String service, int hid)
-    {
-    	int service_num=0;
-    	try {
-            PreparedStatement exe = c.prepareStatement(
-                    "SELECT service_num from service where type=? and hotel_id=?");
+
+    public int getservicenum(String service, int hid) {
+        int service_num = 0;
+        try {
+            PreparedStatement exe = c.prepareStatement("SELECT service_num from service where type=? and hotel_id=?");
             exe.setString(1, service);
             exe.setInt(2, hid);
-            
-            
 
             ResultSet result = exe.executeQuery();
             if (result.next())
-            	service_num = result.getInt(1);
+                service_num = result.getInt(1);
 
         } catch (Exception e) {
             System.out.println(e);
         }
-    	return service_num;
+        return service_num;
     }
-    public int getStaffServing(int hid,String title)
-    {
-    	int pid=0;
-    	try {
-            PreparedStatement exe = c.prepareStatement(
-                    "SELECT pid from staff where hotel_serving=? and department=?");
+
+    public int getStaffServing(int hid, String title) {
+        int pid = 0;
+        try {
+            PreparedStatement exe = c.prepareStatement("SELECT pid from staff where hotel_serving=? and department=?");
             exe.setInt(1, hid);
             exe.setString(2, title);
-            //exe.executeQuery();
-            
+            // exe.executeQuery();
+
             ResultSet result = exe.executeQuery();
             if (result.next())
-            	pid = result.getInt(1);
+                pid = result.getInt(1);
 
         } catch (Exception e) {
             System.out.println(e);
         }
-    	return pid;
+        return pid;
     }
-    
 
+    public static String getServiceType(int temphid, int tempServiceNum) {
+        try {
+            PreparedStatement exe = c.prepareStatement("select type from service where hotel_id=? and service_num=?");
+            exe.setInt(1, (temphid));
+            exe.setInt(2, (tempServiceNum));
+            // System.out.println(temphid);
+            ResultSet result = exe.executeQuery();
+            if (result.next()) {
+                return result.getString("type");
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return "";
+    }
 }

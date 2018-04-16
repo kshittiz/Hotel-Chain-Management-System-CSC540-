@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Vector;
@@ -34,10 +35,28 @@ public class Room {
     private static String[] PER_OCCUP = { "Hotel Name", "Occupancy Percentage" };
     public static Vector<String> PER_OCCUP_COLUMNS = new Vector<String>(Arrays.asList(PER_OCCUP));
 
+    public static Timestamp start, end;
+
     public static void setConnnection(Connection conn) {
         c = conn;
     }
+    public static boolean updateRoomAvailbility(String newAvailability,int room_num) {
+        try {
+            PreparedStatement exe = c.prepareStatement(
+                    "Update room set availability=? where room_num=?");
+                  
+            exe.setString(1, newAvailability);
+            exe.setInt(2,room_num);
+            exe.executeQuery();
 
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+        return true;
+        
+        
+    }
     public boolean createRoom(int room_num, int hotel_id, String room_category, int occupancy,
             String availability) {
 
@@ -111,7 +130,10 @@ public class Room {
                 break;
             case "Occupancy by dates":
                 exe = c.prepareStatement(
-                        " select count(hotel_id), hotel_name, availability from hotel natural join room where availability = 'available' group by hotel_id");
+                        "select count(*),availability from checkin natural join checkin_attributes natural join room where hotel_id=? and checkin BETWEEN ? and ? group by availability");
+                exe.setInt(1, hid);
+                exe.setTimestamp(2, start);
+                exe.setTimestamp(3, end);
                 break;
             case "Total Occupancy":
                 exe = c.prepareStatement(
@@ -195,4 +217,44 @@ public class Room {
         }
         return true;
     }
+    public static String roomCat(int tempRoomNo,int temphid) {
+    try {
+        PreparedStatement exe = c
+                .prepareStatement("select * from room where room_num=? and hotel_id=?");
+        exe.setInt(1, (tempRoomNo));
+        exe.setInt(2, (temphid));
+     
+        ResultSet result = exe.executeQuery();
+        if (result.next()) {
+            return result.getString("room_category");
+           // tempoccupancy = result.getInt("occupancy");
+        }
+        
+
+    } catch (Exception e) {
+        System.out.println(e);
+    
+    }
+    return "";
+}
+    public static int roomOccupancy(int tempRoomNo,int temphid) {
+        try {
+            PreparedStatement exe = c
+                    .prepareStatement("select * from room where room_num=? and hotel_id=?");
+            exe.setInt(1, (tempRoomNo));
+            exe.setInt(2, (temphid));
+         
+            ResultSet result = exe.executeQuery();
+            if (result.next()) {
+               return result.getInt("occupancy");
+            }
+            
+
+        } catch (Exception e) {
+            System.out.println(e);
+        
+        }
+        return 0;
+    }
+    
 }
