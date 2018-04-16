@@ -74,7 +74,6 @@ public class Customer extends People {
             ResultSet result = exe.executeQuery();
             ResultSetMetaData metaData = result.getMetaData();
             int columnCount = metaData.getColumnCount();
-            // Data of the table
             data = new Vector<Vector<Object>>();
             while (result.next()) {
                 Vector<Object> vector = new Vector<Object>();
@@ -89,5 +88,27 @@ public class Customer extends People {
         }
 
         return data;
+    }
+    public int checkIfCustomerExists(int pid)
+    {
+    	int pid_count=0;
+    	
+    	try {
+
+            PreparedStatement exe= c.prepareStatement(
+                    "select count(*) from customer where pid=?");
+
+            exe.setInt(1, pid);
+
+            ResultSet result=exe.executeQuery();
+            if (result.next())
+            	pid_count = result.getInt(1);
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return pid_count;
+        
+    	
     }
 }

@@ -3,17 +3,22 @@ package dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
+import java.util.Vector;
 
 public class RoomServiceLinks {
     private static Connection c = null;
+    private static String[] services = { "Room num", " Staff member", "Job title", "Service provided" };
+    public static Vector<String> ROOM_SERVICE_COLUMNS = new Vector<String>(Arrays.asList(services));
 
     public static void setConnnection(Connection conn) {
         c = conn;
     }
 
-    public int addRoomServiceLinks(int room_num, int service_id,int hid,int pid) throws SQLException {
+    public int addRoomServiceLinks(int room_num, int service_id, int hid, int pid) throws SQLException {
         int id = 0;
         PreparedStatement exe = c.prepareStatement(
                 "insert into room_service_links(room_num,service_num,hotel_id_room, hotel_id_service,staff_id ) values(?, ?,?,?,?)",
@@ -24,8 +29,6 @@ public class RoomServiceLinks {
         exe.setInt(4, hid);
         exe.setInt(5, pid);
 
-
-
         exe.executeQuery();
         ResultSet result = exe.getGeneratedKeys();
         if (result.next())
@@ -35,4 +38,30 @@ public class RoomServiceLinks {
 
     }
 
+    public Vector<Vector<Object>> getRoomServicesOfferedByStaff(int room_num, int hid) {
+        Vector<Vector<Object>> data = null;
+        try {
+            PreparedStatement exe = c.prepareStatement(
+                    "select room_num,name,job_title,service.type from room_service_links natural join service join people on staff_id=pid natural join staff where hotel_id_room = ? and room_num=?");
+            exe.setInt(1, hid);
+            exe.setInt(2, room_num);
+            ResultSet result = exe.executeQuery();
+            ResultSetMetaData metaData = result.getMetaData();
+            int columnCount = metaData.getColumnCount();
+            // Data of the table
+            data = new Vector<Vector<Object>>();
+            while (result.next()) {
+                Vector<Object> vector = new Vector<Object>();
+                for (int i = 1; i <= columnCount; i++) {
+                    vector.add(result.getObject(i));
+                }
+                data.add(vector);
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return data;
+    }
 }

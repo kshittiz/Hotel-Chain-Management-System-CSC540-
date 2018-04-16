@@ -87,14 +87,11 @@ public class Service {
             exe.setInt(2, hid);
             
             
-            //exe.executeQuery();
-            //System.out.println("hid"+hid+"service"+service);
 
             ResultSet result = exe.executeQuery();
             if (result.next())
             	service_num = result.getInt(1);
 
-            //System.out.println("service num"+service_num);
         } catch (Exception e) {
             System.out.println(e);
         }

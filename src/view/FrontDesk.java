@@ -9,296 +9,343 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Vector;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
 
 import org.json.JSONObject;
 
+import dao.ContactInfo;
 import dao.Database;
 import dao.People;
+import dao.Room;
 import dao.RoomServiceLinks;
 import dao.Service;
 import service.FrontDeskService;
 
 public class FrontDesk extends JFrame implements ActionListener {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	JTabbedPane tabbedPane;
-	JPanel register, checkin, checkout, billing, regpanel, end, checkinP, services, end1;
-	JLabel ssnL;
-	JTextField ssnT;
-	JButton check, addPerson, checkB, add_service;
-	NewCheckIn newcheckin;
-	// static JLabel opLabel;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+    JTabbedPane tabbedPane;
+    JPanel register, checkin, checkout, billing, regpanel, end, checkinP, services, end1, report, myreport, end_rep;
+    JLabel ssnL, room_numL;
+    JTextField ssnT;
+    JComboBox room_numC;
+    JButton check, addPerson, checkB, add_service, update, check_rep;
+    NewCheckIn newcheckin;
+    DefaultTableModel tableModel = new DefaultTableModel();
+    JTable table = new JTable(tableModel);
 
-	public FrontDesk(String name) {
-		super("Front Desk View - " + name);
-		tabbedPane = new JTabbedPane();
-		tabbedPane.setBackground(Color.DARK_GRAY);
-		tabbedPane.setForeground(Color.WHITE);
+    ArrayList<String> roomnums = new ArrayList<String>();
 
-		register = new JPanel(new BorderLayout());
 
-		ImageIcon registerIcon = new ImageIcon(
-				new ImageIcon("images/add.png").getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
-		tabbedPane.addTab("Register Customer", registerIcon, register);
+    public FrontDesk(String name) {
+        super("Front Desk View - " + name);
+        tabbedPane = new JTabbedPane();
+        tabbedPane.setBackground(Color.DARK_GRAY);
+        tabbedPane.setForeground(Color.WHITE);
 
-		checkin = new JPanel(new BorderLayout());
+        register = new JPanel(new BorderLayout());
 
-		ImageIcon checkinIcon = new ImageIcon(
-				new ImageIcon("images/checkin.png").getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
-		tabbedPane.addTab("Check-In Customer", checkinIcon, checkin);
+        ImageIcon registerIcon = new ImageIcon(
+                new ImageIcon("images/add.png").getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+        tabbedPane.addTab("Register Customer", registerIcon, register);
 
-		checkout = new JPanel(new BorderLayout());
-		ImageIcon checkoutIcon = new ImageIcon(
-				new ImageIcon("images/checkout.png").getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
-		tabbedPane.addTab("Check-Out Customer", checkoutIcon, checkout);
+        checkin = new JPanel(new BorderLayout());
 
-		/*billing = new JPanel(new BorderLayout());
-		ImageIcon billingIcon = new ImageIcon(
-				new ImageIcon("images/billing.png").getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
-		tabbedPane.addTab("Generate Bills", billingIcon, billing);*/
+        ImageIcon checkinIcon = new ImageIcon(
+                new ImageIcon("images/checkin.png").getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+        tabbedPane.addTab("Check-In Customer", checkinIcon, checkin);
 
-		services = new JPanel(new BorderLayout());
-		ImageIcon servicesIcon = new ImageIcon(
-				new ImageIcon("images/billing.png").getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
-		tabbedPane.addTab("Request Services", servicesIcon, services);
+        checkout = new JPanel(new BorderLayout());
+        ImageIcon checkoutIcon = new ImageIcon(
+                new ImageIcon("images/checkout.png").getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+        tabbedPane.addTab("Check-Out Customer", checkoutIcon, checkout);
 
-		// add(tabbedPane);
-		add(tabbedPane, BorderLayout.CENTER);
+       
 
-		// UI for register
-		regpanel = new JPanel(new GridLayout(12, 2, 0, 3));
-		ssnL = new JLabel("SSN(*)");
-		ssnT = new JTextField();
+        services = new JPanel(new BorderLayout());
+        ImageIcon servicesIcon = new ImageIcon(
+                new ImageIcon("images/billing.png").getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+        tabbedPane.addTab("Request Services", servicesIcon, services);
 
-		regpanel.add(ssnL);
-		regpanel.add(ssnT);
+        report = new JPanel(new BorderLayout());
+        ImageIcon reportIcon = new ImageIcon(
+                new ImageIcon("images/fetch.png").getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+        tabbedPane.addTab("Request Reports", reportIcon, report);
 
-		register.add(regpanel);
-		// register.add(new JScrollPane(regpanel), BorderLayout.CENTER);
+        add(tabbedPane, BorderLayout.CENTER);
 
-		end = new JPanel(new GridLayout(2, 1));
+        // UI for register
+        regpanel = new JPanel(new GridLayout(12, 2, 0, 3));
+        ssnL = new JLabel("SSN");
+        ssnT = new JTextField();
 
-		check = new JButton("Check if Person Detail's Present");
-		end.add(check);
-		check.addActionListener(this);
+        regpanel.add(ssnL);
+        regpanel.add(ssnT);
 
-		addPerson = new JButton("Add this Person");
-		end.add(addPerson);
-		addPerson.addActionListener(this);
+        register.add(regpanel);
 
-		// register.add(end, BorderLayout.SOUTH);
-		register.add(new JScrollPane(end), BorderLayout.SOUTH);
+        end = new JPanel(new GridLayout(3, 1));
 
-		// UI for check-in
-		newcheckin = new NewCheckIn(this);
-		checkin.add(newcheckin.createcheckin());
-		checkinP = new JPanel(new GridLayout(1, 1));
-		checkB = new JButton("Check-In");
-		checkinP.add(checkB);
-		checkB.addActionListener(this);
-		checkin.add(new JScrollPane(checkinP), BorderLayout.SOUTH);
-		// checkin.setSize(50,100);
+        check = new JButton("Check if Person Detail's Present");
+        end.add(check);
+        check.addActionListener(this);
 
-		// UI for services
-		RequestService reqservice = new RequestService(this);
-		services.add(reqservice.getview());
+        addPerson = new JButton("Add this Person");
+        end.add(addPerson);
+        addPerson.addActionListener(this);
 
-		end1 = new JPanel(new GridLayout(1, 1));
-		add_service = new JButton("Add Service");
-		end1.add(add_service);
-		add_service.addActionListener(this);
-		end1.add(add_service);
-		services.add(end1, BorderLayout.SOUTH);
+        update = new JButton("Update this Person's Record");
+        end.add(update);
+        update.addActionListener(this);
+        register.add(new JScrollPane(end), BorderLayout.SOUTH);
 
-		// set this view to full screen size
-		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-		setSize(dim.width / 2, dim.height / 2);
-		setLocation(100, 100);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setVisible(true);
+        // UI for check-in
+        newcheckin = new NewCheckIn(this);
+        checkin.add(newcheckin.createcheckin());
+        checkinP = new JPanel(new GridLayout(1, 1));
+        checkB = new JButton("Check-In");
+        checkinP.add(checkB);
+        checkB.addActionListener(this);
+        checkin.add(new JScrollPane(checkinP), BorderLayout.SOUTH);
 
-	}
+        // UI for services
+        RequestService reqservice = new RequestService(this);
+        services.add(reqservice.getview());
 
-	@Override
-	public void actionPerformed(ActionEvent action) {
-		// TODO Auto-generated method stub
+        end1 = new JPanel(new GridLayout(1, 1));
+        add_service = new JButton("Add Service");
+        end1.add(add_service);
+        add_service.addActionListener(this);
+        end1.add(add_service);
+        services.add(end1, BorderLayout.SOUTH);
 
-		if (action.getSource() == check) {
-			boolean check = FrontDeskService.checkIfPersonPresent(ssnT.getText());
-			if (check == false) {
-				new MyDialog("Sorry! No Data present for this Person");
-			} else {
-				new MyDialog("Data present for this Person!");
-			}
-		}
+        // UI for report
+        myreport = new JPanel(new GridLayout(12, 2, 0, 3));
+        room_numL = new JLabel("Room Number");
 
-		if (action.getSource() == addPerson) {
-			new NewCustomer(this, ssnT.getText());
-		}
-		if (action.getSource() == add_service) {
-			// System.out.println("yo");
-			// RequestService r=new RequestService(this);
-			int my_room = Integer.parseInt(RequestService.room_numC.getSelectedItem().toString());
-			String my_service = RequestService.typeC.getSelectedItem().toString();
+        end_rep = new JPanel(new GridLayout(1, 1));
 
-			Connection c = Database.getConnection();
-			//RoomServiceLinks.setConnnection(c);
-			Service.setConnnection(c);
-			Service s = new Service();
-			int room_service = s.getservicenum(my_service, LoginHMS.hid);
-			// System.out.println("num"+room_service);
-			JSONObject input = new JSONObject();
-			input.put("room_num", my_room);
-			input.put("service_type", my_service);
-			input.put("service_num", room_service);
-			// input.put("staff_id", LoginHMS.pid);
-			int mypid = 10;
-			input.put("hotel_id", LoginHMS.hid);
+        check_rep = new JButton("Get Report");
+        end_rep.add(check_rep);
+        report.add(end_rep, BorderLayout.SOUTH);
+        check_rep.addActionListener(this);
+        Connection conn = Database.getConnection();
+        Room.setConnnection(conn);
+        Room room = new Room();
 
-			if (my_service.contains("special")) {
-				mypid = s.getStaffServing(LoginHMS.hid, "manager");
-			} else if (my_service.contains("room")) {
-				mypid = s.getStaffServing(LoginHMS.hid, "cleaning");
+        Vector<Vector<Object>> data = room.getRoomDetails(LoginHMS.hid);
+        int i;
+        for (i = 0; i < data.size(); i++) {
 
-			} else if (my_service.contains("dry")) {
-				mypid = s.getStaffServing(LoginHMS.hid, "cleaning");
+            if (data.get(i).get(3).toString().equals("unavailable")) {
 
-			} else if (my_service.contains("catering")) {
-				mypid = s.getStaffServing(LoginHMS.hid, "catering");
+                roomnums.add(data.get(i).get(0).toString());
+            }
+        }
+        room_numC = new JComboBox(roomnums.toArray());
+        myreport.add(room_numL);
+        myreport.add(room_numC);
+        report.add(myreport);
 
-			} else
-				mypid = LoginHMS.pid;
+        // set this view to full screen size
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        setSize(dim.width / 2, dim.height / 2);
+        setLocation(100, 100);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setVisible(true);
 
-			input.put("staff_id", mypid);
+    }
 
-			if (!FrontDeskService.requestNewService(input)) {
-				new MyDialog("Service Requested was not successful");
-			} else {
-				new MyDialog2("Service Request completed successfully!");
+    public void showStaffServing(String room_num) {
+        JDialog dialog = new JDialog();
+        Vector<Vector<Object>> vector = FrontDeskService.getRoomServicesOfferedByStaff(room_num);
+        tableModel.setDataVector(vector, RoomServiceLinks.ROOM_SERVICE_COLUMNS);
+        if (vector.size() == 0 || vector == null) {
 
-			}
+        }
+        dialog.add(new JScrollPane(table), BorderLayout.CENTER);
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        dialog.setSize(350, 200);
+        dialog.setVisible(true);
+    }
 
-			// System.out.println(""+my_room+""+my_service);
+    @Override
+    public void actionPerformed(ActionEvent action) {
+        // TODO Auto-generated method stub
 
-		}
-		if (action.getSource() == checkB) {
-			int numguests = Integer.parseInt(newcheckin.guestT.getSelectedItem().toString());
-			String category = newcheckin.categoryT.getSelectedItem().toString();
+        if (action.getSource() == check) {
+            boolean check = FrontDeskService.checkIfPersonPresent(ssnT.getText());
+            if (check == false) {
+                new MyDialog("Sorry! No Data present for this Person");
+            } else {
+                new MyDialog("Data present for this Person!");
+            }
+        }
+        if (action.getSource() == check_rep) {
 
-			SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-mm-dd HH:mm:ss");
-			Calendar cal = Calendar.getInstance();
-			Date date1 = null;
+            showStaffServing(room_numC.getSelectedItem().toString());
+        }
 
-			String jDateChooser1 = myFormat.format(cal.getTime());
-			try {
-				date1 = myFormat.parse(jDateChooser1);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+        if (action.getSource() == update) {
 
-			/*
-			 * SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-mm-dd HH:mm:ss");
-			 * Calendar cal = Calendar.getInstance();
-			 * 
-			 * Timestamp date1=null; try { date1 = (Timestamp)
-			 * myFormat.parse(cal.getTime().toString());
-			 * 
-			 * } catch (Exception e) { e.printStackTrace(); }
-			 */
-			System.out.println(date1);
+            boolean check = FrontDeskService.checkIfPersonPresent(ssnT.getText());
+            if (check == false) {
+                new MyDialog("Sorry! No Data present for this Person");
+            } else {
+                new UpdateCustomer(this, ssnT.getText());
+            }
 
-			int room_num = 0;
-			Map<Integer, String> map = new LinkedHashMap<>();
-			map = FrontDeskService.checkRoomAvailable(LoginHMS.hid, numguests, category);
+        }
 
-			if (map != null) {
-				JSONObject input = new JSONObject();
-				// System.out.println((newcheckin.ssnT.getText()));
-				Connection conn = Database.getConnection();
+        if (action.getSource() == addPerson) {
+            new NewCustomer(this, ssnT.getText());
+        }
+        if (action.getSource() == add_service) {
+            
+            int my_room = Integer.parseInt(RequestService.room_numC.getSelectedItem().toString());
+            String my_service = RequestService.typeC.getSelectedItem().toString();
 
-				People.setConnnection(conn);
-				String ssn = newcheckin.ssnT.getText();
+            Connection c = Database.getConnection();
+            Service.setConnnection(c);
+            Service s = new Service();
+            int room_service = s.getservicenum(my_service, LoginHMS.hid);
+            JSONObject input = new JSONObject();
+            input.put("room_num", my_room);
+            input.put("service_type", my_service);
+            input.put("service_num", room_service);
+            int mypid = 10;
+            input.put("hotel_id", LoginHMS.hid);
 
-				int peopleid = People.getPIDbySSN(ssn);
+            if (my_service.contains("special")) {
+                mypid = s.getStaffServing(LoginHMS.hid, "manager");
+            } else if (my_service.contains("room")) {
+                mypid = s.getStaffServing(LoginHMS.hid, "cleaning");
 
-				Database.endConnnection(conn);
+            } else if (my_service.contains("dry")) {
+                mypid = s.getStaffServing(LoginHMS.hid, "cleaning");
 
-				Map.Entry<Integer, String> entry = map.entrySet().iterator().next();
-				room_num = entry.getKey();
+            } else if (my_service.contains("catering")) {
+                mypid = s.getStaffServing(LoginHMS.hid, "catering");
 
-				if (peopleid == 0)
-					new MyDialog("Invalid SSN");
-				else {
-					input.put("pid", peopleid);
-					input.put("guests", numguests);
-					input.put("checkin", date1);
-					input.put("checkout", date1);
-					input.put("room_num", room_num);
-					input.put("category", category);
-					// input.put("front_desk_id",front_desk_id);
+            } else
+                mypid = LoginHMS.pid;
 
-					if (!FrontDeskService.addNewCheckIn(input)) {
-						new MyDialog("Check-In was not successful");
-					} else {
-						new MyDialog2("Check-In successful!");
+            input.put("staff_id", mypid);
 
-					}
-					this.dispose();
-				}
-			} else
-				new MyDialog("Sorry! No Room Available");
+            if (!FrontDeskService.requestNewService(input)) {
+                new MyDialog("Service Requested was not successful");
+            } else {
+                new MyDialog2("Service Request completed successfully!");
 
-		}
+            }
 
-	}
+
+        }
+        if (action.getSource() == checkB) {
+            int numguests = Integer.parseInt(newcheckin.guestT.getSelectedItem().toString());
+            String category = newcheckin.categoryT.getSelectedItem().toString();
+
+           
+            Timestamp date1 = null;
+
+            try {
+                date1 = new Timestamp(System.currentTimeMillis());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+            int room_num = 0;
+            Map<Integer, String> map = new LinkedHashMap<>();
+            map = FrontDeskService.checkRoomAvailable(LoginHMS.hid, numguests, category);
+
+            if (map != null) {
+                JSONObject input = new JSONObject();
+                Connection conn = Database.getConnection();
+
+                People.setConnnection(conn);
+                String ssn = newcheckin.ssnT.getText();
+
+                int peopleid = People.getPIDbySSN(ssn);
+
+                Database.endConnnection(conn);
+
+                Map.Entry<Integer, String> entry = map.entrySet().iterator().next();
+                room_num = entry.getKey();
+
+                if (peopleid == 0)
+                    new MyDialog("Invalid SSN");
+                else {
+                    input.put("pid", peopleid);
+                    input.put("guests", numguests);
+                    input.put("checkin", date1);
+                    input.put("checkout", date1);
+                    input.put("room_num", room_num);
+                    input.put("category", category);
+
+                    if (!FrontDeskService.addNewCheckIn(input)) {
+                        new MyDialog("Check-In was not successful");
+                    } else {
+                        new MyDialog2("Check-In successful!");
+
+                    }
+                    this.dispose();
+                }
+            } else
+                new MyDialog("Sorry! No Room Available");
+
+        }
+
+    }
 }
 
 @SuppressWarnings("serial")
 class MyDialog extends JDialog {
-	JLabel error;
+    JLabel error;
 
-	MyDialog(String text) {
-		error = new JLabel(text);
-		// super(login, "Error", true);
-		error.setForeground(Color.RED);
-		add(error, BorderLayout.CENTER);
-		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setSize(250, 100);
-		// setLocation(login.getLocationOnScreen());
-		setVisible(true);
-	}
+    MyDialog(String text) {
+        error = new JLabel(text);
+        error.setForeground(Color.RED);
+        add(error, BorderLayout.CENTER);
+        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        setSize(250, 100);
+        setVisible(true);
+    }
 }
 
 @SuppressWarnings("serial")
 class MyDialog2 extends JDialog {
-	JLabel error;
+    JLabel error;
 
-	MyDialog2(String text) {
-		error = new JLabel(text);
-		// super(login, "Error", true);
-		error.setForeground(Color.GREEN);
-		add(error, BorderLayout.CENTER);
-		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setSize(250, 100);
-		// setLocation(login.getLocationOnScreen());
-		setVisible(true);
-	}
+    MyDialog2(String text) {
+        error = new JLabel(text);
+        error.setForeground(Color.GREEN);
+        add(error, BorderLayout.CENTER);
+        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        setSize(250, 100);
+        setVisible(true);
+    }
 }

@@ -3,6 +3,7 @@ package dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 
@@ -94,6 +95,20 @@ public class People {
             exe.executeQuery(finalQueryPeople);
         }
     }
+    public boolean fdupdatePerson(String name,int pid)
+    {
+        String peopleQuery = "UPDATE people set name='"+name+"' where pid="+pid;
+        try {
+            Statement exe = c.createStatement();
+			exe.executeQuery(peopleQuery);
+			return true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+
+    }
 
     public static int getPIDbySSN(String ssn) {
         int pid = 0;
@@ -101,7 +116,6 @@ public class People {
             PreparedStatement exe = c.prepareStatement("SELECT pid from people where ssn =?");
             exe.setString(1, ssn);
             ResultSet result = exe.executeQuery();
-            //System.out.println(result.toString());
             if(result.next())
                 pid = result.getInt("pid");
         } catch (Exception e) {
