@@ -103,12 +103,19 @@ public class FrontDesk extends JFrame implements ActionListener {
         // register.add(new JScrollPane(regpanel), BorderLayout.CENTER);
 
         end = new JPanel(new GridLayout(2, 1));
-
-        check = new JButton("Check if Person Detail's Present");
+        ImageIcon searchIcon = new ImageIcon(new ImageIcon("images/search.png").getImage()
+                .getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+        check = new JButton("Check if customer detail's present", searchIcon);
+        check.setBackground(Color.DARK_GRAY);
+        check.setForeground(Color.ORANGE);
         end.add(check);
         check.addActionListener(this);
 
-        addPerson = new JButton("Add this Person");
+        ImageIcon addIcon = new ImageIcon(new ImageIcon("images/submit.png").getImage()
+                .getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+        addPerson = new JButton("Add this person", addIcon);
+        addPerson.setBackground(Color.DARK_GRAY);
+        addPerson.setForeground(Color.GREEN);
         end.add(addPerson);
         addPerson.addActionListener(this);
 
@@ -159,8 +166,9 @@ public class FrontDesk extends JFrame implements ActionListener {
         checkout.add(billingpanel);
 
         end1 = new JPanel(new GridLayout(2, 1));
-
-        checkOut = new JButton("Check Out and Bil the Customer");
+        checkOut = new JButton("Check out customer & generate bill");
+        checkOut.setBackground(Color.DARK_GRAY);
+        checkOut.setForeground(Color.ORANGE);
         end1.add(checkOut);
         checkOut.addActionListener(this);
         checkout.add(new JScrollPane(end1), BorderLayout.SOUTH);
@@ -169,7 +177,10 @@ public class FrontDesk extends JFrame implements ActionListener {
         newcheckin = new NewCheckIn(this);
         checkin.add(newcheckin.createcheckin());
         checkinP = new JPanel(new GridLayout(1, 1));
-        checkB = new JButton("Check-In");
+
+        checkB = new JButton("Check In");
+        checkB.setBackground(Color.DARK_GRAY);
+        checkB.setForeground(Color.GREEN);
         checkinP.add(checkB);
         checkB.addActionListener(this);
         checkin.add(new JScrollPane(checkinP), BorderLayout.SOUTH);

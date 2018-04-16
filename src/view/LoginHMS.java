@@ -34,6 +34,12 @@ import dao.Staff;
 import service.FrontDeskService;
 import service.ManagerService;
 
+/**
+ * First class of UI that allow user to login on the basis of their role
+ * 
+ * @author kshittiz
+ *
+ */
 public class LoginHMS extends JFrame implements ActionListener {
     /**
      * 
@@ -144,6 +150,12 @@ public class LoginHMS extends JFrame implements ActionListener {
 
 }
 
+/**
+ * Class that creates Error dialog box
+ * 
+ * @author kshittiz
+ *
+ */
 @SuppressWarnings("serial")
 class Error extends JDialog {
     JLabel error = new JLabel("Sorry! SSN not registered for this duty");
@@ -159,6 +171,13 @@ class Error extends JDialog {
     }
 }
 
+/**
+ * Class that creates UI for chairman functionalities i.e. adding hotel and
+ * manager
+ * 
+ * @author kshittiz
+ *
+ */
 @SuppressWarnings("serial")
 class Chairman extends JDialog implements ActionListener {
     JTextField hotelName;

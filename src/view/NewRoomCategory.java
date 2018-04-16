@@ -21,6 +21,13 @@ import javax.swing.JTextField;
 import dao.Database;
 import dao.RoomCategory;
 
+/**
+ * Class that creates dialog box /UI that for adding new room category in
+ * manager's hotel
+ * 
+ * @author kshittiz
+ *
+ */
 @SuppressWarnings("serial")
 public class NewRoomCategory extends JDialog implements ActionListener {
 
