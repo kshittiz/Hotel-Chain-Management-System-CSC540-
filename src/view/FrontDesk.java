@@ -1,7 +1,6 @@
 package view;
 
 import java.awt.BorderLayout;
-import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -28,16 +27,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-
-import javax.swing.JTextArea;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import org.json.JSONObject;
 
 import dao.Database;
-import dao.Discount;
 import dao.People;
 import dao.Room;
 import dao.RoomServiceLinks;
@@ -181,9 +178,18 @@ public class FrontDesk extends JFrame implements ActionListener {
         billingpanel.add(billingAdressText);
 
         billingTypeLabel = new JLabel("Enter the billing type");
-        
-        List<String> paymentTypesList = FrontDeskService.getListOfPayment() ;//getting all billing types from database
-        String []paymentTypes = new String[paymentTypesList.size()]; //converting the list obtained to array format
+
+        List<String> paymentTypesList = FrontDeskService.getListOfPayment();// getting
+                                                                            // all
+                                                                            // billing
+                                                                            // types
+                                                                            // from
+                                                                            // database
+        String[] paymentTypes = new String[paymentTypesList.size()]; // converting
+                                                                     // the list
+                                                                     // obtained
+                                                                     // to array
+                                                                     // format
         paymentTypesList.toArray(paymentTypes);
         payment = new JComboBox<String>(paymentTypes); // creating a dropdown
                                                        // menu for billing types
@@ -348,17 +354,16 @@ public class FrontDesk extends JFrame implements ActionListener {
                 e.printStackTrace();
             }
 
-
             /*
-             * SimpleDateFormat myFormat = new SimpleDateFormat( "yyyy-mm-dd HH:mm:ss");
-             * Calendar cal = Calendar.getInstance();
+             * SimpleDateFormat myFormat = new SimpleDateFormat(
+             * "yyyy-mm-dd HH:mm:ss"); Calendar cal = Calendar.getInstance();
              * 
              * Timestamp date1=null; try { date1 = (Timestamp)
              * myFormat.parse(cal.getTime().toString());
              * 
              * } catch (Exception e) { e.printStackTrace(); }
              */
-            System.out.println(date1);
+            // System.out.println(date1);
 
             int room_num = 0;
             Map<Integer, String> map = new LinkedHashMap<>();
@@ -389,12 +394,14 @@ public class FrontDesk extends JFrame implements ActionListener {
                     input.put("category", category);
 
                     if (!FrontDeskService.addNewCheckIn(input)) {
-                        new MyDialog("Check-In was not successful");
+                        new MyDialog("Check-In was not successful. ");
                     } else {
-                        new MyDialog2("Check-In successful!");
-
+                        new MyDialog2("Check-In successful! Room number alloted is"
+                                + FrontDeskService.room_alloted);
+                        NewCheckIn.ssnT.setText("");
                     }
-                    this.dispose();
+
+                    // this.dispose();
                 }
             } else
                 new MyDialog("Sorry! No Room Available");
@@ -407,11 +414,12 @@ public class FrontDesk extends JFrame implements ActionListener {
             String paymentTypeTemp = (String) payment.getSelectedItem();
 
             try {
-                finalString = FrontDeskService.calculateAmount(roomT.getText(),
-                        extraDiscountText.getText(), paymentTypeTemp, taxText.getText(),
-                        billingAdressText.getText());
+                finalString = FrontDeskService.calculateAmount(roomT.getText(), extraDiscountText
+                        .getText(), paymentTypeTemp, taxText.getText(), billingAdressText
+                                .getText());
                 if (finalString != "") {
-                    new MyDialog3("The customer has successfully checked out " + "\n" + finalString);
+                    new MyDialog3("The customer has successfully checked out " + "\n"
+                            + finalString);
                 } else {
                     new MyDialog3("The room needs to be corrected");
                 }
@@ -453,7 +461,7 @@ class MyDialog2 extends JDialog {
         error.setForeground(Color.GREEN);
         add(error, BorderLayout.CENTER);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        setSize(250, 100);
+        setSize(400, 200);
         setLocation(FrontDesk.p);
         setVisible(true);
     }
@@ -476,6 +484,3 @@ class MyDialog3 extends JDialog {
         setVisible(true);
     }
 }
-
-
-

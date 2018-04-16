@@ -1,7 +1,6 @@
 package view;
 
 import java.awt.GridLayout;
-
 import java.util.Date;
 
 import javax.swing.JButton;
@@ -13,7 +12,7 @@ import javax.swing.JTextField;
 public class NewCheckIn {
 
     JLabel ssnL, guestsL, checkinL, categoryL;
-    JTextField ssnT, checkinT;
+    public static JTextField ssnT, checkinT;
     JComboBox guestT, categoryT;
     JButton check;
     JPanel end;

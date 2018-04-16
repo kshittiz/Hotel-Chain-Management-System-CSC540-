@@ -4,12 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.sql.Timestamp;
-import java.util.HashMap;
 import java.util.Vector;
 
 import org.json.JSONObject;
@@ -35,6 +33,9 @@ import view.LoginHMS;
 import view.UpdateCustomer;
 
 public class FrontDeskService {
+
+    public static int room_alloted;
+
     public static String getNameLinkedwithSSN(String ssn) {
         String name = null;
         Connection c = Database.getConnection();
@@ -74,7 +75,9 @@ public class FrontDeskService {
         return map;
     }
 
-    public static List<String> getListOfPayment() { // Obtaining billingTypesList from Discount
+    public static List<String> getListOfPayment() { // Obtaining
+                                                    // billingTypesList from
+                                                    // Discount
                                                     // table
         Connection c = Database.getConnection();
         Discount.setConnnection(c);
@@ -112,30 +115,51 @@ public class FrontDeskService {
 
             // Setting the variable values obtained from different classes
             Billing.setConnnection(c);
-            int intialDiscount = Billing.discountOnBillType(Billing_Type); // Get discount based on
-                                                                           // payment method
+            int intialDiscount = Billing.discountOnBillType(Billing_Type); // Get
+                                                                           // discount
+                                                                           // based
+                                                                           // on
+                                                                           // payment
+                                                                           // method
             CheckInAttributes.setConnnection(c);
             int tempCID = CheckInAttributes.cidUsingHidRoom_Num(temphid, tempRoomNo); // Get
                                                                                       // checkInAttributes
             CheckIn.setConnnection(c);
-            int duration = CheckIn.durationUsingCID(tempCID);// Get total duration spend by customer
-                                                             // in particular room
+            int duration = CheckIn.durationUsingCID(tempCID);// Get total
+                                                             // duration spend
+                                                             // by customer
+                                                             // in particular
+                                                             // room
             Room.setConnnection(c);
-            String temproom_category = Room.roomCat(tempRoomNo, temphid);// Get room_category
-            int tempoccupancy = Room.roomOccupancy(tempRoomNo, temphid);// Get room occupancy
+            String temproom_category = Room.roomCat(tempRoomNo, temphid);// Get
+                                                                         // room_category
+            int tempoccupancy = Room.roomOccupancy(tempRoomNo, temphid);// Get
+                                                                        // room
+                                                                        // occupancy
             RoomCategory.setConnnection(c);
             int tempNightlyRate = RoomCategory.nightlyRate(temphid, temproom_category,
-                    tempoccupancy);// Get nightly rate for the room at the given hotel
+                    tempoccupancy);// Get nightly rate for the room at the given
+                                   // hotel
 
             ServiceType.setConnnection(c);
-            int serviceAmount = ServiceType.getServiceAmount(temphid, tempRoomNo); // Obtain total
+            int serviceAmount = ServiceType.getServiceAmount(temphid, tempRoomNo); // Obtain
+                                                                                   // total
                                                                                    // service
-                                                                                   // charges levied
-                                                                                   // on the room
+                                                                                   // charges
+                                                                                   // levied
+                                                                                   // on
+                                                                                   // the
+                                                                                   // room
 
             List<String> servicesUsed = new ArrayList<String>();
-            servicesUsed = ServiceType.getServicesUsed(temphid, tempRoomNo); // obtain the list of
-                                                                             // services used by the
+            servicesUsed = ServiceType.getServicesUsed(temphid, tempRoomNo); // obtain
+                                                                             // the
+                                                                             // list
+                                                                             // of
+                                                                             // services
+                                                                             // used
+                                                                             // by
+                                                                             // the
                                                                              // room
 
             RoomServiceLinks.setConnnection(c);
@@ -152,15 +176,19 @@ public class FrontDeskService {
             // Makes changes in databases affected by room checkout
             Billing.setConnnection(c);
             Billing.addBilling(tempCID, Integer.parseInt(Discount), amount, Integer.parseInt(tax),
-                    billingadress, Billing_Type); // adding entry for the particular room to billing
+                    billingadress, Billing_Type); // adding entry for the
+                                                  // particular room to billing
                                                   // table
             Room.setConnnection(c);
-            Room.updateRoomAvailbility("available", tempRoomNo); // changing availability of room on
+            Room.updateRoomAvailbility("available", tempRoomNo); // changing
+                                                                 // availability
+                                                                 // of room on
                                                                  // checkout
             CheckIn.setConnnection(c);
             CheckIn.updateCheckOutTime(tempCID); // updating checkout time
             RoomServiceLinks.setConnnection(c);
-            RoomServiceLinks.deleteServiceLinks(temphid, tempRoomNo); // Removing services
+            RoomServiceLinks.deleteServiceLinks(temphid, tempRoomNo); // Removing
+                                                                      // services
             // records used by customer
             String finalString = "The Total number of days occupied by the customer is " + duration;
             finalString = finalString + "The category of room occupied by the customer is: "
@@ -172,8 +200,8 @@ public class FrontDeskService {
 
                 }
             }
-            finalString = finalString + "The total amount levied on the room is"
-                    + Integer.toString(amount);
+            finalString = finalString + "The total amount levied on the room is" + Integer.toString(
+                    amount);
 
             // Committing transaction
             c.commit();
@@ -352,6 +380,8 @@ public class FrontDeskService {
 
             // Committing transaction
             c.commit();
+
+            room_alloted = obj.getInt("room_num");
             // transaction ends
             return true;
 
@@ -380,8 +410,8 @@ public class FrontDeskService {
 
             RoomServiceLinks.setConnnection(c);
             RoomServiceLinks roomservice = new RoomServiceLinks();
-            roomservice.addRoomServiceLinks(obj.getInt("room_num"), obj.getInt("service_num"),
-                    obj.getInt("hotel_id"), obj.getInt("staff_id"));
+            roomservice.addRoomServiceLinks(obj.getInt("room_num"), obj.getInt("service_num"), obj
+                    .getInt("hotel_id"), obj.getInt("staff_id"));
 
             // Committing transaction
             c.commit();
@@ -412,8 +442,18 @@ public class FrontDeskService {
             People p = new People();
             int pid = People.getPIDbySSN(obj.getString("original_ssn"));
 
+            // if (!obj.getString("name").isEmpty())
+            // p.fdupdatePerson(obj.getString("name"), pid);
+
+            HashMap<String, String> map_people = new HashMap<String, String>();
+
             if (!obj.getString("name").isEmpty())
-                p.fdupdatePerson(obj.getString("name"), pid);
+                map_people.put("name", obj.getString("name"));
+
+            if (!obj.getString("address").isEmpty())
+                map_people.put("address", obj.getString("address"));
+
+            p.updatePerson(map_people, pid);
 
             Customer.setConnnection(c);
             Customer cust = new Customer();
