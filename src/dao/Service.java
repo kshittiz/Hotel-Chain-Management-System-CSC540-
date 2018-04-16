@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Vector;
 
 public class Service {
@@ -19,8 +20,8 @@ public class Service {
     public boolean addService(int service_num, int hotel_id, String type) {
 
         try {
-            PreparedStatement exe = c
-                    .prepareStatement("insert into service(service_num, hotel_id,type) values(?, ?,?)");
+            PreparedStatement exe = c.prepareStatement(
+                    "insert into service(service_num, hotel_id,type) values(?, ?,?)");
             exe.setInt(1, service_num);
             exe.setInt(2, hotel_id);
             exe.setString(3, type);
@@ -64,7 +65,8 @@ public class Service {
 
     public boolean deleteService(int service_num, int hid) {
         try {
-            PreparedStatement exe = c.prepareStatement(" Delete from service where service_num = ? and hotel_id=?");
+            PreparedStatement exe = c.prepareStatement(
+                    " Delete from service where service_num = ? and hotel_id=?");
             exe.setInt(1, service_num);
             exe.setInt(2, hid);
             exe.executeQuery();
@@ -79,7 +81,8 @@ public class Service {
     public int getservicenum(String service, int hid) {
         int service_num = 0;
         try {
-            PreparedStatement exe = c.prepareStatement("SELECT service_num from service where type=? and hotel_id=?");
+            PreparedStatement exe = c.prepareStatement(
+                    "SELECT service_num from service where type=? and hotel_id=?");
             exe.setString(1, service);
             exe.setInt(2, hid);
 
@@ -96,7 +99,8 @@ public class Service {
     public int getStaffServing(int hid, String title) {
         int pid = 0;
         try {
-            PreparedStatement exe = c.prepareStatement("SELECT pid from staff where hotel_serving=? and department=?");
+            PreparedStatement exe = c.prepareStatement(
+                    "SELECT pid from staff where hotel_serving=? and department=?");
             exe.setInt(1, hid);
             exe.setString(2, title);
             // exe.executeQuery();
@@ -113,7 +117,8 @@ public class Service {
 
     public static String getServiceType(int temphid, int tempServiceNum) {
         try {
-            PreparedStatement exe = c.prepareStatement("select type from service where hotel_id=? and service_num=?");
+            PreparedStatement exe = c.prepareStatement(
+                    "select type from service where hotel_id=? and service_num=?");
             exe.setInt(1, (temphid));
             exe.setInt(2, (tempServiceNum));
             // System.out.println(temphid);
@@ -125,5 +130,22 @@ public class Service {
             System.out.println(e);
         }
         return "";
+    }
+
+    public HashMap<String, Integer> getStaffIDs(int hid) {
+        HashMap<String, Integer> map = new HashMap<String, Integer>();
+        try {
+            PreparedStatement exe = c.prepareStatement(
+                    "SELECT pid,name,job_title,department from people natural join staff where hotel_serving=?");
+            exe.setInt(1, hid);
+            ResultSet result = exe.executeQuery();
+            while (result.next()) {
+                map.put(result.getString(2) + " | " + result.getString(3) + " | " + result
+                        .getString(4), result.getInt(1));
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return map;
     }
 }
