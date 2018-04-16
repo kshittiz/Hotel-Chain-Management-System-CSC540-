@@ -29,7 +29,6 @@ public class Database {
         Properties props = new Properties();
         try {
             FileReader reader = new FileReader("database.properties");
-            // Try loading properties from the file (if found)
             props.load(reader);
             driver = props.getProperty("driver");
             connector = props.getProperty("connector");
@@ -47,13 +46,5 @@ public class Database {
             e.printStackTrace();
         }
     }
-    // This main function can be used to test connectivity with database, will
-    // be removed in final version
-    /*
-     * public static void main(String... s) { Connection c = getConnection();
-     * try { Statement exe = c.createStatement(); ResultSet result =
-     * exe.executeQuery("SELECT name from people"); while (result.next())
-     * System.out.println(result.getString(1)); c.close(); } catch (Exception e)
-     * { System.out.println(e); } }
-     */
+    
 }

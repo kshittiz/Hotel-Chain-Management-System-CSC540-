@@ -27,15 +27,13 @@ public class NewCustomer extends JDialog implements ActionListener {
     JTextField nameT,dobT,phoneT,emailT,addressT,ssnT;
     JButton save = new JButton("Save");
     JPanel panel;
-    //String myssn;
 
 	public NewCustomer(FrontDesk f,String ssn)
 	{
-		//myssn=ssn;
 		panel = new JPanel(new GridLayout(6,2,0,3));
 
         
-		nameL = new JLabel("Name (*)");
+		nameL = new JLabel("Name");
 		ssnL=new JLabel("SSN");
 		dobL = new JLabel("Date of Birth");
 		phoneL = new JLabel("Phone Number");
@@ -86,7 +84,6 @@ public class NewCustomer extends JDialog implements ActionListener {
             if (!nameT.getText().isEmpty())
                 input.put("name", nameT.getText());
 
-            //if (!myssn.isEmpty())
             input.put("SSN", Integer.parseInt(ssnT.getText()));
             	
             input.put("address", addressT.getText());
