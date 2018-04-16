@@ -64,14 +64,21 @@ public class ManagerService {
         try {
             // staring a transaction to add values in people hierarchy
             c.setAutoCommit(false);
+            // setting connection in people table
             People.setConnnection(c);
             People p = new People();
+            // adding person in people table
             int pid = p.addPerson(obj);
             obj.put("pid", pid);
-
+            // setting connection in staff table
             Staff.setConnnection(c);
             p = new Staff();
+            // adding person in staff table
             p.addPerson(obj);
+
+            // Selecting person department, setting connection with
+            // corresponding class to add entry of person in the respective
+            // table
             if ("manager".equals(obj.getString("department"))) {
                 Manager.setConnnection(c);
                 p = new Manager();
@@ -113,6 +120,8 @@ public class ManagerService {
 
         } catch (Exception e) {
             try {
+                // In case of any exception in entering data in tables above,
+                // transaction is rolled back
                 c.rollback();
             } catch (SQLException e1) {
                 e1.printStackTrace();
@@ -120,6 +129,7 @@ public class ManagerService {
             e.printStackTrace();
             return false;
         } finally {
+            // Ending connection
             Database.endConnnection(c);
         }
     }
@@ -137,13 +147,20 @@ public class ManagerService {
             String type) {
         Connection c = Database.getConnection();
         try {
-            // staring a transaction to add values in contact table
+            // staring a transaction to add contact
             c.setAutoCommit(false);
+            // setting connection
             ContactInfo.setConnnection(c);
             ContactInfo ci = new ContactInfo();
+            // adding contact info
             int contact_id = ci.addContactInfo(phone_number, email);
+
+            // setting connection with contact links
             ContactLinks.setConnnection(c);
             ContactLinks cl = new ContactLinks();
+
+            // adding entry in contact links based on contact id generated above
+            // and type of contact i.e. people/hotel
             if ("people".equals(type))
                 cl.CreateContactLinks(Integer.parseInt(id), contact_id, "people");
             else
@@ -155,6 +172,8 @@ public class ManagerService {
             return true;
         } catch (Exception e) {
             try {
+                // In case of any exception in entering data in tables above,
+                // transaction is rolled back
                 c.rollback();
             } catch (SQLException e1) {
                 e1.printStackTrace();

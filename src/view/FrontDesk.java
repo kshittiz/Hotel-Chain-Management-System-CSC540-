@@ -6,17 +6,18 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -27,14 +28,19 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+
 import javax.swing.JTextArea;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
 
 import org.json.JSONObject;
 
 import dao.Database;
 import dao.Discount;
 import dao.People;
+import dao.Room;
+import dao.RoomServiceLinks;
 import dao.Service;
 import service.FrontDeskService;
 
@@ -45,10 +51,18 @@ public class FrontDesk extends JFrame implements ActionListener {
      */
     private static final long serialVersionUID = 1L;
     JTabbedPane tabbedPane;
-    JPanel register, checkin, checkinP, services, checkout, billing, regpanel, billingpanel, end,
-            end1;
-    JLabel ssnL;
+    JPanel register, checkin, checkout, billing, regpanel, billingpanel, end, checkinP, services,
+            end1, report, myreport, end_rep;
+    JLabel ssnL, room_numL;
     JTextField ssnT;
+    JComboBox room_numC;
+    JButton check, checkOut, addPerson, checkB, add_service, update, check_rep;
+    NewCheckIn newcheckin;
+    DefaultTableModel tableModel = new DefaultTableModel();
+    JTable table = new JTable(tableModel);
+
+    ArrayList<String> roomnums = new ArrayList<String>();
+
     JLabel roomL;
     JTextField roomT;
     JLabel extraDiscountLabel;
@@ -60,9 +74,7 @@ public class FrontDesk extends JFrame implements ActionListener {
     JLabel billingTypeLabel;
     JTextField billingTypeText;
     JComboBox<String> payment;
-    JButton check, addPerson, checkOut, checkB, add_service;
-    NewCheckIn newcheckin;
-    // static JLabel opLabel;
+    static Point p;
 
     public FrontDesk(String name) {
         super("Front Desk View - " + name);
@@ -74,10 +86,10 @@ public class FrontDesk extends JFrame implements ActionListener {
 
         ImageIcon registerIcon = new ImageIcon(new ImageIcon("images/add.png").getImage()
                 .getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+
         tabbedPane.addTab("Register Customer", registerIcon, register);
 
         checkin = new JPanel(new BorderLayout());
-
         ImageIcon checkinIcon = new ImageIcon(new ImageIcon("images/checkin.png").getImage()
                 .getScaledInstance(30, 30, Image.SCALE_SMOOTH));
         tabbedPane.addTab("Check-In Customer", checkinIcon, checkin);
@@ -92,12 +104,17 @@ public class FrontDesk extends JFrame implements ActionListener {
                 .getScaledInstance(30, 30, Image.SCALE_SMOOTH));
         tabbedPane.addTab("Request Services", servicesIcon, services);
 
-        // add(tabbedPane);
+        report = new JPanel(new BorderLayout());
+        ImageIcon reportIcon = new ImageIcon(new ImageIcon("images/fetch.png").getImage()
+                .getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+        tabbedPane.addTab("Request Reports", reportIcon, report);
+
         add(tabbedPane, BorderLayout.CENTER);
 
         // UI for register
         regpanel = new JPanel(new GridLayout(12, 2, 0, 3));
-        ssnL = new JLabel("SSN(*)");
+        ssnL = new JLabel("SSN");
+
         ssnT = new JTextField();
 
         regpanel.add(ssnL);
@@ -106,15 +123,31 @@ public class FrontDesk extends JFrame implements ActionListener {
         register.add(regpanel);
         // register.add(new JScrollPane(regpanel), BorderLayout.CENTER);
 
-        end = new JPanel(new GridLayout(2, 1));
-
-        check = new JButton("Check if Person Detail's Present");
+        end = new JPanel(new GridLayout(3, 1));
+        ImageIcon searchIcon = new ImageIcon(new ImageIcon("images/search.png").getImage()
+                .getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+        check = new JButton("Check if customer detail's present", searchIcon);
+        check.setBackground(Color.DARK_GRAY);
+        check.setForeground(Color.ORANGE);
         end.add(check);
         check.addActionListener(this);
 
-        addPerson = new JButton("Add this Person");
+        ImageIcon addIcon = new ImageIcon(new ImageIcon("images/submit.png").getImage()
+                .getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+        addPerson = new JButton("Add this person", addIcon);
+        addPerson.setBackground(Color.DARK_GRAY);
+        addPerson.setForeground(Color.GREEN);
         end.add(addPerson);
         addPerson.addActionListener(this);
+
+        ImageIcon upIcon = new ImageIcon(new ImageIcon("images/update.png").getImage()
+                .getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+        update = new JButton("Update this Person's Record", upIcon);
+        update.setBackground(Color.DARK_GRAY);
+        update.setForeground(Color.GREEN);
+        end.add(update);
+        update.addActionListener(this);
+        register.add(new JScrollPane(end), BorderLayout.SOUTH);
 
         // register.add(end, BorderLayout.SOUTH);
         register.add(new JScrollPane(end), BorderLayout.SOUTH);
@@ -161,9 +194,10 @@ public class FrontDesk extends JFrame implements ActionListener {
 
         checkout.add(billingpanel);
 
-        end1 = new JPanel(new GridLayout(2, 1));
-
-        checkOut = new JButton("Check Out and Bil the Customer");
+        end1 = new JPanel(new GridLayout(1, 1));
+        checkOut = new JButton("Check out customer & generate bill");
+        checkOut.setBackground(Color.DARK_GRAY);
+        checkOut.setForeground(Color.ORANGE);
         end1.add(checkOut);
         checkOut.addActionListener(this);
         checkout.add(new JScrollPane(end1), BorderLayout.SOUTH);
@@ -172,23 +206,78 @@ public class FrontDesk extends JFrame implements ActionListener {
         newcheckin = new NewCheckIn(this);
         checkin.add(newcheckin.createcheckin());
         checkinP = new JPanel(new GridLayout(1, 1));
-        checkB = new JButton("Check-In");
+
+        checkB = new JButton("Check In");
+        checkB.setBackground(Color.DARK_GRAY);
+        checkB.setForeground(Color.GREEN);
         checkinP.add(checkB);
         checkB.addActionListener(this);
         checkin.add(new JScrollPane(checkinP), BorderLayout.SOUTH);
-        // checkin.setSize(50,100);
 
         // UI for services
         RequestService reqservice = new RequestService(this);
         services.add(reqservice.getview());
 
+        end1 = new JPanel(new GridLayout(1, 1));
+        add_service = new JButton("Add Service");
+        add_service.setBackground(Color.DARK_GRAY);
+        add_service.setForeground(Color.GREEN);
+        end1.add(add_service);
+        add_service.addActionListener(this);
+        end1.add(add_service);
+        services.add(end1, BorderLayout.SOUTH);
+
+        // UI for report
+        myreport = new JPanel(new GridLayout(12, 2, 0, 3));
+        room_numL = new JLabel("Room Number");
+
+        end_rep = new JPanel(new GridLayout(1, 1));
+
+        check_rep = new JButton("Get Report");
+        check_rep.setBackground(Color.DARK_GRAY);
+        check_rep.setForeground(Color.GREEN);
+        end_rep.add(check_rep);
+        report.add(end_rep, BorderLayout.SOUTH);
+        check_rep.addActionListener(this);
+        Connection conn = Database.getConnection();
+        Room.setConnnection(conn);
+        Room room = new Room();
+
+        Vector<Vector<Object>> data = room.getRoomDetails(LoginHMS.hid);
+        int i;
+        for (i = 0; i < data.size(); i++) {
+
+            if (data.get(i).get(3).toString().equals("unavailable")) {
+
+                roomnums.add(data.get(i).get(0).toString());
+            }
+        }
+        room_numC = new JComboBox(roomnums.toArray());
+        myreport.add(room_numL);
+        myreport.add(room_numC);
+        report.add(myreport);
+
         // set this view to full screen size
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         setSize(dim.width / 2, dim.height / 2);
         setLocation(100, 100);
+        p = getLocation();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
 
+    }
+
+    public void showStaffServing(String room_num) {
+        JDialog dialog = new JDialog();
+        Vector<Vector<Object>> vector = FrontDeskService.getRoomServicesOfferedByStaff(room_num);
+        tableModel.setDataVector(vector, RoomServiceLinks.ROOM_SERVICE_COLUMNS);
+        if (vector.size() == 0 || vector == null) {
+
+        }
+        dialog.add(new JScrollPane(table), BorderLayout.CENTER);
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        dialog.setSize(500, 200);
+        dialog.setVisible(true);
     }
 
     @Override
@@ -203,28 +292,39 @@ public class FrontDesk extends JFrame implements ActionListener {
                 new MyDialog("Data present for this Person!");
             }
         }
+        if (action.getSource() == check_rep) {
+
+            showStaffServing(room_numC.getSelectedItem().toString());
+        }
+
+        if (action.getSource() == update) {
+
+            boolean check = FrontDeskService.checkIfPersonPresent(ssnT.getText());
+            if (check == false) {
+                new MyDialog("Sorry! No Data present for this Person");
+            } else {
+                new UpdateCustomer(this, ssnT.getText());
+            }
+
+        }
 
         if (action.getSource() == addPerson) {
             new NewCustomer(this, ssnT.getText());
         }
-
         if (action.getSource() == add_service) {
-            // System.out.println("yo");
-            // RequestService r=new RequestService(this);
+
             int my_room = Integer.parseInt(RequestService.room_numC.getSelectedItem().toString());
             String my_service = RequestService.typeC.getSelectedItem().toString();
 
             Connection c = Database.getConnection();
-            // RoomServiceLinks.setConnnection(c);
             Service.setConnnection(c);
             Service s = new Service();
             int room_service = s.getservicenum(my_service, LoginHMS.hid);
-            // System.out.println("num"+room_service);
             JSONObject input = new JSONObject();
             input.put("room_num", my_room);
             input.put("service_type", my_service);
             input.put("service_num", room_service);
-            // input.put("staff_id", LoginHMS.pid);
+
             int mypid = 10;
             input.put("hotel_id", LoginHMS.hid);
 
@@ -251,23 +351,20 @@ public class FrontDesk extends JFrame implements ActionListener {
 
             }
 
-            // System.out.println(""+my_room+""+my_service);
-
         }
         if (action.getSource() == checkB) {
             int numguests = Integer.parseInt(newcheckin.guestT.getSelectedItem().toString());
             String category = newcheckin.categoryT.getSelectedItem().toString();
 
-            SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-mm-dd HH:mm:ss");
-            Calendar cal = Calendar.getInstance();
-            Date date1 = null;
+            Timestamp date1 = null;
 
-            String jDateChooser1 = myFormat.format(cal.getTime());
             try {
-                date1 = myFormat.parse(jDateChooser1);
+                date1 = new Timestamp(System.currentTimeMillis());
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
 
             /*
              * SimpleDateFormat myFormat = new SimpleDateFormat( "yyyy-mm-dd HH:mm:ss");
@@ -286,7 +383,6 @@ public class FrontDesk extends JFrame implements ActionListener {
 
             if (map != null) {
                 JSONObject input = new JSONObject();
-                // System.out.println((newcheckin.ssnT.getText()));
                 Connection conn = Database.getConnection();
 
                 People.setConnnection(conn);
@@ -308,7 +404,6 @@ public class FrontDesk extends JFrame implements ActionListener {
                     input.put("checkout", date1);
                     input.put("room_num", room_num);
                     input.put("category", category);
-                    // input.put("front_desk_id",front_desk_id);
 
                     if (!FrontDeskService.addNewCheckIn(input)) {
                         new MyDialog("Check-In was not successful");
@@ -357,12 +452,11 @@ class MyDialog extends JDialog {
 
     MyDialog(String text) {
         error = new JLabel(text);
-        // super(login, "Error", true);
         error.setForeground(Color.RED);
         add(error, BorderLayout.CENTER);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setSize(250, 100);
-        // setLocation(login.getLocationOnScreen());
+        setLocation(FrontDesk.p);
         setVisible(true);
     }
 }
@@ -373,14 +467,14 @@ class MyDialog2 extends JDialog {
 
     MyDialog2(String text) {
         error = new JLabel(text);
-        // super(login, "Error", true);
         error.setForeground(Color.GREEN);
         add(error, BorderLayout.CENTER);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setSize(250, 100);
-        // setLocation(login.getLocationOnScreen());
+        setLocation(FrontDesk.p);
         setVisible(true);
     }
+
 }
 
 @SuppressWarnings("serial")
@@ -399,3 +493,6 @@ class MyDialog3 extends JDialog {
         setVisible(true);
     }
 }
+
+
+

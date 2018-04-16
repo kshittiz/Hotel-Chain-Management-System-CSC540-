@@ -26,6 +26,14 @@ import dao.Room;
 import dao.Staff;
 import service.ManagerService;
 
+/**
+ * This class is designed to support all the update operations by the manager.
+ * All the operations performed by the managers are categorized on the basis of
+ * title passed in the constructor.
+ * 
+ * @author kshittiz
+ *
+ */
 @SuppressWarnings("serial")
 public class UpdateOperations extends JDialog implements ActionListener, TableModelListener {
     JTable table;
@@ -61,6 +69,9 @@ public class UpdateOperations extends JDialog implements ActionListener, TableMo
             }
         };
         title = titled;
+
+        // All the actions performed by manager are reflected in a separate UI
+        // controlled by this switch case
         switch (titled) {
         case "Update staff member details":
             tableModel.setDataVector(ManagerService.getStaffDetails(null), Staff.STAFF_COLUMNS);
@@ -101,6 +112,9 @@ public class UpdateOperations extends JDialog implements ActionListener, TableMo
     @Override
     public void actionPerformed(ActionEvent e) {
         boolean result = false;
+
+        // All the actions performed by manager are reflected in a separate UI
+        // controlled by this switch case
         switch (title) {
         case "Update staff member details":
             result = ManagerService.updateStaff(valuesSelected, Integer.parseInt(valuesSelected.get(
@@ -131,6 +145,8 @@ public class UpdateOperations extends JDialog implements ActionListener, TableMo
 
     @Override
     public void tableChanged(TableModelEvent e) {
+        // Event trapped on any changes in table data based on the user
+        // operations
         if ("Update staff member details".equals(title)) {
             if (valuesSelected.get("pid") != null && !valuesSelected.get("pid").equals(table
                     .getValueAt(e.getLastRow(), 0).toString()))

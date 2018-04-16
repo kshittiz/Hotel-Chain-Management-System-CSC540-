@@ -81,9 +81,9 @@ public class ContactInfo {
 
     public void updateContactDetails(HashMap<String, String> values, int cid) throws Exception {
         String query = "UPDATE contact_info set";
-        if (values.containsKey("phone_number"))
+        if ( !values.get("phone_number").toString().isEmpty())
             query = query + " phone_number=" + values.get("phone_number").toString() + ",";
-        if (values.containsKey("email"))
+        if (!values.get("email").toString().isEmpty())
             query = query + " email= '" + values.get("email").toString() + "',";
 
         String finalQuery = query.subSequence(0, query.length() - 1).toString();
@@ -91,4 +91,25 @@ public class ContactInfo {
         exe.setInt(1, cid);
         exe.executeQuery();
     }
+    public int getcontactid(int pid)
+    {
+    	int contactid=0;
+    	try {
+            PreparedStatement exe = c.prepareStatement(
+                    "select contact_id from contact_links where link_id=?");
+            exe.setInt(1, pid);
+           
+
+            
+            
+            ResultSet result = exe.executeQuery();
+            if (result.next())
+            	contactid = result.getInt(1);
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return contactid;
+    }
+
 }

@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.Vector;
 
 import org.json.JSONObject;
 
@@ -29,6 +32,7 @@ import dao.RoomServiceLinks;
 import dao.Service;
 import dao.ServiceType;
 import view.LoginHMS;
+import view.UpdateCustomer;
 
 public class FrontDeskService {
     public static String getNameLinkedwithSSN(String ssn) {
@@ -61,7 +65,7 @@ public class FrontDeskService {
             while (result.next()) {
                 map.put(result.getInt(1), result.getString(2));
             }
-            // System.out.println(map);
+
             c.close();
         } catch (Exception e) {
             System.out.println(e);
@@ -78,6 +82,19 @@ public class FrontDeskService {
         return returnPaymentList;
     }
 
+    /**
+     * Calculating amount of customer generated during checkout using
+     * transaction mechanism
+     * 
+     * @param room_num
+     * @param Discount
+     * @param Billing_Type
+     * @param tax
+     * @param billingadress
+     * @return amount
+     * @throws NumberFormatException
+     * @throws SQLException
+     */
     public static String calculateAmount(String room_num, String Discount, String Billing_Type,
             String tax, String billingadress) throws NumberFormatException, SQLException {
         // Initializing the connection
@@ -164,6 +181,8 @@ public class FrontDeskService {
             return finalString;
         } catch (Exception e) {
             try {
+                // In case of any exception in entering data in tables above,
+                // transaction is rolled back
                 c.rollback();
             } catch (SQLException e1) {
                 e1.printStackTrace();
@@ -233,6 +252,8 @@ public class FrontDeskService {
 
         } catch (Exception e) {
             try {
+                // In case of any exception in entering data in tables above,
+                // transaction is rolled back
                 c.rollback();
             } catch (SQLException e1) {
                 e1.printStackTrace();
@@ -273,30 +294,46 @@ public class FrontDeskService {
 
     }
 
+    /**
+     * Check in customer using transaction mechanism
+     * 
+     * @param obj
+     * @return
+     */
     public static boolean addNewCheckIn(JSONObject obj) {
         Connection c = Database.getConnection();
         try {
             // staring a transaction to add values in people hierarchy
             c.setAutoCommit(false);
+            // setting connection with check in
             CheckIn.setConnnection(c);
             CheckIn checkin = new CheckIn();
-            int cid = checkin.checkIn(obj.getInt("pid"), obj.getInt("guests"),
-                    (Date) obj.get("checkin"), (Date) obj.get("checkout"));
+            int cid = checkin.checkIn(obj.getInt("pid"), obj.getInt("guests"), (Timestamp) obj.get(
+                    "checkin"), (Timestamp) obj.get("checkout"));
+
             checkin.updateRoomAfterCheckIn(LoginHMS.hid, obj.getInt("room_num"));
 
+            // setting connection with hotel_checkin_links
             HotelCheckInLinks.setConnnection(c);
             HotelCheckInLinks h = new HotelCheckInLinks();
+            // adding entry in hotel_checkin_links
             h.addHotelCheckInLinks(LoginHMS.hid, cid);
 
+            // setting connection with frontdesk_checkin_links
             FrontDeskCheckInLinks.setConnnection(c);
             FrontDeskCheckInLinks f = new FrontDeskCheckInLinks();
+            // adding entry in frontdesk_checkin_links
             f.addFrontDeskCheckInLinks(LoginHMS.pid, cid);
 
+            // setting connection with checkin_attributes
             CheckInAttributes.setConnnection(c);
             CheckInAttributes checkin_attr = new CheckInAttributes();
+            // adding entry in checkin_attributes
             checkin_attr.addCheckInAttributes(cid, LoginHMS.hid, obj.getInt("room_num"));
 
+            // setting connection with service
             Service.setConnnection(c);
+            // setting connection with room_service_links
             RoomServiceLinks.setConnnection(c);
             Service s = new Service();
             RoomServiceLinks r = new RoomServiceLinks();
@@ -305,9 +342,11 @@ public class FrontDeskService {
                 int room_service = s.getservicenum("room service", LoginHMS.hid);
                 int catering = s.getservicenum("catering", LoginHMS.hid);
 
+                int staff_id = s.getStaffServing(LoginHMS.hid, "catering");
+                // adding services based on Presidential suite
                 r.addRoomServiceLinks(obj.getInt("room_num"), room_service, LoginHMS.hid,
                         LoginHMS.pid);
-                r.addRoomServiceLinks(obj.getInt("room_num"), catering, LoginHMS.hid, LoginHMS.pid);
+                r.addRoomServiceLinks(obj.getInt("room_num"), catering, LoginHMS.hid, staff_id);
 
             }
 
@@ -318,6 +357,8 @@ public class FrontDeskService {
 
         } catch (Exception e) {
             try {
+                // In case of any exception in entering data in tables above,
+                // transaction is rolled back
                 c.rollback();
             } catch (SQLException e1) {
                 e1.printStackTrace();
@@ -325,6 +366,7 @@ public class FrontDeskService {
             e.printStackTrace();
             return false;
         } finally {
+            // ending connection with database
             Database.endConnnection(c);
         }
     }
@@ -359,6 +401,100 @@ public class FrontDeskService {
             Database.endConnnection(c);
         }
 
+    }
+
+    public static boolean updateCustomer(JSONObject obj) {
+        Connection c = Database.getConnection();
+        try {
+            // staring a transaction to add values in people hierarchy
+            c.setAutoCommit(false);
+            People.setConnnection(c);
+            People p = new People();
+            int pid = People.getPIDbySSN(obj.getString("original_ssn"));
+
+            if (!obj.getString("name").isEmpty())
+                p.fdupdatePerson(obj.getString("name"), pid);
+
+            Customer.setConnnection(c);
+            Customer cust = new Customer();
+
+            if (!obj.getString("date_of_birth").isEmpty()) {
+                int count = cust.checkIfCustomerExists(pid);
+                if (count == 0) {
+                    JSONObject obj1 = new JSONObject();
+                    obj1.put("pid", pid);
+                    obj1.put("date_of_birth", obj.getString("date_of_birth"));
+                    cust.addPerson(obj1);
+                } else {
+                    cust.updatePerson(obj.getString("date_of_birth"), pid);
+                }
+            }
+
+            ContactInfo.setConnnection(c);
+            ContactInfo info = new ContactInfo();
+            int contactid = Integer.parseInt(UpdateCustomer.contactId.getText());
+
+            String phone = obj.optString("phone");
+            String email = obj.optString("email");
+
+            if (contactid == 0) {
+                contactid = info.addContactInfo(phone, email);
+                ContactLinks.setConnnection(c);
+                ContactLinks contact = new ContactLinks();
+                contact.CreateContactLinks(pid, contactid, "people");
+
+            } else {
+                HashMap<String, String> map = new HashMap<String, String>();
+
+                map.put("phone_number", phone);
+                map.put("email", email);
+                info.updateContactDetails(map, contactid);
+            }
+
+            // Committing transaction
+            c.commit();
+            // transaction ends
+            return true;
+
+        } catch (Exception e) {
+            try {
+                c.rollback();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+            e.printStackTrace();
+            return false;
+        } finally {
+            Database.endConnnection(c);
+        }
+    }
+
+    public static Vector<Vector<Object>> getContactDetails(String ssn) {
+        Vector<Vector<Object>> contacts;
+        Connection c = Database.getConnection();
+        People.setConnnection(c);
+        int pid = People.getPIDbySSN(ssn);
+        ContactInfo.setConnnection(c);
+        ContactInfo ci = new ContactInfo();
+        try {
+            contacts = ci.getContactDetails(pid, "people");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return contacts;
+
+    }
+
+    public static Vector<Vector<Object>> getRoomServicesOfferedByStaff(String room_num) {
+        Connection c = Database.getConnection();
+        RoomServiceLinks.setConnnection(c);
+        RoomServiceLinks r = new RoomServiceLinks();
+        Vector<Vector<Object>> data = r.getRoomServicesOfferedByStaff(Integer.parseInt(room_num),
+                LoginHMS.hid);
+        Database.endConnnection(c);
+        return data;
     }
 
 }
