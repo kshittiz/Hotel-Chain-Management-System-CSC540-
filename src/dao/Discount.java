@@ -5,7 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
 
 public class Discount {
@@ -71,5 +73,27 @@ public class Discount {
         }
         return true;
     }
+    public static List<String> getBillingTypes(){
+        List<String> billTypes = new ArrayList<String>();
+
+        try {
+            PreparedStatement exe = c.prepareStatement(
+                    " Select billing_type from discount");
+            
+            ResultSet result =exe.executeQuery();
+            while(result.next()) {
+                billTypes.add(result.getString(1));
+            }
+           
+
+        } catch (Exception e) {
+            System.out.println(e);
+            
+        }
+        
+        return billTypes;
+        
+    }
+  
    
 }

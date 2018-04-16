@@ -21,8 +21,8 @@ public class ServiceType {
     public boolean addServiceType(String type, int price) {
 
         try {
-            PreparedStatement exe = c.prepareStatement(
-                    "insert into service_type(type, price) values(?, ?)");
+            PreparedStatement exe = c
+                    .prepareStatement("insert into service_type(type, price) values(?, ?)");
             exe.setString(1, type);
             exe.setInt(2, price);
 
@@ -86,34 +86,57 @@ public class ServiceType {
         }
         return true;
     }
-    public static int getServiceAmount(String tempServiceType)
-    {
+
+    public static int getServiceAmount(int hotel_id, int room_num) {
         try
 
         {
-            PreparedStatement exe = c.prepareStatement("select price from service_type where type=?");
-            exe.setString(1, (tempServiceType));
 
-            List<Integer> tempList = new ArrayList<Integer>();
-
+            PreparedStatement exe = c.prepareStatement(
+                    "select SUM(price) from room_service_links natural join service natural join service_type where room_num=? and hotel_id=?");
+            exe.setInt(1, (room_num));
+            exe.setInt(2, (hotel_id));
             ResultSet result = exe.executeQuery();
             if (result.next()) {
-                tempList.add(result.getInt("price"));
+                int tempServiceAmount = result.getInt(1); //Obtaining total service cost levied on customer
+                
+                return tempServiceAmount;           
+                // check if the amount is null or has a value
 
             }
-            int amount=0;
-            for (int i = 0; i < tempList.size(); i++) {
-                amount = amount + tempList.get(i);
-            }
-            
-    
-    }catch(
-            Exception e)
-            {
-                System.out.println(e);
-            }
 
-            return 0;
-            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return 0;
     }
 
+    public static List<String> getServicesUsed(int temphid, int tempRoomNo) {
+        List<String> tempServicesUsed = new ArrayList<String>();
+        try
+
+        {
+
+            PreparedStatement exe = c.prepareStatement(
+                    "select type,price from room_service_links natural join service natural join service_type where room_num=? and hotel_id=?");
+            exe.setInt(1, (tempRoomNo));
+            exe.setInt(2, (temphid));
+            ResultSet result = exe.executeQuery();
+            while (result.next()) {
+                tempServicesUsed.add((result.getString(1)+" : "));// add services used by the room during
+                                                          // stay
+                tempServicesUsed.add("The price levied for this service is  " +(Integer.toString((result.getInt(2)))));// add prices for each
+                                                                            //service
+            }
+
+            return tempServicesUsed;
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return tempServicesUsed;
+    }
+
+}

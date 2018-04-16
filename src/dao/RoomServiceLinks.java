@@ -54,6 +54,25 @@ public class RoomServiceLinks {
         }
         return 0;
     }
+    public static boolean deleteServiceLinks(int hotel_id_room,int room_num) {
+        try {
+            PreparedStatement exe = c.prepareStatement(
+                    "delete from room_service_links where hotel_id_room=? and  room_num=? "
+                    );
+            exe.setInt(1, (hotel_id_room));
+            exe.setInt(2, (room_num));
+            ResultSet result = exe.executeQuery();
+            if (result.next()) {
+                return true;
+
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return false;
+        
+    }
 
     public Vector<Vector<Object>> getRoomServicesOfferedByStaff(int room_num, int hid) {
         Vector<Vector<Object>> data = null;

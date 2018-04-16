@@ -1,6 +1,7 @@
 package view;
 
 import java.awt.BorderLayout;
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -14,6 +15,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
@@ -26,6 +28,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+
+import javax.swing.JTextArea;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
@@ -33,6 +37,7 @@ import javax.swing.table.DefaultTableModel;
 import org.json.JSONObject;
 
 import dao.Database;
+import dao.Discount;
 import dao.People;
 import dao.Room;
 import dao.RoomServiceLinks;
@@ -176,11 +181,10 @@ public class FrontDesk extends JFrame implements ActionListener {
         billingpanel.add(billingAdressText);
 
         billingTypeLabel = new JLabel("Enter the billing type");
-        String[] paymentTypes = { "cash", "credit card", "debit card", "Hotel cc" }; // adding
-                                                                                     // billing
-                                                                                     // types
-                                                                                     // to
-                                                                                     // array
+        
+        List<String> paymentTypesList = FrontDeskService.getListOfPayment() ;//getting all billing types from database
+        String []paymentTypes = new String[paymentTypesList.size()]; //converting the list obtained to array format
+        paymentTypesList.toArray(paymentTypes);
         payment = new JComboBox<String>(paymentTypes); // creating a dropdown
                                                        // menu for billing types
         payment.setSelectedIndex(0);
@@ -344,6 +348,18 @@ public class FrontDesk extends JFrame implements ActionListener {
                 e.printStackTrace();
             }
 
+
+            /*
+             * SimpleDateFormat myFormat = new SimpleDateFormat( "yyyy-mm-dd HH:mm:ss");
+             * Calendar cal = Calendar.getInstance();
+             * 
+             * Timestamp date1=null; try { date1 = (Timestamp)
+             * myFormat.parse(cal.getTime().toString());
+             * 
+             * } catch (Exception e) { e.printStackTrace(); }
+             */
+            System.out.println(date1);
+
             int room_num = 0;
             Map<Integer, String> map = new LinkedHashMap<>();
             map = FrontDeskService.checkRoomAvailable(LoginHMS.hid, numguests, category);
@@ -387,18 +403,17 @@ public class FrontDesk extends JFrame implements ActionListener {
 
         // action to be perfomed when customer checks out
         if (action.getSource() == checkOut) {
-            int amount = 0;
+            String finalString = "";
             String paymentTypeTemp = (String) payment.getSelectedItem();
 
             try {
-                amount = FrontDeskService.calculateAmount(roomT.getText(), extraDiscountText
-                        .getText(), paymentTypeTemp, taxText.getText(), billingAdressText
-                                .getText());
-                if (amount > 0) {
-                    new MyDialog("The customer has successfully checked out,The total amount is "
-                            + Integer.toString(amount));
+                finalString = FrontDeskService.calculateAmount(roomT.getText(),
+                        extraDiscountText.getText(), paymentTypeTemp, taxText.getText(),
+                        billingAdressText.getText());
+                if (finalString != "") {
+                    new MyDialog3("The customer has successfully checked out " + "\n" + finalString);
                 } else {
-                    new MyDialog("The room needs to be corrected");
+                    new MyDialog3("The room needs to be corrected");
                 }
             } catch (NumberFormatException e) {
                 // TODO Auto-generated catch block
@@ -442,4 +457,25 @@ class MyDialog2 extends JDialog {
         setLocation(FrontDesk.p);
         setVisible(true);
     }
+
 }
+
+@SuppressWarnings("serial")
+class MyDialog3 extends JDialog {
+    JTextArea result;
+
+    MyDialog3(String text) {
+        result = new JTextArea(text);
+        // super(login, "Error", true);
+        result.setEditable(false);
+        result.setForeground(Color.GREEN);
+        add(result, BorderLayout.CENTER);
+        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        setSize(250, 100);
+        // setLocation(login.getLocationOnScreen());
+        setVisible(true);
+    }
+}
+
+
+
