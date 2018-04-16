@@ -35,6 +35,7 @@ import view.LoginHMS;
 import view.UpdateCustomer;
 
 public class FrontDeskService {
+    public static int DEFAULT_TAX=5;                                 //Setting default tax value as 5
     public static String getNameLinkedwithSSN(String ssn) {
         String name = null;
         Connection c = Database.getConnection();
@@ -83,8 +84,8 @@ public class FrontDeskService {
     }
 
     /**
-     * Calculating amount of customer generated during checkout using
-     * transaction mechanism
+     * Calculating amount of customer generated during checkout using transaction
+     * mechanism
      * 
      * @param room_num
      * @param Discount
@@ -108,7 +109,14 @@ public class FrontDeskService {
             int amount = 0;
             int temphid = LoginHMS.hid;
             int tempRoomNo = Integer.parseInt(room_num);
-            int finalDiscount = Integer.parseInt(Discount);
+            int finalDiscount = 0;
+            if (!Discount.isEmpty()) {
+                finalDiscount = Integer.parseInt(Discount);
+            }
+            if(!tax.isEmpty()) {                   //Changing default value of tax if the state has a different tax
+               DEFAULT_TAX =Integer.parseInt(tax);
+            }
+           
 
             // Setting the variable values obtained from different classes
             Billing.setConnnection(c);
@@ -147,13 +155,13 @@ public class FrontDeskService {
             amount = amount + tempNightlyRate * duration;
             amount = amount + serviceAmount;
             amount = amount - amount * ((finalDiscount + intialDiscount) / 100);
-            amount = amount + amount * Integer.parseInt(tax) / 100;
+            amount = amount + amount * DEFAULT_TAX / 100;
 
             // Makes changes in databases affected by room checkout
             Billing.setConnnection(c);
-            Billing.addBilling(tempCID, Integer.parseInt(Discount), amount, Integer.parseInt(tax),
-                    billingadress, Billing_Type); // adding entry for the particular room to billing
-                                                  // table
+            Billing.addBilling(tempCID, finalDiscount, amount, DEFAULT_TAX, billingadress,
+                    Billing_Type); // adding entry for the particular room to billing
+                                   // table
             Room.setConnnection(c);
             Room.updateRoomAvailbility("available", tempRoomNo); // changing availability of room on
                                                                  // checkout
@@ -162,9 +170,11 @@ public class FrontDeskService {
             RoomServiceLinks.setConnnection(c);
             RoomServiceLinks.deleteServiceLinks(temphid, tempRoomNo); // Removing services
             // records used by customer
-            String finalString = "The Total number of days occupied by the customer is " + duration;
+            String finalString = "The Total number of days occupied by the customer is : "
+                    + duration;
             finalString = finalString + "The category of room occupied by the customer is: "
                     + temproom_category;
+            finalString = finalString + "\n";
             if (serviceAmount != 0) {
                 finalString = finalString + "The services used by the room is:-" + "\n";
                 for (int i = 0; i < servicesUsed.size(); i++) {
@@ -308,8 +318,8 @@ public class FrontDeskService {
             // setting connection with check in
             CheckIn.setConnnection(c);
             CheckIn checkin = new CheckIn();
-            int cid = checkin.checkIn(obj.getInt("pid"), obj.getInt("guests"), (Timestamp) obj.get(
-                    "checkin"), (Timestamp) obj.get("checkout"));
+            int cid = checkin.checkIn(obj.getInt("pid"), obj.getInt("guests"),
+                    (Timestamp) obj.get("checkin"), (Timestamp) obj.get("checkout"));
 
             checkin.updateRoomAfterCheckIn(LoginHMS.hid, obj.getInt("room_num"));
 

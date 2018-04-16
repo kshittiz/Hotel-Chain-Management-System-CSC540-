@@ -174,16 +174,18 @@ public class FrontDesk extends JFrame implements ActionListener {
         billingpanel.add(taxLabel);
         billingpanel.add(taxText);
 
-        billingAdressLabel = new JLabel("Enter the adress");
+        billingAdressLabel = new JLabel("Enter the billing adress");
         billingAdressText = new JTextField();
 
         billingpanel.add(billingAdressLabel);
         billingpanel.add(billingAdressText);
 
         billingTypeLabel = new JLabel("Enter the billing type");
-        
-        List<String> paymentTypesList = FrontDeskService.getListOfPayment() ;//getting all billing types from database
-        String []paymentTypes = new String[paymentTypesList.size()]; //converting the list obtained to array format
+
+        List<String> paymentTypesList = FrontDeskService.getListOfPayment();// getting all billing
+                                                                            // types from database
+        String[] paymentTypes = new String[paymentTypesList.size()]; // converting the list obtained
+                                                                     // to array format
         paymentTypesList.toArray(paymentTypes);
         payment = new JComboBox<String>(paymentTypes); // creating a dropdown
                                                        // menu for billing types
@@ -365,7 +367,6 @@ public class FrontDesk extends JFrame implements ActionListener {
                 e.printStackTrace();
             }
 
-
             /*
              * SimpleDateFormat myFormat = new SimpleDateFormat( "yyyy-mm-dd HH:mm:ss");
              * Calendar cal = Calendar.getInstance();
@@ -428,7 +429,8 @@ public class FrontDesk extends JFrame implements ActionListener {
                         extraDiscountText.getText(), paymentTypeTemp, taxText.getText(),
                         billingAdressText.getText());
                 if (finalString != "") {
-                    new MyDialog3("The customer has successfully checked out " + "\n" + finalString);
+                    new MyDialog3(
+                            "The customer has successfully checked out " + "\n" + finalString);
                 } else {
                     new MyDialog3("The room needs to be corrected");
                 }
@@ -493,6 +495,3 @@ class MyDialog3 extends JDialog {
         setVisible(true);
     }
 }
-
-
-
