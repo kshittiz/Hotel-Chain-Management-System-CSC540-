@@ -34,7 +34,8 @@ public class FrontDeskService {
         String name = null;
         Connection c = Database.getConnection();
         try {
-            PreparedStatement exe = c.prepareStatement("SELECT name from people natural join front_desk where ssn = ?");
+            PreparedStatement exe = c.prepareStatement(
+                    "SELECT name from people natural join front_desk where ssn = ?");
             exe.setString(1, ssn);
             ResultSet result = exe.executeQuery();
             if (result.next())
@@ -52,8 +53,8 @@ public class FrontDeskService {
 
         Connection c = Database.getConnection();
         try {
-            PreparedStatement exe = c
-                    .prepareStatement("SELECT pid,name from people natural join hotel_people_links where hotel_id = ?");
+            PreparedStatement exe = c.prepareStatement(
+                    "SELECT pid,name from people natural join hotel_people_links where hotel_id = ?");
             exe.setInt(1, hotel_id);
             ResultSet result = exe.executeQuery();
             while (result.next()) {
@@ -68,8 +69,21 @@ public class FrontDeskService {
         return map;
     }
 
-    public static int calculateAmount(String room_num, String Discount, String Billing_Type, String tax,
-            String billingadress) throws NumberFormatException, SQLException {
+    /**
+     * Calculating amount of customer generated during checkout using
+     * transaction mechanism
+     * 
+     * @param room_num
+     * @param Discount
+     * @param Billing_Type
+     * @param tax
+     * @param billingadress
+     * @return amount
+     * @throws NumberFormatException
+     * @throws SQLException
+     */
+    public static int calculateAmount(String room_num, String Discount, String Billing_Type,
+            String tax, String billingadress) throws NumberFormatException, SQLException {
         // Initializing the connection
         Connection c = Database.getConnection();
 
@@ -106,11 +120,12 @@ public class FrontDeskService {
                                                                         // room
                                                                         // occupancy
             RoomCategory.setConnnection(c);
-            int tempNightlyRate = RoomCategory.nightlyRate(temphid, temproom_category, tempoccupancy);// Get nightly
-                                                                                                      // rate for the
-                                                                                                      // room at the
-                                                                                                      // given
-                                                                                                      // hotel
+            int tempNightlyRate = RoomCategory.nightlyRate(temphid, temproom_category,
+                    tempoccupancy);// Get nightly
+                                   // rate for the
+                                   // room at the
+                                   // given
+                                   // hotel
             RoomServiceLinks.setConnnection(c);
             int tempServiceNum = RoomServiceLinks.getServiceNumber(temphid, tempRoomNo);
             Service.setConnnection(c);
@@ -126,8 +141,8 @@ public class FrontDeskService {
 
             // Makes changes in databases affected by room checkout
             Billing.setConnnection(c);
-            Billing.addBilling(tempCID, Integer.parseInt(Discount), amount, Integer.parseInt(tax), billingadress,
-                    Billing_Type);
+            Billing.addBilling(tempCID, Integer.parseInt(Discount), amount, Integer.parseInt(tax),
+                    billingadress, Billing_Type);
             Room.setConnnection(c);
             Room.updateRoomAvailbility("available", tempRoomNo);
             CheckIn.setConnnection(c);
@@ -139,6 +154,8 @@ public class FrontDeskService {
             return amount;
         } catch (Exception e) {
             try {
+                // In case of any exception in entering data in tables above,
+                // transaction is rolled back
                 c.rollback();
             } catch (SQLException e1) {
                 e1.printStackTrace();
@@ -208,6 +225,8 @@ public class FrontDeskService {
 
         } catch (Exception e) {
             try {
+                // In case of any exception in entering data in tables above,
+                // transaction is rolled back
                 c.rollback();
             } catch (SQLException e1) {
                 e1.printStackTrace();
@@ -219,7 +238,8 @@ public class FrontDeskService {
         }
     }
 
-    public static HashMap<Integer, String> checkRoomAvailable(int hid, int numguest, String category) {
+    public static HashMap<Integer, String> checkRoomAvailable(int hid, int numguest,
+            String category) {
         String availability = "unavailable";
         HashMap<Integer, String> map = new HashMap<Integer, String>();
 
@@ -247,31 +267,46 @@ public class FrontDeskService {
 
     }
 
+    /**
+     * Check in customer using transaction mechanism
+     * 
+     * @param obj
+     * @return
+     */
     public static boolean addNewCheckIn(JSONObject obj) {
         Connection c = Database.getConnection();
         try {
             // staring a transaction to add values in people hierarchy
             c.setAutoCommit(false);
+            // setting connection with check in
             CheckIn.setConnnection(c);
             CheckIn checkin = new CheckIn();
-            int cid = checkin.checkIn(obj.getInt("pid"), obj.getInt("guests"), (Timestamp) obj.get("checkin"),
-                    (Timestamp) obj.get("checkout"));
+            int cid = checkin.checkIn(obj.getInt("pid"), obj.getInt("guests"), (Timestamp) obj.get(
+                    "checkin"), (Timestamp) obj.get("checkout"));
 
             checkin.updateRoomAfterCheckIn(LoginHMS.hid, obj.getInt("room_num"));
 
+            // setting connection with hotel_checkin_links
             HotelCheckInLinks.setConnnection(c);
             HotelCheckInLinks h = new HotelCheckInLinks();
+            // adding entry in hotel_checkin_links
             h.addHotelCheckInLinks(LoginHMS.hid, cid);
 
+            // setting connection with frontdesk_checkin_links
             FrontDeskCheckInLinks.setConnnection(c);
             FrontDeskCheckInLinks f = new FrontDeskCheckInLinks();
+            // adding entry in frontdesk_checkin_links
             f.addFrontDeskCheckInLinks(LoginHMS.pid, cid);
 
+            // setting connection with checkin_attributes
             CheckInAttributes.setConnnection(c);
             CheckInAttributes checkin_attr = new CheckInAttributes();
+            // adding entry in checkin_attributes
             checkin_attr.addCheckInAttributes(cid, LoginHMS.hid, obj.getInt("room_num"));
 
+            // setting connection with service
             Service.setConnnection(c);
+            // setting connection with room_service_links
             RoomServiceLinks.setConnnection(c);
             Service s = new Service();
             RoomServiceLinks r = new RoomServiceLinks();
@@ -281,7 +316,9 @@ public class FrontDeskService {
                 int catering = s.getservicenum("catering", LoginHMS.hid);
 
                 int staff_id = s.getStaffServing(LoginHMS.hid, "catering");
-                r.addRoomServiceLinks(obj.getInt("room_num"), room_service, LoginHMS.hid, LoginHMS.pid);
+                // adding services based on Presidential suite
+                r.addRoomServiceLinks(obj.getInt("room_num"), room_service, LoginHMS.hid,
+                        LoginHMS.pid);
                 r.addRoomServiceLinks(obj.getInt("room_num"), catering, LoginHMS.hid, staff_id);
 
             }
@@ -293,6 +330,8 @@ public class FrontDeskService {
 
         } catch (Exception e) {
             try {
+                // In case of any exception in entering data in tables above,
+                // transaction is rolled back
                 c.rollback();
             } catch (SQLException e1) {
                 e1.printStackTrace();
@@ -300,6 +339,7 @@ public class FrontDeskService {
             e.printStackTrace();
             return false;
         } finally {
+            // ending connection with database
             Database.endConnnection(c);
         }
     }
@@ -313,8 +353,8 @@ public class FrontDeskService {
 
             RoomServiceLinks.setConnnection(c);
             RoomServiceLinks roomservice = new RoomServiceLinks();
-            roomservice.addRoomServiceLinks(obj.getInt("room_num"), obj.getInt("service_num"), obj.getInt("hotel_id"),
-                    obj.getInt("staff_id"));
+            roomservice.addRoomServiceLinks(obj.getInt("room_num"), obj.getInt("service_num"), obj
+                    .getInt("hotel_id"), obj.getInt("staff_id"));
 
             // Committing transaction
             c.commit();
@@ -424,7 +464,8 @@ public class FrontDeskService {
         Connection c = Database.getConnection();
         RoomServiceLinks.setConnnection(c);
         RoomServiceLinks r = new RoomServiceLinks();
-        Vector<Vector<Object>> data = r.getRoomServicesOfferedByStaff(Integer.parseInt(room_num), LoginHMS.hid);
+        Vector<Vector<Object>> data = r.getRoomServicesOfferedByStaff(Integer.parseInt(room_num),
+                LoginHMS.hid);
         Database.endConnnection(c);
         return data;
     }

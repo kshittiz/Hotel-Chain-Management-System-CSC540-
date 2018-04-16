@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -68,6 +69,7 @@ public class FrontDesk extends JFrame implements ActionListener {
     JLabel billingTypeLabel;
     JTextField billingTypeText;
     JComboBox<String> payment;
+    static Point p;
 
     public FrontDesk(String name) {
         super("Front Desk View - " + name);
@@ -255,6 +257,7 @@ public class FrontDesk extends JFrame implements ActionListener {
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         setSize(dim.width / 2, dim.height / 2);
         setLocation(100, 100);
+        p = getLocation();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
 
@@ -438,6 +441,7 @@ class MyDialog extends JDialog {
         add(error, BorderLayout.CENTER);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setSize(250, 100);
+        setLocation(FrontDesk.p);
         setVisible(true);
     }
 }
@@ -452,6 +456,7 @@ class MyDialog2 extends JDialog {
         add(error, BorderLayout.CENTER);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setSize(250, 100);
+        setLocation(FrontDesk.p);
         setVisible(true);
     }
 }

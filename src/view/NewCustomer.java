@@ -22,27 +22,24 @@ import service.FrontDeskService;
 
 @SuppressWarnings("serial")
 public class NewCustomer extends JDialog implements ActionListener {
-	
-	JLabel nameL,dobL,phoneL,emailL,addressL,ssnL,message;
-    JTextField nameT,dobT,phoneT,emailT,addressT,ssnT;
+
+    JLabel nameL, dobL, phoneL, emailL, addressL, ssnL, message;
+    JTextField nameT, dobT, phoneT, emailT, addressT, ssnT;
     JButton save = new JButton("Save");
     JPanel panel;
 
-	public NewCustomer(FrontDesk f,String ssn)
-	{
-		panel = new JPanel(new GridLayout(6,2,0,3));
+    public NewCustomer(FrontDesk f, String ssn) {
+        panel = new JPanel(new GridLayout(6, 2, 0, 3));
 
-        
-		nameL = new JLabel("Name");
-		ssnL=new JLabel("SSN");
-		dobL = new JLabel("Date of Birth");
-		phoneL = new JLabel("Phone Number");
-		emailL = new JLabel("E-Mail Address");
+        nameL = new JLabel("Name");
+        ssnL = new JLabel("SSN");
+        dobL = new JLabel("Date of Birth");
+        phoneL = new JLabel("Phone Number");
+        emailL = new JLabel("E-Mail Address");
         addressL = new JLabel(" Address");
-        
 
         nameT = new JTextField();
-        ssnT=new JTextField(9);
+        ssnT = new JTextField(9);
         dobT = new JTextField();
         phoneT = new JTextField();
         emailT = new JTextField();
@@ -60,7 +57,7 @@ public class NewCustomer extends JDialog implements ActionListener {
         panel.add(emailT);
         panel.add(addressL);
         panel.add(addressT);
-        
+
         add(panel, BorderLayout.CENTER);
 
         ImageIcon saveIcon = new ImageIcon(new ImageIcon("images/submit.png").getImage()
@@ -73,53 +70,50 @@ public class NewCustomer extends JDialog implements ActionListener {
         getRootPane().setDefaultButton(save);
 
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        setSize((dim.width - 20) /3 , (dim.height - 30) / 4);
+        setSize((dim.width - 20) / 3, (dim.height - 30) / 4);
+        setLocation(FrontDesk.p);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setVisible(true);
-	}
-	@Override
+    }
+
+    @Override
     public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == save) {
+        if (e.getSource() == save) {
             JSONObject input = new JSONObject();
             if (!nameT.getText().isEmpty())
                 input.put("name", nameT.getText());
 
             input.put("SSN", Integer.parseInt(ssnT.getText()));
-            	
+
             input.put("address", addressT.getText());
-            
+
             input.put("phone", phoneT.getText());
             input.put("email", emailT.getText());
-            
-            
-            
+
             input.put("date_of_birth", dobT.getText());
 
-            
             input.put("peopleType", "customer");
             input.put("hotel_serving", LoginHMS.hid);
-            
-           if (!FrontDeskService.addNewCustomer(input)) {
-                message=new JLabel("Customer not added, error in input!");
+
+            if (!FrontDeskService.addNewCustomer(input)) {
+                message = new JLabel("Customer not added, error in input!");
                 message.setForeground(Color.RED);
                 mydialog(message);
             } else {
-            	message=new JLabel("Customer added successfully!");
+                message = new JLabel("Customer added successfully!");
                 message.setForeground(Color.GREEN);
                 mydialog(message);
             }
             this.dispose();
         }
-	}
-	public void mydialog(JLabel label)
-	{
-		 JDialog dialog=new JDialog(); 		
-         dialog.add(label, BorderLayout.CENTER);
-         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-         dialog.setSize(250, 100);
-         dialog.setVisible(true);
-	}
+    }
+
+    public void mydialog(JLabel label) {
+        JDialog dialog = new JDialog();
+        dialog.add(label, BorderLayout.CENTER);
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        dialog.setSize(250, 100);
+        dialog.setVisible(true);
+    }
 
 }
-
-
