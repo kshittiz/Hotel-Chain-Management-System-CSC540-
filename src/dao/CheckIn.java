@@ -13,7 +13,15 @@ public class CheckIn {
     public static void setConnnection(Connection conn) {
         c = conn;
     }
-
+/**
+ * The function is used to generate checkin id 
+ * @param pid
+ * @param guests
+ * @param checkin
+ * @param checkout
+ * @return
+ * @throws SQLException
+ */
     public int checkIn(int pid, int guests, Timestamp checkin, Timestamp checkout) throws SQLException {
         int cid = 0;
         PreparedStatement exe = c.prepareStatement("insert into checkin(pid,guests,checkin,checkout) values(?, ?,?,?)",
@@ -30,7 +38,12 @@ public class CheckIn {
 
         return cid;
     }
-
+/**
+ * The function is used to update room parameters
+ * @param hid
+ * @param room_num
+ * @return
+ */
     public boolean updateRoomAfterCheckIn(int hid, int room_num) {
         try {
             PreparedStatement exe = c
@@ -45,7 +58,11 @@ public class CheckIn {
         }
         return true;
     }
-
+/**
+ * The function is used to update checkout time when the customer checks out a particular room
+ * @param cid
+ * @return
+ */
     public static boolean updateCheckOutTime(int cid) {
         try {
             PreparedStatement exe = c.prepareStatement("update checkin set checkout =? where cid=?");
@@ -60,7 +77,11 @@ public class CheckIn {
         }
         return true;
     }
-
+/**
+ * The duration of the stay is generated based on Checkin id
+ * @param tempCID
+ * @return
+ */
     public static int durationUsingCID(int tempCID) {
         try {
             PreparedStatement exe = c.prepareStatement("select * from checkin where cid=? ");

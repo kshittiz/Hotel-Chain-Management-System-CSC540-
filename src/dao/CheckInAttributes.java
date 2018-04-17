@@ -11,6 +11,13 @@ public class CheckInAttributes {
     public static void setConnnection(Connection conn) {
         c = conn;
     }
+    /**
+     * The function is used to add check in parameters to checkin table
+     * @param cid
+     * @param hotel_id
+     * @param room_num
+     * @return
+     */
     public boolean addCheckInAttributes(int cid,int hotel_id,int room_num) {
         
         try {
@@ -28,6 +35,12 @@ public class CheckInAttributes {
         }
         return true;
     }
+    /**
+     * Used to generate the cid based on hotel id and room no 
+     * @param temphid
+     * @param tempRoomNo
+     * @return
+     */
     public static int cidUsingHidRoom_Num(int temphid,int tempRoomNo){
         try {
             PreparedStatement exe = c.prepareStatement(

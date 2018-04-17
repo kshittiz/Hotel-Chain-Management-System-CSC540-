@@ -1,7 +1,9 @@
 package view;
 
 import java.awt.GridLayout;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -9,6 +11,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import service.FrontDeskService;
+/**This class is used to create UI for a checkin field
+ * 
+ * @author vidhisha
+ *
+ */
 public class NewCheckIn {
 
     JLabel ssnL, guestsL, checkinL, categoryL;
@@ -18,7 +26,8 @@ public class NewCheckIn {
     JButton check;
     JPanel end;
     String[] num = { "1", "2", "3", "4" };
-    String[] category = { "Deluxe", "Economy", "Executive suite", "Presidential Suite" };
+    //String[] category = { "Deluxe", "Economy", "Executive suite", "Presidential Suite" };
+    ArrayList<String> category=new ArrayList<String>();
     JPanel panel = new JPanel(new GridLayout(12, 2));
     Date date1;
 
@@ -30,7 +39,18 @@ public class NewCheckIn {
 
         ssnT = new JTextField();
         guestT = new JComboBox<>(num);
-        categoryT = new JComboBox<>(category);
+        
+        Vector<Vector<Object>> data=FrontDeskService.getCategory(LoginHMS.hid);
+        int k;
+        for (k = 0; k < data.size(); k++) {
+            // System.out.println(data_service);
+            category.add(data.get(k).get(0).toString());
+
+        }
+
+        categoryT = new JComboBox(category.toArray());
+        
+        //categoryT = new JComboBox<>(category);
         panel.add(ssnL);
         panel.add(ssnT);
 

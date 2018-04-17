@@ -217,6 +217,12 @@ public class Room {
         }
         return true;
     }
+    /**
+     * The room category is generated  using Room number and hotel id 
+     * @param tempRoomNo
+     * @param temphid
+     * @return
+     */
     public static String roomCat(int tempRoomNo,int temphid) {
     try {
         PreparedStatement exe = c
@@ -237,6 +243,12 @@ public class Room {
     }
     return "";
 }
+    /**
+     * The function is used to generate the room occupancy based on room number and hotel id
+     * @param tempRoomNo
+     * @param temphid
+     * @return
+     */
     public static int roomOccupancy(int tempRoomNo,int temphid) {
         try {
             PreparedStatement exe = c

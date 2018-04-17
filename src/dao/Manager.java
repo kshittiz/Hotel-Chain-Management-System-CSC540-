@@ -4,7 +4,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 
 import org.json.JSONObject;
-
+/**
+ * The class 
+ * @author kshittiz
+ *
+ */
 public class Manager extends Staff {
     private static Connection c = null;
 

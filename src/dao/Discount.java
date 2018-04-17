@@ -18,7 +18,12 @@ public class Discount {
     public static void setConnnection(Connection conn) {
         c = conn;
     }
-
+/**
+ * The method is used to add discount for  corresponding billing_type 
+ * @param billing_type
+ * @param discount
+ * @return
+ */
     public boolean addDiscount(String billing_type, int discount) {
         try {
             PreparedStatement exe = c.prepareStatement(
@@ -59,7 +64,11 @@ public class Discount {
 
         return data;
     }
-
+/**
+ * The function is to used to delete discount entry from discount table
+ * @param billing_type
+ * @return
+ */
     public boolean deleteDiscount(String billing_type) {
         try {
             PreparedStatement exe = c.prepareStatement(
@@ -73,6 +82,10 @@ public class Discount {
         }
         return true;
     }
+    /**
+     * The method is used to generate billing types for front desk view
+     * @return
+     */
     public static List<String> getBillingTypes(){
         List<String> billTypes = new ArrayList<String>();
 

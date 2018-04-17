@@ -92,7 +92,7 @@ public class RoomCategory {
         }
         return list;
     }
-
+    
     public Vector<Vector<Object>> getRoomCategoriesForTable(int hid) {
         Vector<Vector<Object>> data = null;
         try {
@@ -136,6 +136,13 @@ public class RoomCategory {
         }
         return true;
     }
+    /**
+     * The function is used to generate the nightly rate 
+     * @param temphid
+     * @param temproom_category
+     * @param tempoccupancy
+     * @return
+     */
     public static int nightlyRate(int temphid,String temproom_category,int tempoccupancy)
     {
         try
@@ -162,5 +169,38 @@ public class RoomCategory {
             System.out.println(e);
         }
         return 0;
+    }
+    public  Vector<Vector<Object>> getCategory(int hid)
+    {
+        Vector<Vector<Object>> data=null;
+        try
+
+        {
+            PreparedStatement exe = c.prepareStatement(
+                    "select room_category from room_category where hotel_id =?");
+            exe.setInt(1, (hid));
+            
+            ResultSet result = exe.executeQuery();
+            ResultSetMetaData metaData = result.getMetaData();
+            int columnCount = metaData.getColumnCount();
+
+            data = new Vector<Vector<Object>>();
+            while (result.next()) {
+                Vector<Object> vector = new Vector<Object>();
+                for (int i = 1; i <= columnCount; i++) {
+                    vector.add(result.getObject(i));
+                }
+                data.add(vector);
+            }
+           
+
+            
+
+        }catch(
+        Exception e)
+        {
+            System.out.println(e);
+        }
+        return data;
     }
 }

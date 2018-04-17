@@ -17,7 +17,10 @@ public class Customer extends People {
     public static void setConnnection(Connection conn) {
         c = conn;
     }
-
+/**
+ * The method is used to add person as a customer in the customer table using json object
+ * 
+ */
     public int addPerson(JSONObject obj1) throws Exception {
         PreparedStatement exe = c.prepareStatement(
                 "insert into customer(pid,date_of_birth) values(?, ?)");
@@ -27,7 +30,9 @@ public class Customer extends People {
 
         return obj1.getInt("pid");
     }
-
+/**
+ * The method is used to delete person from the customer table
+ */
     public boolean deletePerson(int pid) {
 
         try {
@@ -42,7 +47,12 @@ public class Customer extends People {
         }
         return true;
     }
-
+/**
+ * The method is used to update the person in the customer table
+ * @param date_of_birth
+ * @param pid
+ * @return
+ */
     public boolean updatePerson(String date_of_birth, int pid) {
 
         try {
@@ -89,6 +99,11 @@ public class Customer extends People {
 
         return data;
     }
+    /**
+     * The method is used to check if the customer exists from the customer table
+     * @param pid
+     * @return
+     */
     public int checkIfCustomerExists(int pid)
     {
     	int pid_count=0;

@@ -19,7 +19,11 @@ import javax.swing.JTextField;
 import org.json.JSONObject;
 
 import service.FrontDeskService;
-
+/**This class is used to create dialog box box for adding new customer
+ * 
+ * @author vidhisha
+ *
+ */
 @SuppressWarnings("serial")
 public class NewCustomer extends JDialog implements ActionListener {
 

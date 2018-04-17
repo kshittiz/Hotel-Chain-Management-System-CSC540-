@@ -111,7 +111,12 @@ public class ServiceType {
 
         return 0;
     }
-
+/**
+ * The method is used to generate the services used by the room
+ * @param temphid
+ * @param tempRoomNo
+ * @return
+ */
     public static List<String> getServicesUsed(int temphid, int tempRoomNo) {
         List<String> tempServicesUsed = new ArrayList<String>();
         try

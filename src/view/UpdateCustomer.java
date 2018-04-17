@@ -24,7 +24,11 @@ import org.json.JSONObject;
 
 import dao.ContactInfo;
 import service.FrontDeskService;
-
+/**
+ * This class opens the UI for updating the customer details
+ * @author vidhisha
+ *
+ */
 @SuppressWarnings("serial")
 public class UpdateCustomer extends JDialog implements ActionListener {
 

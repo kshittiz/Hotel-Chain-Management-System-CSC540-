@@ -32,11 +32,21 @@ import dao.ServiceType;
 import view.LoginHMS;
 import view.UpdateCustomer;
 
+/**This class is the service layer that interacts with the view and model
+ * 
+ * @author vidhisha
+ *
+ */
 public class FrontDeskService {
     public static int room_alloted;
 
     public static int DEFAULT_TAX = 5; // Setting default tax value as 5
 
+    /**
+     * 
+     * @param ssn
+     * @return string
+     */
     public static String getNameLinkedwithSSN(String ssn) {
         String name = null;
         Connection c = Database.getConnection();
@@ -54,6 +64,11 @@ public class FrontDeskService {
         return name;
     }
 
+    /**
+     * 
+     * @param hotel_id
+     * @return
+     */
     public static HashMap<Integer, String> getAllPeople(int hotel_id) {
 
         HashMap<Integer, String> map = new HashMap<>();
@@ -75,7 +90,11 @@ public class FrontDeskService {
 
         return map;
     }
-
+    /**This method is used to get lists of payment from Discount DAO class
+     * 
+     * @return List<String>
+     */
+    
     public static List<String> getListOfPayment() { // Obtaining
                                                     // billingTypesList from
                                                     // Discount
@@ -87,8 +106,8 @@ public class FrontDeskService {
     }
 
     /**
-     * Calculating amount of customer generated during checkout using
-     * transaction mechanism
+     * This function is used to return the string to be displayed on the dialog box,
+     * it calculates the total amount based on the room number
      * 
      * @param room_num
      * @param Discount
@@ -232,7 +251,11 @@ public class FrontDeskService {
         }
 
     }
-
+    /**function where we check if a person with a particular ssn is present in the database or not
+     * 
+     * @param ssn
+     * @return boolean
+     */
     public static boolean checkIfPersonPresent(String ssn) {
         int count = 0;
         Connection c = Database.getConnection();
@@ -251,7 +274,11 @@ public class FrontDeskService {
         else
             return true;
     }
-
+    /**
+     * function to add new customers via a transaction
+     * @param obj
+     * @return boolean
+     */
     public static boolean addNewCustomer(JSONObject obj) {
         Connection c = Database.getConnection();
         try {
@@ -302,7 +329,13 @@ public class FrontDeskService {
             Database.endConnnection(c);
         }
     }
-
+    /**
+     * function to check if a room is available or not
+     * @param hid
+     * @param numguest
+     * @param category
+     * @return HashMap<Integer, String>
+     */
     public static HashMap<Integer, String> checkRoomAvailable(int hid, int numguest,
             String category) {
         String availability = "unavailable";
@@ -336,7 +369,7 @@ public class FrontDeskService {
      * Check in customer using transaction mechanism
      * 
      * @param obj
-     * @return
+     * @return boolean
      */
     public static boolean addNewCheckIn(JSONObject obj) {
         Connection c = Database.getConnection();
@@ -411,6 +444,11 @@ public class FrontDeskService {
         }
     }
 
+    /**
+     * function to request a new service for a room
+     * @param obj
+     * @return boolean
+     */
     public static boolean requestNewService(JSONObject obj) {
         Connection c = Database.getConnection();
 
@@ -442,7 +480,11 @@ public class FrontDeskService {
         }
 
     }
-
+    /**
+     * this function is used to update the customer
+     * @param obj
+     * @return boolean
+     */
     public static boolean updateCustomer(JSONObject obj) {
         Connection c = Database.getConnection();
         try {
@@ -519,6 +561,11 @@ public class FrontDeskService {
         }
     }
 
+    /**
+     * this function is used to get the contact details of a particular person
+     * @param ssn
+     * @return Vector<Vector<Object>>
+     */
     public static Vector<Vector<Object>> getContactDetails(String ssn) {
         Vector<Vector<Object>> contacts;
         Connection c = Database.getConnection();
@@ -536,7 +583,11 @@ public class FrontDeskService {
         return contacts;
 
     }
-
+    /**
+     * this function calls into the DAO layer to get the staff who served what services to which room
+     * @param room_num
+     * @return Vector<Vector<Object>>
+     */
     public static Vector<Vector<Object>> getRoomServicesOfferedByStaff(String room_num) {
         Connection c = Database.getConnection();
         RoomServiceLinks.setConnnection(c);
@@ -546,5 +597,14 @@ public class FrontDeskService {
         Database.endConnnection(c);
         return data;
     }
+    public static Vector<Vector<Object>> getCategory(int hid) {
+        Connection c = Database.getConnection();
+        RoomCategory.setConnnection(c);
+        RoomCategory r = new RoomCategory();
+        Vector<Vector<Object>> data = r.getCategory(hid);
+        Database.endConnnection(c);
+        return data;
+    }
+    
 
 }

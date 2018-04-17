@@ -13,7 +13,9 @@ public class FrontDesk extends Staff {
     public static void setConnnection(Connection conn) {
         c = conn;
     }
-
+/**
+ * The function is used to add person to the front_desk table
+ */
     public int addPerson(JSONObject obj1) throws JSONException, SQLException {
         PreparedStatement exe = c.prepareStatement(
                 "insert into front_desk(pid, gender) values(?, ?)");
@@ -23,7 +25,9 @@ public class FrontDesk extends Staff {
         return obj1.getInt("pid");
 
     }
-
+/**
+ * The function is used to delete the entry from front desk table
+ */
     public boolean deletePerson(int pid) {
 
         try {
@@ -38,7 +42,12 @@ public class FrontDesk extends Staff {
         }
         return true;
     }
-
+/**
+ * The function is used to update the front desk representative parameters
+ * @param obj2
+ * @param pid
+ * @return
+ */
     public boolean updatePerson(JSONObject obj2, int pid) {
 
         try {

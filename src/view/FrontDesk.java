@@ -41,6 +41,12 @@ import dao.RoomServiceLinks;
 import dao.Service;
 import service.FrontDeskService;
 
+/**
+ * This class is used to design UI for FrontDesk
+ * 
+ * @author vidhisha
+ *
+ */
 public class FrontDesk extends JFrame implements ActionListener {
 
     /**
@@ -52,7 +58,6 @@ public class FrontDesk extends JFrame implements ActionListener {
             end1, report, myreport, end_rep;
     JLabel ssnL, room_numL;
     JTextField ssnT;
-    @SuppressWarnings("rawtypes")
     JComboBox room_numC;
     JButton check, checkOut, addPerson, checkB, add_service, update, check_rep;
     NewCheckIn newcheckin;
@@ -74,7 +79,6 @@ public class FrontDesk extends JFrame implements ActionListener {
     JComboBox<String> payment;
     static Point p;
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     public FrontDesk(String name) {
         super("Front Desk View - " + name);
         tabbedPane = new JTabbedPane();
@@ -194,7 +198,7 @@ public class FrontDesk extends JFrame implements ActionListener {
         paymentTypesList.toArray(paymentTypes);
         payment = new JComboBox<String>(paymentTypes); // creating a dropdown
                                                        // menu for billing types
-        payment.setSelectedIndex(0);
+        // payment.setSelectedIndex(0);
 
         billingpanel.add(billingTypeLabel);
         billingpanel.add(payment);
@@ -274,6 +278,11 @@ public class FrontDesk extends JFrame implements ActionListener {
 
     }
 
+    /**
+     * this method is used to show which staff is serving which customer
+     * 
+     * @param room_num
+     */
     public void showStaffServing(String room_num) {
         JDialog dialog = new JDialog();
         Vector<Vector<Object>> vector = FrontDeskService.getRoomServicesOfferedByStaff(room_num);
@@ -296,7 +305,7 @@ public class FrontDesk extends JFrame implements ActionListener {
             if (check == false) {
                 new MyDialog("Sorry! No Data present for this Person");
             } else {
-                new MyDialog("Data present for this Person!");
+                new MyDialog2("Data present for this Person!");
             }
         }
         if (action.getSource() == check_rep) {
@@ -354,17 +363,6 @@ public class FrontDesk extends JFrame implements ActionListener {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-            /*
-             * SimpleDateFormat myFormat = new SimpleDateFormat(
-             * "yyyy-mm-dd HH:mm:ss"); Calendar cal = Calendar.getInstance();
-             * 
-             * Timestamp date1=null; try { date1 = (Timestamp)
-             * myFormat.parse(cal.getTime().toString());
-             * 
-             * } catch (Exception e) { e.printStackTrace(); }
-             */
-            // System.out.println(date1);
 
             int room_num = 0;
             Map<Integer, String> map = new LinkedHashMap<>();

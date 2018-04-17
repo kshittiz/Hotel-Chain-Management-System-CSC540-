@@ -12,7 +12,14 @@ public class FrontDeskCheckInLinks {
     public static void setConnnection(Connection conn) {
         c = conn;
     }
-
+/**
+ * The function is used to add an entry to the frontdesk_check_links which maintains a link between the 
+ * id of the front desk representative and the checked in customers id
+ * @param pid
+ * @param cid
+ * @return
+ * @throws SQLException
+ */
     public int addFrontDeskCheckInLinks(int pid, int cid) throws SQLException {
         int id = 0;
         PreparedStatement exe = c.prepareStatement(

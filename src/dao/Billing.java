@@ -14,7 +14,17 @@ public class Billing {
     public static void setConnnection(Connection conn) {
        c = conn;
     }
-
+/**
+ * The function is used to add billing record to the billing table
+ * @param cid
+ * @param amount
+ * @param extra_discount
+ * @param tax
+ * @param billing_address
+ * @param billing_type
+ * @return
+ * @throws SQLException
+ */
     public static  int addBilling(int cid, int amount, int extra_discount, int tax, String billing_address,
             String billing_type) throws SQLException {
         
@@ -37,6 +47,11 @@ public class Billing {
 
         return invoice_id;
     }
+    /**
+     * The function is used to generate based on billing type
+     * @param Billing_Type
+     * @return
+     */
     public static int discountOnBillType(String Billing_Type) {
         try {
             PreparedStatement exe = c

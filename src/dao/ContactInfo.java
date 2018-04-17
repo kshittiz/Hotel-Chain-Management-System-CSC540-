@@ -19,7 +19,13 @@ public class ContactInfo {
     public static void setConnnection(Connection conn) {
         c = conn;
     }
-
+/**
+ * The method is used to add contact info into contact_info table
+ * @param phone_number
+ * @param email
+ * @return
+ * @throws SQLException
+ */
     public int addContactInfo(String phone_number, String email) throws SQLException {
         int contact_id = 0;
         PreparedStatement exe = c.prepareStatement(
@@ -41,7 +47,9 @@ public class ContactInfo {
     }
 
     public boolean deleteContact(int contact_id) {
-
+/**
+ * The method is used to delete contact using contact_id
+ */
         try {
             PreparedStatement exe = c.prepareStatement(
                     " Delete from contact_info where contact_id=?");

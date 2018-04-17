@@ -6,7 +6,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-
+/**
+ * The HotelPeopleLinks class is used to maintain a link between hotel and people
+ * @author kshittiz
+ *
+ */
 public class HotelPeopleLinks {
     private static Connection c = null;
 
@@ -29,7 +33,11 @@ public class HotelPeopleLinks {
 
         return id;
     }
-
+/**
+ * The function is used to get list of hotel ids based on people id
+ * @param pid
+ * @return
+ */
     public static ArrayList<Integer> getHotelIdsByPeopleId(int pid) {
         ArrayList<Integer> list = new ArrayList<Integer>();
         try {
@@ -44,7 +52,11 @@ public class HotelPeopleLinks {
         }
         return list;
     }
-
+/**
+ * The method is used to get a list of all the people associated by the hotel 
+ * @param hotel_id
+ * @return
+ */
     public static ArrayList<Integer> getPeopleIdsByHotel(int hotel_id) {
         ArrayList<Integer> list = new ArrayList<Integer>();
         try {

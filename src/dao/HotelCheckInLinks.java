@@ -5,7 +5,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
+/**
+ * The class is used to perform the operations on the hotelcheckinlinks tables
+ * hotelcheckinlinks maintain the link between hotel and checkinid of a customer
+ * @author kshittiz
+ *
+ */
 public class HotelCheckInLinks {
     private static Connection c = null;
 

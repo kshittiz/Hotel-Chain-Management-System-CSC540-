@@ -12,7 +12,14 @@ public class ContactLinks {
     public static void setConnnection(Connection conn) {
         c = conn;
     }
-
+/**
+ * The method is used to create contact links in contact_links
+ * @param link_id
+ * @param contact_id
+ * @param type
+ * @return
+ * @throws SQLException
+ */
     public int CreateContactLinks(int link_id, int contact_id, String type) throws SQLException {
         int id = 0;
         PreparedStatement exe = c.prepareStatement(

@@ -29,7 +29,20 @@ import dao.ServiceType;
 import dao.Staff;
 import view.LoginHMS;
 
+/**
+ * Service class for Manager operations
+ * 
+ * @author kshittiz
+ *
+ */
 public class ManagerService {
+
+    /**
+     * This function returns name linked with SSN
+     * 
+     * @param ssn
+     * @return
+     */
     public static String getNameLinkedwithSSN(String ssn) {
         String name = null;
         Connection c = Database.getConnection();
@@ -185,6 +198,16 @@ public class ManagerService {
         }
     }
 
+    /**
+     * This function add new room in the manager's hotel
+     * 
+     * @param roomN
+     * @param hid
+     * @param category
+     * @param occup
+     * @param avail
+     * @return boolean
+     */
     public static boolean addNewRoom(String roomN, int hid, String category, String occup,
             String avail) {
         boolean result = false;
@@ -209,6 +232,15 @@ public class ManagerService {
 
     }
 
+    /**
+     * This function add new room category in manager's hotel
+     * 
+     * @param hid
+     * @param category
+     * @param occup
+     * @param rate
+     * @return boolean
+     */
     public static boolean addNewCategory(int hid, String category, int occup, String rate) {
         boolean result = false;
         Connection conn = Database.getConnection();
@@ -230,6 +262,14 @@ public class ManagerService {
 
     }
 
+    /**
+     * This function add new service in the hotel
+     * 
+     * @param serviceN
+     * @param hid
+     * @param type
+     * @return
+     */
     public static boolean addNewService(String serviceN, int hid, String type) {
         boolean result = false;
         Connection conn = Database.getConnection();
@@ -251,6 +291,13 @@ public class ManagerService {
 
     }
 
+    /**
+     * This function add new service type in hotel
+     * 
+     * @param type
+     * @param price
+     * @return boolean
+     */
     public static boolean addNewServiceType(String type, String price) {
         boolean result = false;
         Connection conn = Database.getConnection();
@@ -273,6 +320,13 @@ public class ManagerService {
 
     }
 
+    /**
+     * This function add new discount based on payment type in hotel chain
+     * 
+     * @param billing_type
+     * @param disc
+     * @return boolean
+     */
     public static boolean addNewDiscount(String billing_type, String disc) {
         boolean result = false;
         Connection conn = Database.getConnection();
@@ -296,6 +350,13 @@ public class ManagerService {
     }
 
     // FETCH Operations
+
+    /**
+     * This function return hotel details
+     * 
+     * @param hid
+     * @return Vector<Vector<Object>>
+     */
     public static Vector<Vector<Object>> getHotelDetails(int hid) {
         Connection c = Database.getConnection();
         Hotel.setConnnection(c);
@@ -305,6 +366,12 @@ public class ManagerService {
         return data;
     }
 
+    /**
+     * This function return staff details of manager's hotel
+     * 
+     * @param hid
+     * @return Vector<Vector<Object>>
+     */
     public static Vector<Vector<Object>> getStaffDetails(String type) {
         Connection c = Database.getConnection();
         Staff.setConnnection(c);
@@ -314,6 +381,12 @@ public class ManagerService {
         return data;
     }
 
+    /**
+     * This function return staff details grouped by role/department
+     * 
+     * @param hid
+     * @return Vector<Vector<Object>>
+     */
     public static Vector<Vector<Object>> getStaffDetailsGroupedByRole() {
         Connection c = Database.getConnection();
         Staff.setConnnection(c);
@@ -323,6 +396,12 @@ public class ManagerService {
         return data;
     }
 
+    /**
+     * This function return customer details linked to the manager's hotel
+     * 
+     * @param hid
+     * @return Vector<Vector<Object>>
+     */
     public static Vector<Vector<Object>> getCustomerDetails() {
         Connection c = Database.getConnection();
         Customer.setConnnection(c);
@@ -332,6 +411,12 @@ public class ManagerService {
         return data;
     }
 
+    /**
+     * This function return room details of manager's hotel
+     * 
+     * @param hid
+     * @return Vector<Vector<Object>>
+     */
     public static Vector<Vector<Object>> getRoomDetails() {
         Connection c = Database.getConnection();
         Room.setConnnection(c);
@@ -341,6 +426,12 @@ public class ManagerService {
         return data;
     }
 
+    /**
+     * This function return room category details of manager's hotel
+     * 
+     * @param hid
+     * @return Vector<Vector<Object>>
+     */
     public static Vector<Vector<Object>> getRoomCategoryDetails() {
         Connection c = Database.getConnection();
         RoomCategory.setConnnection(c);
@@ -350,6 +441,12 @@ public class ManagerService {
         return data;
     }
 
+    /**
+     * This function return service details of manager's hotel
+     * 
+     * @param hid
+     * @return Vector<Vector<Object>>
+     */
     public static Vector<Vector<Object>> getServiceDetails() {
         Connection c = Database.getConnection();
         Service.setConnnection(c);
@@ -359,6 +456,12 @@ public class ManagerService {
         return data;
     }
 
+    /**
+     * This function return service type details of manager's hotel
+     * 
+     * @param hid
+     * @return Vector<Vector<Object>>
+     */
     public static Vector<Vector<Object>> getServiceTypeDetails() {
         Connection c = Database.getConnection();
         ServiceType.setConnnection(c);
@@ -368,6 +471,12 @@ public class ManagerService {
         return data;
     }
 
+    /**
+     * This function return discount details in manager's hotel
+     * 
+     * @param hid
+     * @return Vector<Vector<Object>>
+     */
     public static Vector<Vector<Object>> getDiscountDetails() {
         Connection c = Database.getConnection();
         Discount.setConnnection(c);
@@ -377,6 +486,13 @@ public class ManagerService {
         return data;
     }
 
+    /**
+     * This function return occupancy statistics
+     * 
+     * @param type
+     * @param city
+     * @return Vector<Vector<Object>>
+     */
     public static Vector<Vector<Object>> getOccupancyStats(String type, String city) {
         Connection c = Database.getConnection();
         Room.setConnnection(c);
@@ -386,6 +502,13 @@ public class ManagerService {
         return data;
     }
 
+    /**
+     * This function return contact details
+     * 
+     * @param type
+     * @param id
+     * @return Vector<Vector<Object>>
+     */
     public static Vector<Vector<Object>> getContactDetails(String type, String id) {
         Connection c = Database.getConnection();
         Vector<Vector<Object>> data;
@@ -402,6 +525,13 @@ public class ManagerService {
         return data;
     }
 
+    /**
+     * This function return revenue of manager's hotel
+     * 
+     * @param startDate
+     * @param endDate
+     * @return double
+     */
     public static double getRevenue(Timestamp startDate, Timestamp endDate) {
         Connection c = Database.getConnection();
         Hotel.setConnnection(c);
@@ -412,6 +542,13 @@ public class ManagerService {
     }
 
     // UPDATE OPERATIONS
+    /**
+     * This function update staff details
+     * 
+     * @param values
+     * @param pid
+     * @return boolean
+     */
     public static boolean updateStaff(HashMap<String, String> values, int pid) {
         Connection c = Database.getConnection();
         try {
@@ -431,6 +568,13 @@ public class ManagerService {
         return true;
     }
 
+    /**
+     * This function update room in manager's hotel
+     * 
+     * @param values
+     * @param room_num
+     * @return boolean
+     */
     public static boolean updateRoom(HashMap<String, String> values, int room_num) {
         Connection c = Database.getConnection();
         try {
@@ -445,6 +589,12 @@ public class ManagerService {
         return true;
     }
 
+    /**
+     * This function update manager's hotel details
+     * 
+     * @param values
+     * @return boolean
+     */
     public static boolean updateHotel(HashMap<String, String> values) {
         Connection c = Database.getConnection();
         try {
@@ -459,6 +609,13 @@ public class ManagerService {
         return true;
     }
 
+    /**
+     * This function update contact details based on contact id
+     * 
+     * @param values
+     * @param cid
+     * @return boolean
+     */
     public static boolean updateContact(HashMap<String, String> values, int cid) {
         Connection c = Database.getConnection();
         try {
@@ -474,6 +631,12 @@ public class ManagerService {
     }
 
     // DELETE OPERATIONS
+    /**
+     * This function delete staff from manager's hotel
+     * 
+     * @param values
+     * @return boolean
+     */
     public static boolean deleteStaff(HashMap<String, String> values) {
         boolean result = false;
         Connection c = Database.getConnection();
@@ -486,6 +649,12 @@ public class ManagerService {
         return result;
     }
 
+    /**
+     * This function delete room in hotel
+     * 
+     * @param values
+     * @return boolean
+     */
     public static boolean deleteRoom(HashMap<String, String> values) {
         boolean result = false;
         Connection c = Database.getConnection();
@@ -498,6 +667,12 @@ public class ManagerService {
         return result;
     }
 
+    /**
+     * This function delete room category in hotel
+     * 
+     * @param values
+     * @return boolean
+     */
     public static boolean deleteRoomCategory(HashMap<String, String> values) {
         Connection c = Database.getConnection();
         RoomCategory.setConnnection(c);
@@ -509,6 +684,13 @@ public class ManagerService {
         return result;
     }
 
+    /**
+     * This function delete service type in hotel chain only if not linked with
+     * other hotels
+     * 
+     * @param values
+     * @return boolean
+     */
     public static boolean deleteServiceType(HashMap<String, String> values) {
         Connection c = Database.getConnection();
         ServiceType.setConnnection(c);
@@ -519,6 +701,12 @@ public class ManagerService {
         return result;
     }
 
+    /**
+     * This function delete service linked with manager hotel
+     * 
+     * @param values
+     * @return
+     */
     public static boolean deleteService(HashMap<String, String> values) {
         Connection c = Database.getConnection();
         Service.setConnnection(c);
@@ -529,6 +717,12 @@ public class ManagerService {
         return result;
     }
 
+    /**
+     * This function delete discount only if not used in any invoice receipt
+     * 
+     * @param values
+     * @return boolean
+     */
     public static boolean deleteDiscount(HashMap<String, String> values) {
         Connection c = Database.getConnection();
         Discount.setConnnection(c);
@@ -539,6 +733,12 @@ public class ManagerService {
         return result;
     }
 
+    /**
+     * This function delete contact
+     * 
+     * @param values
+     * @return boolean
+     */
     public static boolean deleteContact(String id) {
         boolean result = false;
         Connection c = Database.getConnection();

@@ -57,7 +57,7 @@ public class Service {
             }
 
         } catch (Exception e) {
-            System.out.println(e);
+            //System.out.println(e);
         }
 
         return data;
@@ -72,7 +72,7 @@ public class Service {
             exe.executeQuery();
 
         } catch (Exception e) {
-            System.out.println(e);
+            //System.out.println(e);
             return false;
         }
         return true;

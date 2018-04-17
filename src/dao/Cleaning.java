@@ -11,7 +11,9 @@ public class Cleaning extends Staff {
     public static void setConnnection(Connection conn) {
         c = conn;
     }
-
+/**
+ * The method is used to add cleaning staff member 
+ */
     public int addPerson(JSONObject obj1) throws Exception {
         PreparedStatement exe = c.prepareStatement(
                 "insert into cleaning_staff(pid, speciality) values(?, ?)");
@@ -21,7 +23,9 @@ public class Cleaning extends Staff {
 
         return obj1.getInt("pid");
     }
-
+/**
+ * The method is used to delete from the cleaning staff table
+ */
     public boolean deletePerson(int pid) {
 
         try {
@@ -36,7 +40,12 @@ public class Cleaning extends Staff {
         }
         return true;
     }
-
+/**
+ * The method is used to update person parameter in cleaning table
+ * @param obj2
+ * @param pid
+ * @return
+ */
     public boolean updatePerson(JSONObject obj2, int pid) {
 
         try {
