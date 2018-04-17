@@ -261,7 +261,7 @@ class DateQueryOccup extends JDialog implements ActionListener {
         SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-mm-dd HH:mm:ss");
         try {
             Date startDate = myFormat.parse(entryDate.getText());
-            Date endDate = myFormat.parse(entryDate.getText());
+            Date endDate = myFormat.parse(exitDate.getText());
             ManagerService.setRoomTimeStamp(new Timestamp(startDate.getTime()), new Timestamp(
                     endDate.getTime()));
 
