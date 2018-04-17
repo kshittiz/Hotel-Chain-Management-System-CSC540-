@@ -1,5 +1,6 @@
 LOGIN HMS PROJECT (CSC 540)
-
+This project is focused on creation of a database schema normalized in BCNF form for Hotel Chain Management Sytem and its implementation using Java swings.
+ 
 Organization:
 
 Software Engineer (prime and backup)
