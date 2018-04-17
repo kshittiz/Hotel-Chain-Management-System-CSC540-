@@ -32,7 +32,8 @@ import dao.ServiceType;
 import view.LoginHMS;
 import view.UpdateCustomer;
 
-/**This class is the service layer that interacts with the view and model
+/**
+ * This class is the service layer that interacts with the view and model
  * 
  * @author vidhisha
  *
@@ -90,11 +91,13 @@ public class FrontDeskService {
 
         return map;
     }
-    /**This method is used to get lists of payment from Discount DAO class
+
+    /**
+     * This method is used to get lists of payment from Discount DAO class
      * 
      * @return List<String>
      */
-    
+
     public static List<String> getListOfPayment() { // Obtaining
                                                     // billingTypesList from
                                                     // Discount
@@ -106,8 +109,8 @@ public class FrontDeskService {
     }
 
     /**
-     * This function is used to return the string to be displayed on the dialog box,
-     * it calculates the total amount based on the room number
+     * This function is used to return the string to be displayed on the dialog
+     * box, it calculates the total amount based on the room number
      * 
      * @param room_num
      * @param Discount
@@ -157,6 +160,8 @@ public class FrontDeskService {
                                                              // by customer
                                                              // in particular
                                                              // room
+            if (duration == 0)
+                duration = 1;
             Room.setConnnection(c);
             String temproom_category = Room.roomCat(tempRoomNo, temphid);// Get
                                                                          // room_category
@@ -251,7 +256,10 @@ public class FrontDeskService {
         }
 
     }
-    /**function where we check if a person with a particular ssn is present in the database or not
+
+    /**
+     * function where we check if a person with a particular ssn is present in
+     * the database or not
      * 
      * @param ssn
      * @return boolean
@@ -274,8 +282,10 @@ public class FrontDeskService {
         else
             return true;
     }
+
     /**
      * function to add new customers via a transaction
+     * 
      * @param obj
      * @return boolean
      */
@@ -329,8 +339,10 @@ public class FrontDeskService {
             Database.endConnnection(c);
         }
     }
+
     /**
      * function to check if a room is available or not
+     * 
      * @param hid
      * @param numguest
      * @param category
@@ -446,6 +458,7 @@ public class FrontDeskService {
 
     /**
      * function to request a new service for a room
+     * 
      * @param obj
      * @return boolean
      */
@@ -480,8 +493,10 @@ public class FrontDeskService {
         }
 
     }
+
     /**
      * this function is used to update the customer
+     * 
      * @param obj
      * @return boolean
      */
@@ -563,6 +578,7 @@ public class FrontDeskService {
 
     /**
      * this function is used to get the contact details of a particular person
+     * 
      * @param ssn
      * @return Vector<Vector<Object>>
      */
@@ -583,8 +599,11 @@ public class FrontDeskService {
         return contacts;
 
     }
+
     /**
-     * this function calls into the DAO layer to get the staff who served what services to which room
+     * this function calls into the DAO layer to get the staff who served what
+     * services to which room
+     * 
      * @param room_num
      * @return Vector<Vector<Object>>
      */
@@ -597,6 +616,7 @@ public class FrontDeskService {
         Database.endConnnection(c);
         return data;
     }
+
     public static Vector<Vector<Object>> getCategory(int hid) {
         Connection c = Database.getConnection();
         RoomCategory.setConnnection(c);
@@ -605,6 +625,5 @@ public class FrontDeskService {
         Database.endConnnection(c);
         return data;
     }
-    
 
 }
